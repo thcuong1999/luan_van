@@ -343,18 +343,18 @@ lichsu {
 - D: disable
 - F: tim lich su theo ten thao tac, thoi gian (hom nay, hom qua, 1 thang truoc)
 
+=> update user collection -> tham chiếu đến bophankd or dly1 or daly2 or hodan
 
-
-
-user {
-    tk,
-    mk, 
-    vt
+xac nhan day du
+client send {
+    phanphatId -> update phanphat collection
+    item: [{congcuId, soluongphanphat}]
+    receiveVaitro -> dùng để đặt đk if, nếu vai trò là 'daily1' -> update congcu field 
+    của đại lý 1, nếu vai trò ....
+    receiveId
 }
 
-bophankd {
-    ten,
-    sdt,
-    diachi,
-    user: UserID
-}
+
+db.phanphats.update(
+{trangthai : "choxn"},
+{$set: { hoanthanh : false}})

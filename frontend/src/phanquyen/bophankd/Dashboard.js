@@ -72,6 +72,7 @@ const BophankdDashboard = (props) => {
               <span>Đại lý cấp 1</span>
             </NavLink>
           </li>
+
           <li>
             <NavLink to="/bophankd/phanphat" activeClassName="active">
               <i class="fas fa-th-list"></i>

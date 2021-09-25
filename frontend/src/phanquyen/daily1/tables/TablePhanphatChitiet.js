@@ -31,7 +31,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const TablePhanphatChitiet = ({ rows }) => {
+const TablePhanphatChitiet = ({ rows, handleClickOpen }) => {
   console.log(rows);
   //   const { setItems, rows } = props;
   // const [rows, setRows] = React.useState(props.rows);
@@ -108,9 +108,9 @@ const TablePhanphatChitiet = ({ rows }) => {
                 />
               </StyledTableCell>
               <StyledTableCell>
-                <Link to={`/bophankd/congcu/chitiet/${row.congcu._id}`}>
+                <span onClick={() => handleClickOpen(row.congcu?._id)}>
                   {row.congcu.ten}
-                </Link>
+                </span>
               </StyledTableCell>
               <StyledTableCell>{row.congcu.congdung}</StyledTableCell>
               <StyledTableCell>{row.soluongphanphat}</StyledTableCell>

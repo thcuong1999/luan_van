@@ -25,6 +25,15 @@ const apiPhanphat = {
     const url = `/phanphat/single/${id}`;
     return axiosClient.delete(url);
   },
+
+  dsPhanphatDenDaily1(id) {
+    const url = `/phanphat/daily1/${id}`;
+    return axiosClient.get(url);
+  },
+  xacnhandaydu(data) {
+    const url = "/phanphat/xacnhandaydu";
+    return axiosClient.put(url, data);
+  },
 };
 
 export default apiPhanphat;

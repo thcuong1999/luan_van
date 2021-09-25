@@ -1,11 +1,11 @@
 const express = require("express");
-const adminRouter = express.Router();
+const userRouter = express.Router();
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils");
 
 // admin signin
-adminRouter.post("/login", async (req, res) => {
+userRouter.post("/login", async (req, res) => {
   const { taikhoan, matkhau } = req.body;
   // check email
   const user = await User.findOne({ taikhoan });
@@ -17,7 +17,7 @@ adminRouter.post("/login", async (req, res) => {
     // check password
     //const validPwd = bcrypt.compareSync(matkhau, user.matkhau); // false
     const token = generateToken(user);
-    if (matkhau === user.matkhau) {
+    if (bcrypt.compareSync(matkhau, user.matkhau)) {
       // passwd matched, -> tìm thông tin user tương ứng với vaitro
 
       res.status(200).send({
@@ -33,8 +33,19 @@ adminRouter.post("/login", async (req, res) => {
         .send({ message: "Thông tin không chính xác", success: false });
     }
   }
-
-  // generate token to send
 });
 
-module.exports = adminRouter;
+// update user acc
+userRouter.put("/single/:id", async (req, res) => {
+  const { matkhau } = req.body;
+  try {
+    const user = await User.findById(req.params.id);
+    user.matkhau = bcrypt.hashSync(matkhau, 8);
+    const updatedUser = await user.save();
+    res.send({ updatedUser, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+module.exports = userRouter;

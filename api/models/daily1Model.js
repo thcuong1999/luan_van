@@ -24,10 +24,10 @@ const daily1Schema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    congcu: [
+    items: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Congcu",
+        congcu: { type: mongoose.Schema.Types.ObjectId, ref: "Congcu" },
+        soluongphanphat: Number,
       },
     ],
   },

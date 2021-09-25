@@ -25,6 +25,11 @@ const apiDaily1 = {
     const url = `/daily1/single/${id}`;
     return axiosClient.delete(url);
   },
+
+  singleBophankdBasedUser(userId) {
+    const url = `/daily1/user/${userId}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default apiDaily1;

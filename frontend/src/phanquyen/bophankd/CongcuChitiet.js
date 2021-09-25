@@ -65,7 +65,7 @@ const CongcuChitiet = (props) => {
             onClick={() => props.history.push("/bophankd/congcu")}
           >
             <i class="fas fa-angle-left"></i>
-            <span>Quay lại trang danh sách cong cu</span>
+            <span>Quay lại trang danh sách công cụ</span>
           </h5>
           <div className="btns">
             <ButtonMaterial

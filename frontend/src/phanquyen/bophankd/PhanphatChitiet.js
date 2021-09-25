@@ -9,6 +9,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ButtonMaterial from "../../components/ButtonMaterial";
 import apiPhanphat from "../../axios/apiPhanphat";
 import TablePhanphatChitiet from "./tables/TablePhanphatChitiet";
+// icons
+import ClearIcon from "@mui/icons-material/Clear";
+import CheckIcon from "@mui/icons-material/Check";
 
 const PhanphatChitiet = (props) => {
   const [open, setOpen] = React.useState(false);
@@ -65,13 +68,13 @@ const PhanphatChitiet = (props) => {
         <div className="header">
           <h5
             className="title"
-            onClick={() => props.history.push("/bophankd/congcu")}
+            onClick={() => props.history.push("/bophankd/phanphat")}
           >
             <i class="fas fa-angle-left"></i>
             <span>Quay lại trang danh sách phân phát</span>
           </h5>
-          <div className="btns">
-            {/* <ButtonMaterial
+          {/* <div className="btns">
+            <ButtonMaterial
               variant="outlined"
               startIcon={<DeleteIcon />}
               onClick={handleClickOpen}
@@ -85,8 +88,8 @@ const PhanphatChitiet = (props) => {
               }
             >
               Chỉnh sửa công cụ
-            </ButtonMaterial> */}
-          </div>
+            </ButtonMaterial>
+          </div> */}
         </div>
         <div className="content">
           <div className="section">
@@ -169,6 +172,38 @@ const PhanphatChitiet = (props) => {
             <h6>Danh sách công cụ</h6>
             <div className="sectionTable">
               <TablePhanphatChitiet rows={phanphat} />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-lg-7"></div>
+            <div className="col-lg-5">
+              <div className="section">
+                <h6>Tiến trình cấp phát</h6>
+                <div className="row">
+                  <div className="col-lg-5">
+                    <p>Trạng thái</p>
+                    <p>Báo cáo bên đại lý 1</p>
+                    <p>Hoàn thành phân phát</p>
+                  </div>
+                  <div className="col-lg-7">
+                    <p>
+                      {phanphat?.trangthai === "choxn"
+                        ? ": Chờ xác nhận"
+                        : ": Đã xác nhận"}
+                    </p>
+                    <p>
+                      {phanphat?.trangthai === "choxn"
+                        ? ": Đang chờ"
+                        : phanphat?.trangthai === "daxn" &&
+                          phanphat?.thieu.length
+                        ? ": Thiếu công cụ"
+                        : ": Đã nhận đầy đủ"}
+                    </p>
+                    <p>{phanphat?.hoanthanh ? <CheckIcon /> : <ClearIcon />}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -21,6 +21,12 @@ const daily2Schema = new mongoose.Schema(
         ref: "Hodan",
       },
     ],
+    items: [
+      {
+        congcu: { type: mongoose.Schema.Types.ObjectId, ref: "Congcu" },
+        soluongphatphat: Number,
+      },
+    ],
     daily1: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Daily1",

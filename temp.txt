@@ -53,3 +53,10 @@ phanphatRouter.post("/them", async (req, res) => {
 
 module.exports = phanphatRouter;
 
+db.bophankds.insertOne({ 
+    ten : "Bộ phận kinh doanh",
+	sdt : "334123567",
+	email: "bpkd@gmail.com",
+	diachi : "Duong 30/4, Viet Nam",
+	user : "614e9d49c3944d73e8e0063c"
+})

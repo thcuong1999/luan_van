@@ -12,6 +12,8 @@ import Congcu from "./Congcu";
 import CongcuThem from "./CongcuThem";
 import CongcuChitiet from "./CongcuChitiet";
 import CongcuChinhsua from "./CongcuChinhsua";
+import PhanphatDen from "./PhanphatDen";
+import PhanphatChitiet from "./PhanphatChitiet";
 
 const Dashboard = (props) => {
   const dispatch = useDispatch();
@@ -44,6 +46,13 @@ const Dashboard = (props) => {
             </NavLink>
           </li>
 
+          <li>
+            <NavLink to="/daily1/phanphat" activeClassName="active">
+              <i class="fas fa-th-list"></i>
+              <span>C.Cụ phân phát đến</span>
+            </NavLink>
+          </li>
+
           <button className="btn btn-primary mt-4" onClick={handleLogout}>
             Dang xuat
           </button>
@@ -66,6 +75,11 @@ const Dashboard = (props) => {
           exact
           path="/daily1/congcu/chinhsua/:id"
           component={CongcuChinhsua}
+        />
+        <Route exact path="/daily1/phanphat" component={PhanphatDen} />
+        <Route
+          path="/daily1/phanphat/chitiet/:id"
+          component={PhanphatChitiet}
         />
       </div>
     </div>

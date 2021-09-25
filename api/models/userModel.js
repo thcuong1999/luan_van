@@ -16,6 +16,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["admin", "bophankd", "giamsatvung", "daily1", "daily2", "hodan"],
   },
+  daily1: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Daily1",
+  },
+  daily2: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Daily2",
+  },
+  // hodan: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Hodan",
+  // },
 });
 
 const User = mongoose.model("User", userSchema);

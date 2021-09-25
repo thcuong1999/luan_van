@@ -79,7 +79,7 @@ daily1Router.put("/single/:id", async (req, res) => {
 daily1Router.get("/danhsach", async (req, res) => {
   try {
     const daily1 = await Daily1.find({}).populate("user");
-    if (!Daily1.length) {
+    if (!daily1.length) {
       return res.send({ message: "Khong tim thay dai ly", success: false });
     }
     res.send({ daily1, success: true });
@@ -108,6 +108,19 @@ daily1Router.delete("/single/:id", async (req, res) => {
     // delete user belong to this dai ly 1
     await User.findByIdAndDelete(removedDaily1.user);
     res.send({ removedDaily1, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// get single daily1 based userId
+daily1Router.get("/user/:id", async (req, res) => {
+  try {
+    const daily1 = await Daily1.findOne({ user: req.params.id });
+    if (!daily1) {
+      return res.send({ message: "Khong tim thay dai ly", success: false });
+    }
+    res.send({ daily1, success: true });
   } catch (error) {
     res.send({ message: error.message, success: false });
   }

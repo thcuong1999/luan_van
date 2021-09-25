@@ -57,3 +57,48 @@ export const headCellsDaily2 = [
     label: "Tài khoản",
   },
 ];
+
+export const headCellsPhanphat = [
+  {
+    id: "bengui",
+    numeric: false,
+    disablePadding: true,
+    label: "Bên gửi",
+  },
+  {
+    id: "bennhan",
+    numeric: false,
+    disablePadding: false,
+    label: "Bên nhận (đại lý 1)",
+  },
+  {
+    id: "tongcongcu",
+    numeric: true,
+    disablePadding: false,
+    label: "Tổng số công cụ",
+  },
+  {
+    id: "trangthai",
+    numeric: false,
+    disablePadding: false,
+    label: "Trạng thái",
+  },
+  {
+    id: "ngaytao",
+    numeric: false,
+    disablePadding: false,
+    label: "Ngày tạo",
+  },
+  {
+    id: "hoanthanh",
+    numeric: false,
+    disablePadding: false,
+    label: "Hoàn thành",
+  },
+  {
+    id: "chitiet",
+    numeric: false,
+    disablePadding: false,
+    label: "Chi tiết",
+  },
+];

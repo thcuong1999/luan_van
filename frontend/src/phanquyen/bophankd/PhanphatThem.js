@@ -53,7 +53,7 @@ const PhanphatThem = (props) => {
   const fetchBophankdData = async () => {
     const data = await apiBophankd.singleBophankdBasedUser(userInfo._id);
     setBophankdData(data.bophankd);
-    //console.log({ BophankdData: data });
+    // console.log({ BophankdData: data });
   };
 
   const deliverablePhatphat = () => {
@@ -87,7 +87,7 @@ const PhanphatThem = (props) => {
       const dl = {
         items: dscc,
         from: {
-          bophankd: bophankdData._id,
+          bophankd: bophankdData?._id,
         },
         to: {
           daily1,

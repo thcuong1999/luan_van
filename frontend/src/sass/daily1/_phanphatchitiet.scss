@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-#bophankdPhanphatChitiet {
+#daily1PhanphatChitiet {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -89,6 +89,25 @@
           text-decoration: underline;
         }
       }
+    }
+  }
+}
+
+.MuiBox-root {
+  .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.7) !important;
+  }
+
+  .css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
+    opacity: 1;
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.7) !important;
+  }
+
+  img {
+    width: 120px;
+
+    &.noImage {
+      opacity: 0.2;
     }
   }
 }

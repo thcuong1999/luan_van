@@ -39,6 +39,12 @@ const hodanSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Daily2",
     },
+    items: [
+      {
+        congcu: { type: mongoose.Schema.Types.ObjectId, ref: "Congcu" },
+        soluongphatphat: Number,
+      },
+    ],
   },
   {
     timestamps: true,
