@@ -1,0 +1,55 @@
+phanphat collection: {
+    _id
+    items: [{
+        congcu: congcuId,
+        soluong -- <= current soluong
+    }]
+    from: {
+        user: userId,
+        vaitro
+    },
+    to: {
+        user: userId,
+        vaitro
+    }
+    trangthai: [chờ XN, đã XN],
+    thieu: [{
+        congcu: congcuId,
+        soluongthieu: number
+    }],  
+    hoanthanh: boolean,
+    ngayPhanphat (timestamp),
+}
+
+
+- C: Them ds phan phat -> store history
+    if(baocao === thieu || baocao === thua) --> hoanthanh = false
+- R: Xem ds phan phat table: {from, to, trang thai, baocao, ngayPhanphat}
+    baocao field -> <Link> -> show ds congcu: phanphat.populate('congcu')
+- U:
+    show ds theo <a>thua</a>, <a>thieu</a> -> show ds cong cu + button cap phat lai cong cu thieu, thu hoi cong cu thua
+    if(baocao === thieu) {
+        gui lai cong cu thieu -> create new phanphat (button cap phat lai cong cu thieu)
+        set current phanphat.hoanthanh = true
+        DONE
+    }
+    if(baocao === daydu) {
+        DONE
+    }
+- D: delete record if(trangthai === cho xac nhan)
+- F: tim kiem ...
+
+
+const express = require("express");
+const phanphatRouter = express.Router();
+
+phanphatRouter.post("/them", async (req, res) => {
+    try {
+        //
+      } catch (error) {
+        res.send({ message: error.message, success: false });
+      }
+});
+
+module.exports = phanphatRouter;
+

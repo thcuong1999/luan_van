@@ -1,0 +1,73 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#bophankdPhanphatChitiet {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 36px;
+    background: #fff;
+
+    h5 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.7);
+
+      i {
+        color: rgba(0, 0, 0, 0.35);
+        margin-right: 10px;
+        font-size: 20px;
+      }
+    }
+
+    .btns {
+      padding: 10px 0;
+
+      button {
+        margin-left: 16px;
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+    background: #f0eeee;
+    padding: 36px;
+
+    .section {
+      padding: 24px;
+      background: #fff;
+      margin-bottom: 20px;
+
+      h6 {
+        margin-bottom: 30px;
+      }
+
+      .formGroup {
+        margin-bottom: 20px;
+
+        .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
+          opacity: 1;
+          -webkit-text-fill-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
+          opacity: 1;
+          -webkit-text-fill-color: rgba(0, 0, 0, 0.7);
+        }
+      }
+    }
+  }
+}
