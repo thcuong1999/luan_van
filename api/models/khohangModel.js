@@ -2,14 +2,17 @@ const mongoose = require("mongoose");
 
 const khohangSchema = new mongoose.Schema(
   {
-    sanpham: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Sanpham",
-      required: true,
-    },
-    tonkho: {
-      type: Number,
-    },
+    items: [
+      {
+        sanpham: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Sanpham",
+        },
+        tonkho: {
+          type: Number,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

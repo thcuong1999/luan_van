@@ -135,4 +135,18 @@
       }
     }
   }
+
+  table {
+    thead {
+      tr > th:first-child {
+        display: none;
+      }
+    }
+
+    tbody {
+      tr > td:first-child {
+        display: none;
+      }
+    }
+  }
 }

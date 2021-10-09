@@ -24,10 +24,19 @@ const daily1Schema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    bophankd: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Bophankd",
+    },
     items: [
       {
         congcu: { type: mongoose.Schema.Types.ObjectId, ref: "Congcu" },
         soluongphanphat: Number,
+        ngaytiepnhan: String,
+        daphanphat: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
   },

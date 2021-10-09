@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Loading from "../../components/Loading";
+import BackdropMaterial from "../../components/BackdropMaterial";
 import { makeStyles } from "@material-ui/core/styles";
 import img_placeholder from "../../assets/images/img_placeholder.png";
 import Alert from "@material-ui/lab/Alert";
@@ -12,6 +12,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Axios from "axios";
+import apiBophankd from "../../axios/apiBophankd";
+import { useSelector } from "react-redux";
+import apiSanpham from "../../axios/apiSanpham";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,10 +29,12 @@ const useStyles = makeStyles((theme) => ({
 
 const SanphamChitiet = (props) => {
   const [sanpham, setSanpham] = useState(null);
+  const [bophankdInfo, setBophankdInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [open, setOpen] = React.useState(false);
   const { id: sanphamId } = props.match.params;
+  const { userInfo } = useSelector((state) => state.user);
   const classes = useStyles();
 
   const handleClickOpen = () => {
@@ -45,7 +50,10 @@ const SanphamChitiet = (props) => {
   };
 
   const handleDelete = async () => {
-    const { data } = await Axios.delete(`/api/sanpham/single/${sanphamId}`);
+    const data = await apiBophankd.bophankdXoaSanpham({
+      bophankdId: bophankdInfo._id,
+      sanphamId,
+    });
     setOpen(false);
     if (data.success) {
       Toastify({
@@ -58,25 +66,22 @@ const SanphamChitiet = (props) => {
     setTimeout(() => props.history.push("/bophankd/sanpham"), 1000);
   };
 
-  const fetchSanpham = async (id) => {
+  const fetchSanpham = async () => {
     setLoading(true);
-    const { data } = await Axios.get(`/api/sanpham/single/${id}`);
-    if (data.success) {
-      setSanpham(data.sanpham);
-      setLoading(false);
-    } else {
-      setErrMsg("Khong tim thay san pham");
-      setLoading(false);
-    }
+    const data1 = await apiBophankd.bophankdBasedUserId(userInfo._id);
+    const data2 = await apiSanpham.singleSanpham(sanphamId);
+    setSanpham(data2.sanpham);
+    setBophankdInfo(data1.bophankd);
+    setLoading(false);
   };
 
   useEffect(() => {
-    fetchSanpham(sanphamId);
+    fetchSanpham();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
-    return <Loading />;
+    return <BackdropMaterial />;
   }
 
   return (
@@ -92,7 +97,7 @@ const SanphamChitiet = (props) => {
               className="btn btn-outline-danger"
               onClick={handleClickOpen}
             >
-              Xoa
+              Xóa
             </button>
             <button
               className="btn btn-primary"
@@ -100,25 +105,25 @@ const SanphamChitiet = (props) => {
                 props.history.push(`/bophankd/sanpham/chinhsua/${sanphamId}`)
               }
             >
-              Sua san pham
+              Sửa sản phẩm
             </button>
           </div>
         </div>
         {errMsg ? (
           <div className={classes.root}>
-            <Alert severity="error">Khong tim thay san pham!</Alert>
+            <Alert severity="error">Không tìm thấy sản phẩm!</Alert>
           </div>
         ) : (
           <div className="content">
             <h4>{sanpham?.ten}</h4>
             <div className="productInfo">
-              <h5>Thong tin san pham</h5>
+              <h5>Thông tin sản phẩm</h5>
               <div className="productInfoDetails">
                 <div className="titles">
-                  <p>Ma SKU</p>
-                  <p>Ten san pham</p>
-                  <p>Loai</p>
-                  <p>Nhan hieu</p>
+                  <p>Mã SKU</p>
+                  <p>Tên sản phẩm</p>
+                  <p>Loại</p>
+                  <p>Nhãn hiệu</p>
                 </div>
                 <div className="values">
                   <p>: {sanpham?.sku}</p>
@@ -127,8 +132,8 @@ const SanphamChitiet = (props) => {
                   <p>: {sanpham?.nhanhieu}</p>
                 </div>
                 <div className="titles">
-                  <p>Gia ban le</p>
-                  <p>Gia ban buon</p>
+                  <p>Giá bán lẻ</p>
+                  <p>Giá bán buôn</p>
                 </div>
                 <div className="values">
                   <p>: {sanpham?.giabanle}</p>
@@ -151,12 +156,12 @@ const SanphamChitiet = (props) => {
             <div className="row">
               <div className="col-lg-8">
                 <div className="productInfo mt-4">
-                  <h5>Gia san pham</h5>
+                  <h5>Giá sản phẩm</h5>
 
                   <div className="productInfoDetails">
                     <div className="titles">
-                      <p>Gia ban le</p>
-                      <p>Gia ban buon</p>
+                      <p>Giá bán lẻ</p>
+                      <p>Giá bán buôn</p>
                     </div>
                     <div className="values">
                       <p>: {sanpham?.giabanle}</p>
@@ -167,7 +172,7 @@ const SanphamChitiet = (props) => {
               </div>
               <div className="col-lg-4">
                 <div className="productInfo mt-4">
-                  <h5>Thong tin them</h5>
+                  <h5>Thông tin thêm</h5>
 
                   <div className="productInfoDetails">
                     <div className="d-flex justify-content-between w-100 py-3">
@@ -178,7 +183,7 @@ const SanphamChitiet = (props) => {
                           checked={sanpham?.chophepban}
                           disabled
                         />
-                        <span>Cho phep ban</span>
+                        <span>Cho phép bán</span>
                       </div>
                       <div className="px-3">
                         <input
@@ -186,7 +191,7 @@ const SanphamChitiet = (props) => {
                           checked={sanpham?.apdungthue}
                           disabled
                         />
-                        <span className="ml-2">Ap dung thue</span>
+                        <span className="ml-2">Áp dụng thuế</span>
                       </div>
                     </div>
                   </div>

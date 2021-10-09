@@ -9,6 +9,7 @@ const ButtonMaterial = ({
   children,
   className,
   color,
+  style,
 }) => {
   return (
     <Button
@@ -18,6 +19,7 @@ const ButtonMaterial = ({
       onClick={onClick}
       className={className}
       color={color}
+      style={style}
     >
       {children}
     </Button>

@@ -5,7 +5,9 @@ const Khohang = require("../models/khohangModel");
 // lay danh sach kho hang
 khohangRouter.get("/danhsach", async (req, res) => {
   try {
-    const spkhohang = await Khohang.find({}).populate({ path: "sanpham" });
+    const spkhohang = await Khohang.find({})
+      .populate({ path: "sanpham" })
+      .sort({ createdAt: "desc" });
     if (spkhohang.length) {
       res.send({ spkhohang, success: true });
     } else {

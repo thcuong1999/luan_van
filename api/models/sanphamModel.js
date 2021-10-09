@@ -44,10 +44,11 @@ const sanphamSchema = new mongoose.Schema(
       // so luong co the ban
       type: Number,
     },
-    khohang: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Khohang",
-    },
+    // khohang: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Khohang",
+    // },
+    ngaytao: String,
   },
   {
     timestamps: true,

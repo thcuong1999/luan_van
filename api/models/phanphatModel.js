@@ -39,6 +39,7 @@ const phanphatSchema = new mongoose.Schema(
         ref: "Hodan",
       },
     },
+
     trangthai: {
       type: String,
       enum: ["choxn", "daxn"],
@@ -50,6 +51,7 @@ const phanphatSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Congcu",
         },
+        soluongphanphat: Number,
         soluongthieu: Number,
       },
     ],

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import Loading from "../../components/Loading";
+import BackdropMaterial from "../../components/BackdropMaterial";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import Axios from "axios";
@@ -12,10 +10,21 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { useSelector } from "react-redux";
+import apiBophankd from "../../axios/apiBophankd";
+import apiSanpham from "../../axios/apiSanpham";
+import styled from "styled-components";
+import Header from "../../components/Header";
+import DropdownCustom from "../../components/DropdownCustom";
+import { Checkbox } from "@mui/material";
 
 const SanphamChinhsua = (props) => {
   const [thuoctinh, setThuoctinh] = useState([{ ten: "", giatri: "" }]);
   const { id: sanphamId } = props.match.params;
+  const { userInfo } = useSelector((state) => state.user);
+  const [bophankdInfo, setBophankdInfo] = useState(null);
+  const [loai, setLoai] = useState("Chọn loại sản phẩm");
+  const [nhanhieu, setNhanhieu] = useState("Chọn nhãn hiệu");
   // api;
   const [dsloai, setDsloai] = useState([]);
   const [dsnhanhieu, setDsnhanhieu] = useState([]);
@@ -38,16 +47,32 @@ const SanphamChinhsua = (props) => {
     const {
       data: { loai },
     } = await Axios.get("/api/sanpham/loai");
-    setDsloai(loai);
+    setDsloai(
+      loai.map((item) =>
+        item === "nongsan"
+          ? "Nông sản"
+          : item === "nguyenlieu"
+          ? "Nguyên liệu"
+          : "Thủ công mỹ nghệ"
+      )
+    );
     const {
       data: { nhanhieu },
     } = await Axios.get("/api/sanpham/nhanhieu");
-    setDsnhanhieu(nhanhieu);
-    const { data } = await Axios.get(`/api/sanpham/single/${sanphamId}`);
-    setSanpham(data.sanpham);
-    setThuoctinh(
-      data.sanpham.thuoctinh.length ? data.sanpham.thuoctinh : thuoctinh
+    setDsnhanhieu(nhanhieu.map((item) => item.tennhanhieu));
+    const data1 = await apiBophankd.bophankdBasedUserId(userInfo._id);
+    const { sanpham } = await apiSanpham.singleSanpham(sanphamId);
+    setSanpham(sanpham);
+    setLoai(
+      sanpham.loai === "nongsan"
+        ? "Nông sản"
+        : sanpham.loai === "nguyenlieu"
+        ? "Nguyên liệu"
+        : "Thủ công mỹ nghệ"
     );
+    setNhanhieu(sanpham.nhanhieu);
+    setBophankdInfo(data1.bophankd);
+    setThuoctinh(sanpham.thuoctinh.length ? sanpham.thuoctinh : thuoctinh);
     setLoading(false);
   };
 
@@ -75,12 +100,21 @@ const SanphamChinhsua = (props) => {
     formData.append("giabanle", sanpham.giabanle);
     formData.append("giabanbuon", sanpham.giabanbuon);
     formData.append("hinhanh", sanpham.hinhanh);
-    formData.append("nhanhieu", sanpham.nhanhieu);
-    formData.append("loai", sanpham.loai || "thucongmynghe");
+    formData.append("nhanhieu", nhanhieu);
+    formData.append(
+      "loai",
+      loai === "Nông sản"
+        ? "nongsan"
+        : loai === "Nguyên liệu"
+        ? "nguyenlieu"
+        : "thucongmynghe"
+    );
     formData.append("chophepban", sanpham.chophepban);
     formData.append("apdungthue", sanpham.apdungthue);
     formData.append("cotheban", sanpham.cotheban);
+    formData.append("bophankdId", bophankdInfo._id);
     formData.append("thuoctinh", JSON.stringify(getThuocTinh()));
+
     const { data } = await Axios.put(
       `/api/sanpham/single/${sanphamId}`,
       formData
@@ -88,7 +122,7 @@ const SanphamChinhsua = (props) => {
 
     if (data.success) {
       Toastify({
-        text: "Thêm sản phẩm thành công",
+        text: "Chỉnh sửa sản phẩm thành công",
         backgroundColor: "#0DB473",
         className: "toastifyInfo",
         position: "center",
@@ -135,374 +169,278 @@ const SanphamChinhsua = (props) => {
     setThuoctinh([...thuoctinh, { ten: "", giatri: "" }]);
   };
 
-  // handle inputs change
-  const handleChangeTen = (e) => {
+  const handleSanphamChange = (e) => {
     setSanpham({
       ...sanpham,
-      ten: e.target.value,
-    });
-  };
-  const handleChangeCotheban = (e) => {
-    setSanpham({
-      ...sanpham,
-      cotheban: e.target.value,
-    });
-  };
-  const handleChangeSku = (e) => {
-    setSanpham({
-      ...sanpham,
-      sku: e.target.value,
-    });
-  };
-  const handleChangeMota = (data) => {
-    setSanpham({
-      ...sanpham,
-      mota: data,
-    });
-  };
-  const handleChangeGianbanle = (e) => {
-    setSanpham({
-      ...sanpham,
-      giabanle: e.target.value,
-    });
-  };
-  const handleChangeGianbanbuon = (e) => {
-    setSanpham({
-      ...sanpham,
-      giabanbuon: e.target.value,
-    });
-  };
-  const handleChangeHinh = (e) => {
-    setSanpham({
-      ...sanpham,
-      hinhanh: e.target.files[0],
-    });
-  };
-  const handleChangeLoai = (e) => {
-    setSanpham({
-      ...sanpham,
-      loai: e.target.value,
-    });
-  };
-  const handleChangeNhanhieu = (e) => {
-    setSanpham({
-      ...sanpham,
-      nhanhieu: e.target.value,
-    });
-  };
-  const handleChangeChophepban = (e) => {
-    setSanpham({
-      ...sanpham,
-      chophepban: !sanpham.chophepban,
-    });
-  };
-  const handleChangeApdungthue = (e) => {
-    setSanpham({
-      ...sanpham,
-      apdungthue: !sanpham.apdungthue,
+      [e.target.name]: e.target.value,
     });
   };
 
   if (loading) {
-    return <Loading />;
+    return <BackdropMaterial />;
   }
 
   return (
     <>
-      <div id="bophankdThemSP">
-        <div className="header">
-          <h5
-            className="title"
-            onClick={() =>
-              props.history.push(`/bophankd/sanpham/chitiet/${sanphamId}`)
-            }
-          >
-            <i class="fas fa-angle-left"></i>
-            <span>Quay lại trang chi tiết sản phẩm</span>
-          </h5>
-          <div className="btns">
-            <button className="btn btn-primary" onClick={submitForm}>
+      <Container>
+        <Header
+          title="Quay lại trang danh sách sản phẩm"
+          titleBack
+          onClick={() => props.history.push("/bophankd/sanpham")}
+          headerRight={
+            <Button variant="contained" onClick={submitForm}>
               Cập nhật
-            </button>
-          </div>
-        </div>
-        <div className="content">
+            </Button>
+          }
+        />
+
+        <Content>
           <div className="row">
             <div className="col-lg-8">
-              <div className="productInfo">
-                <h5>Thong tin chung</h5>
-                <div className="productInfoWrapper">
-                  <div className="formGroup">
-                    <span>Ten san pham</span>
-                    <input
+              <Box>
+                <BoxTitle>
+                  <h5>Thông tin chung</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <FormGroup>
+                    <Label>Tên sản phẩm:</Label>
+                    <Input
                       type="text"
-                      placeholder="Nhap ten san pham"
+                      placeholder="Nhập tên sản phẩm"
+                      name="ten"
                       value={sanpham?.ten}
-                      onChange={handleChangeTen}
+                      onChange={handleSanphamChange}
                     />
-                    {/* <span className="errorMsg">
-                      Ten san pham khong duoc de trong
-                    </span> */}
-                  </div>
+                    {/* {!ten && <ErrMsg>{errMsg}</ErrMsg>} */}
+                  </FormGroup>
 
-                  <div className="formGroup">
-                    <span>So luong co the ban</span>
-                    <input
+                  <FormGroup>
+                    <Label>Số lượng có thể bán:</Label>
+                    <Input
                       type="text"
-                      placeholder="Nhap ma SKU"
+                      placeholder="Nhập số lượng"
                       style={{ width: "50%" }}
+                      name="cotheban"
                       value={sanpham?.cotheban}
-                      onChange={handleChangeCotheban}
+                      onChange={handleSanphamChange}
                     />
-                  </div>
+                    {/* {!cotheban && <ErrMsg>{errMsg}</ErrMsg>} */}
+                  </FormGroup>
 
-                  <div className="formGroup">
-                    <span>Ma SKU</span>
-                    <input
-                      type="text"
-                      placeholder="Nhap ma SKU"
-                      style={{ width: "50%" }}
-                      value={sanpham?.sku}
-                      onChange={handleChangeSku}
+                  <FormGroup>
+                    <Label>Mô tả sản phẩm:</Label>
+                    <TextArea
+                      name="mota"
+                      value={sanpham?.mota}
+                      onChange={handleSanphamChange}
+                      rows="5"
                     />
-                  </div>
+                  </FormGroup>
+                </BoxContent>
+              </Box>
 
-                  <div className="formGroup">
-                    <a
-                      class="ckeditorShow"
-                      data-toggle="collapse"
-                      href="#motaSanpham"
-                      role="button"
-                      aria-expanded="true"
-                      aria-controls="collapseExample"
-                    >
-                      Mo ta san pham
-                    </a>
-                    <div class="collapse show" id="motaSanpham">
-                      <div className="ckeditor">
-                        <CKEditor
-                          editor={ClassicEditor}
-                          data={sanpham?.mota}
-                          onChange={(event, editor) => {
-                            const data = editor.getData();
-                            handleChangeMota(data);
-                          }}
-                          onBlur={(event, editor) => {
-                            console.log("Blur.", editor);
-                          }}
-                          onFocus={(event, editor) => {
-                            console.log("Focus.", editor);
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="productInfo">
-                <h5>Gia san pham</h5>
-                <div className="productInfoWrapper">
+              <Box>
+                <BoxTitle>
+                  <h5>Giá sản phẩm</h5>
+                </BoxTitle>
+                <BoxContent>
                   <div className="row">
                     <div className="col-lg-6">
-                      <div className="formGroup">
-                        <span>Gian ban le</span>
-                        <input
+                      <FormGroup>
+                        <Label>Giá bản lẻ:</Label>
+                        <Input
                           type="text"
-                          placeholder="Nhap ma SKU"
+                          placeholder="Nhập giá"
+                          name="giabanle"
                           value={sanpham?.giabanle}
-                          onChange={handleChangeGianbanle}
+                          onChange={handleSanphamChange}
                         />
-                      </div>
+                        {/* {!giabanle && <ErrMsg>{errMsg}</ErrMsg>} */}
+                      </FormGroup>
                     </div>
                     <div className="col-lg-6">
-                      <div className="formGroup">
-                        <span>Gia ban buon</span>
-                        <input
+                      <FormGroup>
+                        <Label>Giá bản buôn:</Label>
+                        <Input
                           type="text"
-                          placeholder="Nhap ma SKU"
+                          placeholder="Nhập giá"
+                          name="giabanbuon"
                           value={sanpham?.giabanbuon}
-                          onChange={handleChangeGianbanbuon}
+                          onChange={handleSanphamChange}
                         />
-                      </div>
+                        {/* {!giabanbuon && <ErrMsg>{errMsg}</ErrMsg>} */}
+                      </FormGroup>
                     </div>
                   </div>
-                </div>
-              </div>
+                </BoxContent>
+              </Box>
 
-              <div className="productInfo">
-                <h5>Anh san pham</h5>
-                <div className="productInfoWrapper">
-                  <div className="formGroup">
+              <Box>
+                <BoxTitle>
+                  <h5>Ảnh sản phẩm</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <FormGroup>
+                    <Label>Chọn ảnh:</Label>
                     <input
                       type="file"
                       style={{ border: "none" }}
-                      onChange={handleChangeHinh}
+                      onChange={(e) =>
+                        setSanpham({
+                          ...sanpham,
+                          hinhanh: e.target.files[0],
+                        })
+                      }
                     />
-                  </div>
-                </div>
-              </div>
+                  </FormGroup>
+                </BoxContent>
+              </Box>
 
-              <div className="productInfo">
-                <h5>Khoi tao kho hang</h5>
-                <div className="productInfoWrapper">
-                  <p>content goes here</p>
-                </div>
-              </div>
+              <Box>
+                <BoxTitle>
+                  <h5>Thuộc tính</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <div id="themThuocTinh" className="collapse show">
+                    <div className="productInfoWrapper">
+                      {thuoctinh.map((item, key) => {
+                        return (
+                          <div className="row">
+                            <div className="col-lg-4">
+                              <FormGroup>
+                                <Input
+                                  type="text"
+                                  name="ten"
+                                  value={item.ten}
+                                  onChange={(e) => handleInputChange(e, key)}
+                                  placeholder="Ten thuoc tinh"
+                                />
+                              </FormGroup>
+                            </div>
+                            <div className="col-lg-8">
+                              <div className="d-flex align-items-center">
+                                <Input
+                                  type="text"
+                                  name="giatri"
+                                  value={item.giatri}
+                                  onChange={(e) => handleInputChange(e, key)}
+                                  placeholder="Gia tri"
+                                />
+                                {thuoctinh.length !== 1 && (
+                                  <CrossButton
+                                    onClick={() => handleRemoveClick(key)}
+                                  >
+                                    <i class="fas fa-times"></i>
+                                  </CrossButton>
+                                )}
+                              </div>
+                            </div>
 
-              <div className="productInfo">
-                <h5>
-                  Thuoc tinh
-                  <a
-                    data-toggle="collapse"
-                    href="#themThuocTinh"
-                    role="button"
-                    aria-expanded="false"
-                    aria-controls="collapseExample"
-                  >
-                    <i class="fas fa-plus"></i>
-                  </a>
-                </h5>
-
-                <div id="themThuocTinh" className="collapse show">
-                  <div className="productInfoWrapper">
-                    {thuoctinh.map((item, key) => {
-                      return (
-                        <div className="row">
-                          <div className="col-lg-4">
-                            <input
-                              type="text"
-                              name="ten"
-                              value={item.ten}
-                              onChange={(e) => handleInputChange(e, key)}
-                              placeholder="Ten thuoc tinh"
-                            />
-                          </div>
-                          <div className="col-lg-8">
-                            <div className="d-flex align-items-center">
-                              <input
-                                type="text"
-                                name="giatri"
-                                value={item.giatri}
-                                onChange={(e) => handleInputChange(e, key)}
-                                placeholder="Gia tri"
-                              />
-                              {thuoctinh.length !== 1 && (
-                                <button
-                                  className="removeElement"
-                                  onClick={() => handleRemoveClick(key)}
-                                >
-                                  <i class="fas fa-times"></i>
-                                </button>
+                            <div className="addElementBtn">
+                              {thuoctinh.length - 1 === key && (
+                                <PlusButton onClick={handleAddClick}>
+                                  <i class="fas fa-plus"></i>
+                                  <span>Thêm thuộc tính khác</span>
+                                </PlusButton>
                               )}
                             </div>
                           </div>
-
-                          <div className="addElementBtn">
-                            {thuoctinh.length - 1 === key && (
-                              <button onClick={handleAddClick}>
-                                <i class="fas fa-plus"></i>
-                                <span>Them thuoc tinh khac</span>
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              </div>
+                </BoxContent>
+              </Box>
             </div>
+
             <div className="col-lg-4">
-              <div className="productInfo">
-                <h5>Hinh thuc quan ly</h5>
-                <div className="productInfoWrapper">
-                  <div className="formGroup">
-                    <span>Loai san pham (Mac dinh: Thu cong my nghe)</span>
-                    <select value={sanpham?.loai} onChange={handleChangeLoai}>
-                      <option></option>
-                      {dsloai &&
-                        dsloai.map((loai) => (
-                          <option value={loai}>
-                            {loai === "thucongmynghe"
-                              ? "Thủ công mỹ nghệ"
-                              : loai === "nongsan"
-                              ? "Nông sản"
-                              : "Nguyên liệu"}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                  <div className="formGroup">
-                    <span>Nhan hieu</span>
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      data-toggle="modal"
-                      data-target="#themNhanHieu"
-                      className="themNhanHieu"
-                      onClick={handleClickOpen}
-                    >
-                      <i class="fas fa-plus"></i>
-                      <span>Them nhan hiệu</span>
-                    </button>
-                    <select
-                      value={sanpham?.nhanhieu}
-                      onChange={handleChangeNhanhieu}
-                    >
-                      <option></option>
-                      {dsnhanhieu &&
-                        dsnhanhieu.map((nhanhieu) => (
-                          <option value={nhanhieu.tennhanhieu}>
-                            {nhanhieu.tennhanhieu}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                  <div className="formGroup">
-                    <span>Tags</span>
-                    <textarea rows="3" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="productInfo">
-                <h5>Cho phep ban</h5>
-                <div className="productInfoWrapper">
-                  <div className="formGroup">
-                    <input
-                      type="checkbox"
-                      checked={sanpham?.chophepban}
-                      onChange={handleChangeChophepban}
+              <Box>
+                <BoxTitle>
+                  <h5>Hình thức quản lý</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <FormGroup>
+                    <Label>Loại sản phẩm:</Label>
+                    <DropdownCustom
+                      data={dsloai}
+                      dropdownStyles={{ width: "100%" }}
+                      selected={loai}
+                      onClick={(val) => setLoai(val)}
                     />
-                  </div>
-                </div>
-              </div>
+                    {/* {loai === "Chọn loại sản phẩm" && <ErrMsg>{errMsg}</ErrMsg>} */}
+                  </FormGroup>
 
-              <div className="productInfo">
-                <h5>Ap dung thue</h5>
-                <div className="productInfoWrapper">
-                  <div className="formGroup">
-                    <input
-                      type="checkbox"
-                      checked={sanpham?.apdungthue}
-                      onChange={handleChangeApdungthue}
+                  <FormGroup>
+                    <Label>Nhãn hiệu:</Label>
+                    <DropdownCustom
+                      data={dsnhanhieu}
+                      dropdownStyles={{ width: "100%" }}
+                      selected={nhanhieu}
+                      onClick={(val) => setNhanhieu(val)}
                     />
-                  </div>
-                </div>
-              </div>
+                    <SmallLabel onClick={handleClickOpen}>
+                      Them nhan hieu
+                    </SmallLabel>
+                    {/* {nhanhieu === "Chọn nhãn hiệu" && <ErrMsg>{errMsg}</ErrMsg>} */}
+                  </FormGroup>
+                </BoxContent>
+              </Box>
+
+              <Box>
+                <BoxTitle>
+                  <h5>Cho phép bán</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <Checkbox
+                    checked={sanpham?.chophepban}
+                    onChange={(e) =>
+                      setSanpham({
+                        ...sanpham,
+                        chophepban: !sanpham.chophepban,
+                      })
+                    }
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                  />
+                </BoxContent>
+              </Box>
+
+              <Box>
+                <BoxTitle>
+                  <h5>Áp dụng thuế</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <Checkbox
+                    checked={sanpham?.apdungthue}
+                    onChange={(e) =>
+                      setSanpham({
+                        ...sanpham,
+                        apdungthue: !sanpham.apdungthue,
+                      })
+                    }
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                  />
+                </BoxContent>
+              </Box>
+
+              {/* <Box>
+                <BoxTitle>
+                  <h5>Thêm vào kho hàng</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <Checkbox
+                    onChange={(e) => setLuuvaokho(!luuvaokho)}
+                    checked={luuvaokho}
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                  />
+                </BoxContent>
+              </Box> */}
             </div>
           </div>
-
-          <div className="btnRight">
-            <button className="btn btn-primary" onClick={submitForm}>
-              Cập nhật
-            </button>
-          </div>
-        </div>
-      </div>
+        </Content>
+      </Container>
 
       {/* dialog */}
       <Dialog
@@ -510,8 +448,8 @@ const SanphamChinhsua = (props) => {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Them nhan hieu</DialogTitle>
-        <DialogContent>
+        <DialogTitle id="form-dialog-title">Thêm nhãn hiệu</DialogTitle>
+        <DialogContent style={{ minWidth: 600 }}>
           <DialogContentText className="test123"></DialogContentText>
           <TextField
             autoFocus
@@ -525,15 +463,130 @@ const SanphamChinhsua = (props) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            Huy
+            Hủy
           </Button>
           <Button onClick={themNhanHieuMoi} color="primary">
-            Them
+            Thêm
           </Button>
         </DialogActions>
       </Dialog>
     </>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  background: #f0eeee;
+  padding: 20px 36px;
+`;
+
+const Box = styled.div`
+  background: #fff;
+  margin-bottom: 20px;
+`;
+
+const BoxTitle = styled.div`
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  h5 {
+    font-size: 16px;
+    display: inline-block;
+    padding: 20px;
+    margin-bottom: 0;
+  }
+`;
+
+const BoxContent = styled.div`
+  padding: 20px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 26px;
+`;
+
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+
+const SmallLabel = styled.span`
+  font-size: 15px;
+  color: blue;
+  display: block;
+  margin-top: 4px;
+  cursor: pointer;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+
+const CrossButton = styled.button`
+  border: none;
+  margin-left: 10px;
+  background: #fff;
+  outline: none;
+  i {
+    font-size: 26px;
+    color: rgba(0, 0, 0, 0.3);
+  }
+  &:active {
+    outline: none;
+  }
+`;
+
+const PlusButton = styled.button`
+  margin-left: 20px;
+  background: #fff;
+  border: none;
+  outline: none;
+  i {
+    font-size: 13px;
+    color: #0088ff;
+    width: 25px;
+    height: 25px;
+    line-height: 20px;
+    border: 3px solid #0088ff;
+    text-align: center;
+    border-radius: 50%;
+  }
+  span {
+    color: #0088ff;
+    margin-left: 8px;
+  }
+`;
+
+const ErrMsg = styled.span`
+  display: block;
+  font-size: 15px;
+  color: red;
+`;
 
 export default SanphamChinhsua;

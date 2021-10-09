@@ -9,8 +9,6 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiKhohang from "../../../axios/apiKhohang";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
@@ -18,30 +16,12 @@ import EnhancedTableToolbar from "../../../components/table/EnhancedTableToolbar
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsKhohang } from "./headCells";
 
-const TableKhohang = () => {
+const TableKhohang = ({ dsSanpham }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  // api
-  const [loading, setLoading] = React.useState(false);
-  const [khohang, setKhohang] = React.useState([]);
-
-  const fetchDSSPkhohang = async () => {
-    setLoading(true);
-    const data = await apiKhohang.dsSPKhohang();
-    if (data.success) {
-      setKhohang(data.spkhohang);
-      setLoading(false);
-    }
-    setLoading(false);
-  };
-
-  React.useEffect(() => {
-    fetchDSSPkhohang();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -52,7 +32,7 @@ const TableKhohang = () => {
   //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = khohang.map((item) => item._id);
+      const newSelecteds = dsSanpham.map((item) => item._id);
       setSelected(newSelecteds);
       return;
     }
@@ -92,15 +72,7 @@ const TableKhohang = () => {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - khohang.length) : 0;
-
-  const generateDateString = (dateStr) => {
-    return dateStr.slice(0, 10);
-  };
-
-  if (loading) {
-    return <BackdropMaterial />;
-  }
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsSanpham.length) : 0;
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -119,11 +91,11 @@ const TableKhohang = () => {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={khohang.length}
+              rowCount={dsSanpham.length}
               headCells={headCellsKhohang}
             />
             <TableBody>
-              {khohang
+              {dsSanpham
                 .slice()
                 .sort(getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -179,9 +151,7 @@ const TableKhohang = () => {
                         {row.sanpham?.cotheban}
                       </TableCell>
                       <TableCell align="right"> {row.tonkho}</TableCell>
-                      <TableCell align="right">
-                        {generateDateString(row.createdAt)}
-                      </TableCell>
+                      <TableCell align="right">{row.sanpham.ngaytao}</TableCell>
                       <TableCell align="right">
                         {row.sanpham?.giabanle}
                       </TableCell>
@@ -206,7 +176,7 @@ const TableKhohang = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
           colSpan={3}
-          count={khohang.length}
+          count={dsSanpham.length}
           rowsPerPage={rowsPerPage}
           page={page}
           SelectProps={{

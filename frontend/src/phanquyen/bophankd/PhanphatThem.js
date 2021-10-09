@@ -92,6 +92,7 @@ const PhanphatThem = (props) => {
         to: {
           daily1,
         },
+        redo: false,
       };
       // console.log(dl);
       const data = await apiPhanphat.themPhanphat(dl);
@@ -168,7 +169,7 @@ const PhanphatThem = (props) => {
         BackdropProps={{
           timeout: 500,
         }}
-        id="modalPhanphat"
+        class="modalPhanphat"
       >
         <Fade in={open}>
           <Box sx={style}>

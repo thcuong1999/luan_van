@@ -32,7 +32,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const TablePhanphatChitiet = ({ rows, handleClickOpen }) => {
-  console.log(rows);
   //   const { setItems, rows } = props;
   // const [rows, setRows] = React.useState(props.rows);
 

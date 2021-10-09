@@ -1,360 +1,142 @@
-admin => cung cấp tài khoản, mật khẩu
+padding: 36px 20px;
 
-giao diện đăng nhập => chung
-    - tùy role mà sẽ phục vụ các components khác nhau
-    nguoidung collection -> dung cho đăng nhập
-    {
-        _id,
-        hoten,
-        sdt,
-        cmnd,
-        ngaysinh,
-        email,
-        diachi,
-        taikhoan,
-        matkhau,
-        vaitro: ['admin', 'bophankd', 'giamsatvung', 'daily1', 'daily2', 'hodan']
-    }
-    
-
-    hodan collections
-    {
-        _id,
-        daidien,
-        diachi,
-        sdt,
-        cmnd,
-        ngaysinh,
-        thanhvien[hoten, namesinh],
-        taikhoan,
-        matkhau,
-        _idlangnghe,
-        _iddaily2
-    }
-
-    congty collection
-    {
-        _id,
-        tencty,
-        diachi,
-        sdt,
-        email
-    }
-
-    langnghe {
-        _id,
-        tenlang,
-        hodan: [Hodan]
-    }
-
-    loaisanpham {
-        _id,
-        tenloai,
-        ghichu
-    }
-
-    sanpham {
-        _id,
-        sku (PVN05),
-        ten,
-        mota,
-        giabanle (khach mua le),
-        giabanbuon (khach mua voi sluong lon)
-        hinhanh,
-        thuoctinh: [{
-            ten,
-            giatri
-        }],
-        loai ['thucongmynghe', 'nongsan', 'nguenlieu'],
-        nhanhieu,
-        tags: [] (phục vụ cho việc lọc sp)
-        chophepban: Boolean,
-        apdungthue: Boolean,
-        cotheban (so luong co the ban),
-        ngaycapnhatcuoi,
-
-    }
-
-    congcu {
-        _id,
-        ten,
-        mota,
-        thuoctinh: [{
-            ten,
-            giatri
-        }],
-        hinhanh,
-        congdung,
-        soluong
-    }
-
-    nhanhieu {
-        tennhanhieu,
-        mota
-    }
-
-    donhang {
-        _id
-    }
+onclick={() => myFunc()} : Gọi hàm <=> onclick={myFunc} : tham chiếu
 
 
-    khachhang {
-        _id,
-        ten,
-        sdt,
-        ngaysinh,
-        diachi,
-        khuvuc,
-        phuongxa,
-        nhomkh: [vip, banbuon, banle],
-        gioitinh: [nam, nu, khac],
-        email
-    }
+MẤY CÁI REF TRONG COLLECTION CHỈ LÀ THAM CHIẾU THÔI, KO TÁC ĐỘNG LÊ NÓ KHI UPDATE
+=> CHỈ TÁC ĐỘNG LÊN COLLECTION MÀ NÓ THAM CHIẾU ĐẾN THÔI
+- khi cập nhật or thêm, sửa, xóa -> đặt giả thiết field này có tồn tại ko
+    nêu tồn tại thì làm j, ko tồn tại thì làm j
 
-    khohang {
-        _id,
-        sanpham: [Sanpham],
-        tonkho
-    }
+sửa sp -> sp chưa nhập kho -> có thể nhập kho (do later)
 
-    daily1 {
-        _id,
-        madaily
-        ten,
-        sdt,
-        email,
-        diachi,
-        daily2: [Daily2]
-    }
+tỉnh: name
+huyện: districts
+xã: wards
 
-     daily2 {
-        _id,
-        daily1 [Daily1ID],
-        madaily,
-        ten,
-        sdt,
-        email,
-        diachi,
-        hodan: [Hodan]
-    }
+db.daily2.update({}, {$set: {daily1: null}}, false, true);
 
 
-1 Lang nghe -> nhiều hộ dân <=> 1 hộ dân thuộc 1 làng nghề
-1 hộ dân -> nghề khác/giống nhau
-daily2 -> ql nhiều hộ dân <=> hộ dân thuộc 1 đại lý 2
+mỗi bộ phận kd quản lý riêng: công cụ, sản phẩm, đại lý 1, kho hàng, phân phát
 
-
-bpkd -> quản lý đl1, đơn hàng, kho hàng, sản phẩm [categories: thucongmynghe, nongsan, nguyenlieu], công cụ
-
-
-=> TẠO HÓA ĐƠN (khi bán tại quầy):
-1. thêm sp vào dơn hàng
-2. điều chỉnh thông tin sản phẩm (sửa số lượng, đơn giá, chiết khâu, xóa đi,...)
-3. thêm khách hàng vào hđ (tìm theo tên, sđt, nếu ko chọn -> default khách lẻ. có thể thêm mới khách hàng tại đây)
-4. chọn phương thức thanh toán (quẹt thể, COD, chuyển khoản, tiền mặt)
-5. nhập tiền khách đưa (nhập số tiền khách đã thanh toán)
-6. xem thông tin tiền thừa (xem số tienf cần trả cho khách nếu có)
-7. nhấn nút thanh toán (sau đó có thể in ngay hóa đơn cho kh)
-8. Sử dụng nút chức năng (thực hiện nghiệp vụ khi bán hàng tại quầy: đổi trả hàng, khuyến mãi, xem báo cáo,...)
-=> giảm sl có thể bán xuống sau khi tạo
-
-
-toastify --
+bophankdRouter.get("/danhsach", async (req, res) => {
+  try {
+    const bophankd = await Bophankd.find({}).populate("user");
+    res.send({ bophankd, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
 
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-Toastify({
+
+if(data.success) {
+    Toastify({
         text: "Then nhan hieu thanh cong",
         backgroundColor: "#0DB473",
         className: "toastifyInfo",
         position: "center",
-      }).showToast();
-
-
-DON NHAP HANG
-    * chủ yếu nguyên liệu từ hộ dân
-    - phân phát xuống đl 1 -> đl 2 -> hộ dân
-1. dat hang
-2. duyet / dang giao dich = n => hang dang ve (ton kho) = n
-3. nhap kho => hang dang ve = 0 -> if(chua thanh toan) -> khong hoan thanh -> xac nhan thanh toan -> hoan thanh
-
-// phân phát công cụ
-- bophankd -> đại lý 1
-    + case: nhận trực tiếp -> điền form
-    + bokd gửi danh sách
-
-component ngoai`
-    button -> click -> open dialog
-
-dialog component
-    huy button -> click -> close dialog
-
-moi dialog khac nhau -> title, content, button text 1, button text 2
-    - button text 1 -> click -> close dialog
-    - button text 2 -> click -> handleClick (component ngoai`)
-
-
-Quản lý công cụ (đl1)
-    - nhận công cụ từ cty gửi xuống hộ dân (CREATE)
-        + nhận cc trực tiếp -> điền form -> nhập công cụ vào kho
-        + cty gửi danh sách các công cụ sẽ phân phát xuống hộ dân -> lưu vào kho -> phân phát xuống đl2
-    - nhận yêu cầu cấp công cụ từ đl2 (đl2 nhận yêu cầu từ hộ dân -> làm đơn gửi lên đl 1 -> đl1 gửi lên bpkd) (CREATE)
-    - gửi yêu cầu công cụ lên bpkd
-    - phân phát công cụ xuống đl 1 (DELETE)
-    - show danh sách công cụ (READ)
-    - công ty gửi 1 số công cụ trước cho hd, sau đó gửi thêm -> cập nhật lại kho công cụ (UPDATE)
-
-
-1 bpkd - nhiều đl1 - nhiều đl 2- nhiều hd
-
-
-=== BOKD PHAN SIDE
-bpkd -> check box công cụ -> select option: phân phát xuống đl 1 -> xác nhận phân phát -> OK -> done
-1. send:
-{
-    _id: pp1111
-    items: [
-        {
-            congcu: ID111,
-            soluong: 10
-        },
-        {
-            congcu: ID222,
-        soluong: 5
-        },
-]
-    from: {
-        user: User111,
-        vaitro: 'bophankd'
-    },
-    to: {
-        user: User222,
-        vaitro: 'daily1'
-    }
-    trangthai: 'chờ XN'
-    thieu: []
-    hoanthanh: false,
+    }).showToast();
 }
-2. store history
-
-//=== DAI LY 1 SIDE
-1. confirm
-CASE: "daydu"
-{
-    _id: pp1111
-    items: [
-        {
-            congcu: ID111,
-            soluong: 10
-        },
-        {
-            congcu: ID222,
-            soluong: 5
-        },
-    ]
-    from: {
-        user: User111,
-        vaitro: 'bophankd'
-    },
-    to: {
-        user: User222,
-        vaitro: 'daily1'
-    }
-    trangthai: 'Da XN'
-    thieu: [],  
-    hoanthanh: true,   
-}   
-
-CASE: "thieu"
-{
-    _id: pp1111
-    items: [
-        {
-            congcu: ID111,
-            soluong: 10
-        },
-        {
-            congcu: ID222,
-            soluong: 5
-        },
-    ]
-    from: {
-        user: User111,
-        vaitro: 'bophankd'
-    },
-    to: {
-        user: User222,
-        vaitro: 'daily1'
-    }
-    trangthai: 'Da XN'
-    thieu: [
-        {
-            congcu: ID222,
-            soluongthieu: 3 --> slthieu <= slphanphat
-        }
-    ],   
-    hoanthanh: false,   
-}   
-2. store history
-
-//=== BO PHAN KD SIDE
-if(trangthai="da XN" && hoanthanh === false)
-1. send new:
-{
-    _id: pp2222
-    items: [
-        {
-            ongcu: ID222,
-            soluongthieu: 3
-        },
-    ]
-    from: {
-        user: User111,
-        vaitro: 'bophankd'
-    },
-    to: {
-        user: User222,
-        vaitro: 'daily1'
-    }
-    trangthai: 'Cho XN'
-    thieu: [],  
-    hoanthanh: false,   
-}  
-2. set current:
- {
-    ...
-    hoanthanh: true,   
-}   
-3.store history
+    
+const [bophankd, setBophankd] = useState(null);
+const [loading, setLoading] = useState(false)   
+const fetchDsBophankd = async () => {
+    setLoading(true);
+    const data = await apiBophankd.dsBophankd();
+    setDsBophankd(data.bophankd);
+    setLoading(false);
+  };
 
 
+   useEffect(() => {
+      //
+  }, [])
 
-lichsu {
-    _id,
-    user: userID,
-    thaotac: tenThaotac: String -- trien khai: thaotac.js (export const THEM_SAN_PHAM="Them san pham",...)
-    thoigian (timestamp)
-}
-- C: create lich su
-    + VD: sanphamRouter.js - themSanpham() -> (new Lichsu({ user: userid, thaotac: thaotac.THEM_SANPHAM })).save()
-- R: Read history
-    + Lichsu.find({user: current_userID})
-- U: disable
-- D: disable
-- F: tim lich su theo ten thao tac, thoi gian (hom nay, hom qua, 1 thang truoc)
+===================================================
 
-=> update user collection -> tham chiếu đến bophankd or dly1 or daly2 or hodan
+PHAN PHAT FUNCTIONALITY
 
-xac nhan day du
-client send {
-    phanphatId -> update phanphat collection
-    item: [{congcuId, soluongphanphat}]
-    receiveVaitro -> dùng để đặt đk if, nếu vai trò là 'daily1' -> update congcu field 
-    của đại lý 1, nếu vai trò ....
-    receiveId
+I. bo phan KD
+    - 
+daily2: {
+    tencty,
+    sdt,
+    email,
+    diachi,
+    hodan: [],
+    items: [],
+    daily1,
+    user,
+  },
+
+
+langnghe: {
+    ten,
+    tinh,
+    huyen,
+    sanphamchinh,
+    hodan[]
 }
 
+hodan: {
+    daidien,
+    diachi,
+    sdt,
+    cmnd,
+    ngaysinh,
+    user,
+    langnghe,
+    daily2,
+    items
+}
 
-db.phanphats.update(
-{trangthai : "choxn"},
-{$set: { hoanthanh : false}})
+//=== LÀNG NGHỀ
+Langnghe.js
+    - show ds làng nghề:    ten | tinh | huyen | san pham chinh | tổng số hộ dân -> (langnghe.find({}))
+    - them lang nghe: {
+        ten,
+        tinh,
+        huyen,
+        sanphamchinh,
+    }
+    - sua lang nghe: {
+        ten,
+        tinh,
+        huyen,
+        sanphamchinh,
+    }
+    - xoa lang nghe: { langngheID }
+LangngheChitiet.js:
+    - show chi tiết làng nghề:  tên, tỉnh, huyện, sản phẩm chính, hộ dân (table) -> (langnghe.find({}).populate('hodan'))
+        -> row hộ dân onclick => HodanChitiet.js
+     - sua lang nghe: {
+        ten,
+        tinh,
+        huyen,
+        sanphamchinh,
+    }
+    - xoa lang nghe: { langngheID }
+
+//=== HỘ DÂN
+Hodan.js
+    - show ds hộ dân:   dai dien(tên người đại diện) | sdt | cmnd | ngày sinh | ten làng -> (hodan.find({}).populate('langnghe'))
+        -> làng onclick => LangngheChitiet.js
+HodanChitiet.js:
+    - show chi tiết hộ dân: daidien, diachi, sdt, cmnd, ngaysinh, taikhoan, tên langnghe, tên đaily2 -> (hodan.find({}).populate('langnghe').populate('daily2'))
+        -> ten langnghe onclick => LangngheChitiet.js:
+
+* 1 tỉnh, huyền -> nhiều làng nghề
+* 1 làng nghề -> nhiều hộ dân
+
+xoa ho dan
+  - remove doc of Hodan collection -> return removed doc -> gained field: langnghe
+    - Langnghe model update field: hodan 
+payload: { hodanId }
+
+
+Phanphat model 
+{
+  
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Loading from "../../components/Loading";
+import BackdropMaterial from "../../components/BackdropMaterial";
 import Axios from "axios";
 import img_placeholder from "../../assets/images/img_placeholder.png";
 import Toastify from "toastify-js";
@@ -8,33 +8,44 @@ import InputText from "../../components/InputText";
 import DialogMaterial from "../../components/DialogMaterial";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ButtonMaterial from "../../components/ButtonMaterial";
+import apiCongcu from "../../axios/apiCongcu";
+import apiBophankd from "../../axios/apiBophankd";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import Header from "../../components/Header";
 
 const CongcuChitiet = (props) => {
   const [open, setOpen] = React.useState(false);
   const { id: congcuId } = props.match.params;
+  const [bophankdInfo, setBophankdInfo] = useState(null);
+  const { userInfo } = useSelector((state) => state.user);
 
   // api
   const [loading, setLoading] = useState(false);
   const [congcu, setCongcu] = useState({});
+
   const fetchCongcu = async () => {
     setLoading(true);
-    const { data } = await Axios.get(`/api/congcu/single/${congcuId}`);
+    const data = await apiCongcu.singleCongcu(congcuId);
     if (data.success) {
       setCongcu(data.congcu);
       setLoading(false);
     }
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const fetchBophankdInfo = async () => {
+    const data = await apiBophankd.bophankdBasedUserId(userInfo._id);
+    setBophankdInfo(data.bophankd);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleDelete = async () => {
-    const { data } = await Axios.delete(`/api/congcu/single/${congcuId}`);
+    const data = await apiBophankd.bophankdXoaCongcu({
+      bophankdId: bophankdInfo._id,
+      congcuId,
+    });
     if (data.success) {
       setOpen(false);
       Toastify({
@@ -49,64 +60,59 @@ const CongcuChitiet = (props) => {
 
   useEffect(() => {
     fetchCongcu();
+    fetchBophankdInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
-    return <Loading />;
+    return <BackdropMaterial />;
   }
 
   return (
     <>
-      <div id="bophankdChitetcongcu">
-        <div className="header">
-          <h5
-            className="title"
-            onClick={() => props.history.push("/bophankd/congcu")}
-          >
-            <i class="fas fa-angle-left"></i>
-            <span>Quay lại trang danh sách công cụ</span>
-          </h5>
-          <div className="btns">
-            <ButtonMaterial
-              variant="outlined"
-              startIcon={<DeleteIcon />}
-              onClick={handleClickOpen}
-            >
-              Xóa
-            </ButtonMaterial>
-            <ButtonMaterial
-              variant="contained"
-              onClick={() =>
-                props.history.push(`/bophankd/congcu/chinhsua/${congcuId}`)
-              }
-            >
-              Chỉnh sửa công cụ
-            </ButtonMaterial>
-          </div>
-        </div>
-        <div className="content">
-          <h4>{congcu.ten} </h4>
-          <div className="form">
+      <Container>
+        <Header
+          title="Quay lại trang danh sách công cụ"
+          titleBack
+          onClick={() => props.history.push("/bophankd/congcu")}
+          headerRight={
+            <>
+              <ButtonMaterial
+                variant="outlined"
+                startIcon={<DeleteIcon />}
+                onClick={handleClickOpen}
+              >
+                Xóa
+              </ButtonMaterial>
+              <ButtonMaterial
+                style={{ marginLeft: 20 }}
+                variant="contained"
+                onClick={() =>
+                  props.history.push(`/bophankd/congcu/chinhsua/${congcuId}`)
+                }
+              >
+                Chỉnh sửa công cụ
+              </ButtonMaterial>
+            </>
+          }
+        />
+        <Content>
+          <Form>
             <div className="row">
               <div className="col-lg-6">
-                <div className="formGroup">
-                  <InputText label="Tên công cụ" value={congcu.ten} disabled />
-                </div>
+                <FormGroup>
+                  <Label>Tên công cụ:</Label>
+                  <Input type="text" value={congcu.ten} />
+                </FormGroup>
 
-                <div className="formGroup">
-                  <InputText
-                    label="Mô tả công cụ"
-                    multiline
-                    rows={5}
-                    value={congcu.mota}
-                    disabled
-                  />
-                </div>
+                <FormGroup>
+                  <Label>Mô tả công cụ:</Label>
+                  <TextArea value={congcu.mota} rows="5" />
+                </FormGroup>
 
-                <div className="formGroup">
-                  <span>Hinh anh</span>
-                  <img
+                <FormGroup>
+                  <Label>Hình ảnh:</Label>
+                  <Image
                     src={
                       congcu.hinhanh
                         ? `/uploads/${congcu.hinhanh}`
@@ -115,68 +121,168 @@ const CongcuChitiet = (props) => {
                     alt="anhcongcu"
                     className={!congcu.hinhanh && "noImage"}
                   />
-                </div>
+                </FormGroup>
               </div>
+
               <div className="col-lg-6">
-                <div className="formGroup">
-                  <InputText
-                    label="Công dụng"
-                    value={congcu.congdung}
-                    disabled
-                  />
-                </div>
+                <FormGroup>
+                  <Label>Công dụng:</Label>
+                  <Input type="text" value={congcu.congdung} />
+                </FormGroup>
 
-                <div className="formGroup">
-                  <InputText label="Số lượng" value={congcu.soluong} disabled />
-                </div>
+                <FormGroup>
+                  <Label>Số lượng:</Label>
+                  <Input type="text" value={congcu.soluong} />
+                </FormGroup>
 
-                <div className="themThuocTinh">
-                  <div className="formGroup">
-                    <span>Thuoc tinh</span>
-                    {congcu.thuoctinh && !congcu.thuoctinh.length && (
-                      <div>---</div>
-                    )}
-                    {congcu.thuoctinh &&
-                      congcu.thuoctinh.map((item) => (
-                        <div className="row mt-3">
-                          <div className="col-4">
-                            <input
-                              type="text"
-                              placeholder="Nhap so luong"
-                              value={item.ten}
-                              disabled
-                            />
-                          </div>
-                          <div className="col-8">
-                            <input
-                              type="text"
-                              placeholder="Nhap so luong"
-                              value={item.giatri}
-                              disabled
-                            />
-                          </div>
+                <FormGroup>
+                  <Label>Thuộc tính:</Label>
+                  {congcu.thuoctinh && !congcu.thuoctinh.length && (
+                    <div>---</div>
+                  )}
+                  {congcu.thuoctinh &&
+                    congcu.thuoctinh.map((item) => (
+                      <div className="row mt-3">
+                        <div className="col-4">
+                          <FormGroup style={{ marginBottom: 0 }}>
+                            <Input type="text" value={item.ten} />
+                          </FormGroup>
                         </div>
-                      ))}
-                  </div>
-                </div>
+                        <div className="col-8">
+                          <Input type="text" value={item.giatri} />
+                        </div>
+                      </div>
+                    ))}
+                </FormGroup>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </Form>
+        </Content>
+      </Container>
 
       <DialogMaterial
         open={open}
         onClose={handleClose}
         title="Xóa sản phẩm?"
-        text1="Xóa"
-        text2="Hủy"
-        content=" Bạn chắc xóa vĩnh viễn công cụ này chứ ?"
-        onClick1={handleDelete}
-        onClick2={handleClose}
+        text2="Xóa"
+        text1="Hủy"
+        content=" Bạn chắc xóa công cụ này chứ ?"
+        onClick2={handleDelete}
+        onClick1={handleClose}
       />
     </>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  background: #f0eeee;
+  padding: 20px 36px;
+`;
+
+const Form = styled.div`
+  background: #fff;
+  padding: 36px 20px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 26px;
+`;
+
+const Image = styled.img`
+  width: 200px;
+  &.noImage {
+    opacity: 0.15;
+  }
+`;
+
+const CrossButton = styled.button`
+  border: none;
+  margin-left: 10px;
+  background: #fff;
+  outline: none;
+  i {
+    font-size: 26px;
+    color: rgba(0, 0, 0, 0.3);
+  }
+  &:active {
+    outline: none;
+  }
+`;
+
+const PlusButton = styled.button`
+  margin-left: 20px;
+  background: #fff;
+  border: none;
+  outline: none;
+  i {
+    font-size: 13px;
+    color: #0088ff;
+    width: 25px;
+    height: 25px;
+    line-height: 20px;
+    border: 3px solid #0088ff;
+    text-align: center;
+    border-radius: 50%;
+  }
+  span {
+    color: #0088ff;
+    margin-left: 8px;
+  }
+  &:active {
+    outline: none;
+  }
+`;
+
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+
+const SmallLabel = styled.span`
+  font-size: 15px;
+  color: blue;
+  display: block;
+  margin-top: 4px;
+  cursor: pointer;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+
+const ErrMsg = styled.span`
+  font-size: 15px;
+  color: red !important;
+  margin-top: 3px;
+`;
 
 export default CongcuChitiet;

@@ -60,3 +60,42 @@ db.bophankds.insertOne({
 	diachi : "Duong 30/4, Viet Nam",
 	user : "614e9d49c3944d73e8e0063c"
 })
+
+
+bpkd xem báo cáo thiếu
+cong cu 1, sl phan phat: 4, sl thieu: 1
+-> cấp phát mới {
+    items: [
+        congcu: congcuId
+        soluongphanphat: slthieu
+    ],
+     from: {
+      bophankd: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bophankd",
+      }
+    to: {
+      daily1: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Daily1",
+      }
+    },
+    trangthai: "choxn",
+    thieu: [],
+    hoanthanh: false,
+    ngaytao: String,
+  },
+}
+-> set cấp phát cũ  {
+    ...,
+    hoanthanh: true
+}
+
+- old phanphatId -> to update old record
+- items[] -> array of congcu thieu'
+- from,
+- to
+- trangthai
+- thieu
+- hoanthanh
+- ngaytao

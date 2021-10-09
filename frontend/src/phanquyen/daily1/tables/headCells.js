@@ -24,10 +24,10 @@ export const headCellsCongcu = [
     label: "Công dụng",
   },
   {
-    id: "ngaykhoitao",
+    id: "ngaytiepnhan",
     numeric: false,
     disablePadding: false,
-    label: "Ngày khởi tạo",
+    label: "Ngày tiếp nhận",
   },
 ];
 

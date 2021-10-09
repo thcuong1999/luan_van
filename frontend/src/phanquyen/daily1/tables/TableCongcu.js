@@ -9,37 +9,19 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiCongcu from "../../../axios/apiCongcu";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
 // ====
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
-import EnhancedTableToolbar from "../../../components/table/EnhancedTableToolbar";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsCongcu } from "./headCells";
 
-const TableCongcu = () => {
+const TableCongcu = ({ dsCongcu }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  // api
-  const [loading, setLoading] = React.useState(false);
-  const [congcu, setCongcu] = React.useState([]);
-
-  const fetchCongcu = async () => {
-    setLoading(true);
-    const data = await apiCongcu.dsCongcu();
-    setCongcu(data.congcu);
-    setLoading(false);
-  };
-
-  React.useEffect(() => {
-    fetchCongcu();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -50,7 +32,7 @@ const TableCongcu = () => {
   //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = congcu.map((item) => item._id);
+      const newSelecteds = dsCongcu.map((item) => item._id);
       setSelected(newSelecteds);
       return;
     }
@@ -90,20 +72,11 @@ const TableCongcu = () => {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - congcu.length) : 0;
-
-  const generateDateString = (dateStr) => {
-    return dateStr.slice(0, 10);
-  };
-
-  if (loading) {
-    return <BackdropMaterial />;
-  }
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsCongcu.length) : 0;
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -112,16 +85,16 @@ const TableCongcu = () => {
             id="tableMaterial"
           >
             <EnhancedTableHead
-              numSelected={selected.length}
+              //numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={congcu.length}
+              rowCount={dsCongcu.length}
               headCells={headCellsCongcu}
             />
             <TableBody>
-              {congcu
+              {dsCongcu
                 .slice()
                 .sort(getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -156,25 +129,21 @@ const TableCongcu = () => {
                       >
                         <img
                           src={
-                            row.hinhanh
-                              ? `/uploads/${row.hinhanh}`
+                            row.congcu.hinhanh
+                              ? `/uploads/${row.congcu.hinhanh}`
                               : img_placeholder
                           }
                           alt="anhcongcu"
                           style={{ width: "30px" }}
-                          className={!row.hinhanh && "noImage"}
+                          className={!row.congcu.hinhanh && "noImage"}
                         />
                       </TableCell>
                       <TableCell align="right">
-                        <Link to={`/daily1/congcu/chitiet/${row._id}`}>
-                          {row.ten}
-                        </Link>
+                        <Link to={`#`}>{row.congcu.ten}</Link>
                       </TableCell>
-                      <TableCell align="right">{row.soluong}</TableCell>
-                      <TableCell align="right">{row.congdung}</TableCell>
-                      <TableCell align="right">
-                        {generateDateString(row.createdAt)}
-                      </TableCell>
+                      <TableCell align="right">{row.soluongphanphat}</TableCell>
+                      <TableCell align="right">{row.congcu.congdung}</TableCell>
+                      <TableCell align="right">{row.ngaytiepnhan}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -193,7 +162,7 @@ const TableCongcu = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
           colSpan={3}
-          count={congcu.length}
+          count={dsCongcu.length}
           rowsPerPage={rowsPerPage}
           page={page}
           SelectProps={{

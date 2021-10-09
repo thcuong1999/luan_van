@@ -30,8 +30,19 @@ const apiPhanphat = {
     const url = `/phanphat/daily1/${id}`;
     return axiosClient.get(url);
   },
+
+  dsPhanphatDenDaily2(id) {
+    const url = `/phanphat/daily2/${id}`;
+    return axiosClient.get(url);
+  },
+
   xacnhandaydu(data) {
     const url = "/phanphat/xacnhandaydu";
+    return axiosClient.put(url, data);
+  },
+
+  baocaothieu(data) {
+    const url = "/phanphat/baocaothieu";
     return axiosClient.put(url, data);
   },
 };

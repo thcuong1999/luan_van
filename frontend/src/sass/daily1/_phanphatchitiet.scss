@@ -93,21 +93,10 @@
   }
 }
 
-.MuiBox-root {
-  .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
-    -webkit-text-fill-color: rgba(0, 0, 0, 0.7) !important;
-  }
+svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.MuiSelect-icon.MuiSelect-iconOutlined.css-hfutr2-MuiSvgIcon-root-MuiSelect-icon {
+  position: static;
+}
 
-  .css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
-    opacity: 1;
-    -webkit-text-fill-color: rgba(0, 0, 0, 0.7) !important;
-  }
-
-  img {
-    width: 120px;
-
-    &.noImage {
-      opacity: 0.2;
-    }
-  }
+svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.MuiSelect-icon.MuiSelect-iconOutlined.MuiSelect-iconOpen.css-bpeome-MuiSvgIcon-root-MuiSelect-icon {
+  position: static;
 }

@@ -15,13 +15,12 @@ import CongcuChinhsua from "./CongcuChinhsua";
 import Khohang from "./Khohang";
 import Daily1 from "./Daily1";
 import Daily1Them from "./Daily1Them";
-import Daily1Chinhsua from "./Daily1Chinhsua";
 import Daily1Chitiet from "./Daily1Chitiet";
 import Phanphat from "./Phanphat";
 import PhanphatThem from "./PhanphatThem";
 import PhanphatChitiet from "./PhanphatChitiet";
 
-const BophankdDashboard = (props) => {
+const Dashboard = (props) => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -108,10 +107,6 @@ const BophankdDashboard = (props) => {
         <Route exact path="/bophankd/daily1" component={Daily1} />
         <Route path="/bophankd/daily1/them" component={Daily1Them} />
         <Route path="/bophankd/daily1/chitiet/:id" component={Daily1Chitiet} />
-        <Route
-          path="/bophankd/daily1/chinhsua/:id"
-          component={Daily1Chinhsua}
-        />
 
         <Route exact path="/bophankd/phanphat" component={Phanphat} />
         <Route exact path="/bophankd/phanphat/them" component={PhanphatThem} />
@@ -125,4 +120,4 @@ const BophankdDashboard = (props) => {
   );
 };
 
-export default BophankdDashboard;
+export default Dashboard;

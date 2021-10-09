@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Loading from "../../components/Loading";
+import BackdropMaterial from "../../components/BackdropMaterial";
 import img_placeholder from "../../assets/images/img_placeholder.png";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
@@ -9,12 +9,31 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ButtonMaterial from "../../components/ButtonMaterial";
 import apiPhanphat from "../../axios/apiPhanphat";
 import TablePhanphatChitiet from "./tables/TablePhanphatChitiet";
+import TableBaocaoThieu from "./tables/TableBaocaoThieu";
+import { useSelector } from "react-redux";
 // icons
 import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
+// modal
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import apiBophankd from "../../axios/apiBophankd";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 950,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+};
 
 const PhanphatChitiet = (props) => {
   const [open, setOpen] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const { id: phanphatId } = props.match.params;
 
   // api
@@ -31,12 +50,51 @@ const PhanphatChitiet = (props) => {
     setLoading(false);
   };
 
-  const handleClickOpen = () => {
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleTaoPhanphatMoi = async () => {
+    const ccthieu = phanphat?.thieu.map((item) => ({
+      congcu: item?.congcu._id,
+      soluongphanphat: item.soluongthieu,
+    }));
+    const dl = {
+      oldPhanphatId: phanphatId,
+      items: ccthieu,
+      from: {
+        bophankd: phanphat?.from.bophankd._id,
+      },
+      to: {
+        daily1: phanphat?.to.daily1._id,
+      },
+      redo: true,
+    };
+    // console.log(dl);
+    const data = await apiPhanphat.themPhanphat(dl);
+    // console.log(data);
+    if (data.success) {
+      handleClose();
+      Toastify({
+        text: "Phân phát công cụ thành công",
+        backgroundColor: "#0DB473",
+        className: "toastifyInfo",
+        position: "center",
+      }).showToast();
+      props.history.push(`/bophankd/phanphat`);
+    }
   };
 
   // const handleDelete = async () => {
@@ -59,7 +117,7 @@ const PhanphatChitiet = (props) => {
   }, []);
 
   if (loading) {
-    return <Loading />;
+    return <BackdropMaterial />;
   }
 
   return (
@@ -193,12 +251,16 @@ const PhanphatChitiet = (props) => {
                         : ": Đã xác nhận"}
                     </p>
                     <p>
-                      {phanphat?.trangthai === "choxn"
-                        ? ": Đang chờ"
-                        : phanphat?.trangthai === "daxn" &&
-                          phanphat?.thieu.length
-                        ? ": Thiếu công cụ"
-                        : ": Đã nhận đầy đủ"}
+                      {phanphat?.trangthai === "choxn" ? (
+                        ": Đang chờ"
+                      ) : phanphat?.trangthai === "daxn" &&
+                        phanphat?.thieu.length ? (
+                        <span style={thieuCongcu} onClick={handleOpen}>
+                          : Thiếu công cụ
+                        </span>
+                      ) : (
+                        ": Đã nhận đầy đủ"
+                      )}
                     </p>
                     <p>{phanphat?.hoanthanh ? <CheckIcon /> : <ClearIcon />}</p>
                   </div>
@@ -209,18 +271,74 @@ const PhanphatChitiet = (props) => {
         </div>
       </div>
 
-      {/* <DialogMaterial
+      <Modal
         open={open}
         onClose={handleClose}
-        title="Xóa sản phẩm?"
-        text1="Xóa"
-        text2="Hủy"
-        content=" Bạn chắc xóa vĩnh viễn công cụ này chứ ?"
-        onClick1={handleDelete}
-        onClick2={handleClose}
-      /> */}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Báo cáo thiếu
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            <TableBaocaoThieu rows={phanphat} />
+            <div className="text-right mt-4">
+              {phanphat?.thieu.length ? (
+                phanphat?.hoanthanh ? (
+                  <ButtonMaterial variant="outlined" onClick={handleClose}>
+                    Thoát
+                  </ButtonMaterial>
+                ) : (
+                  <>
+                    <ButtonMaterial variant="outlined" onClick={handleClose}>
+                      Hủy
+                    </ButtonMaterial>
+                    <ButtonMaterial
+                      variant="contained"
+                      style={{ marginLeft: 16 }}
+                      onClick={handleOpenDialog}
+                    >
+                      Tạo phân phát mới
+                    </ButtonMaterial>
+                  </>
+                )
+              ) : (
+                <>
+                  <ButtonMaterial variant="outlined" onClick={handleClose}>
+                    Hủy
+                  </ButtonMaterial>
+                  <ButtonMaterial
+                    variant="contained"
+                    style={{ marginLeft: 14 }}
+                    // onClick={handleXacnhan}
+                  >
+                    Xác nhận
+                  </ButtonMaterial>
+                </>
+              )}
+            </div>
+          </Typography>
+        </Box>
+      </Modal>
+
+      <DialogMaterial
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        title="Tạo phân phát mới?"
+        text1="Hủy"
+        text2="Tạo"
+        content="Phân phát lại các công cụ còn thiếu."
+        onClick1={handleCloseDialog}
+        onClick2={handleTaoPhanphatMoi}
+      />
     </>
   );
+};
+
+const thieuCongcu = {
+  color: "blue",
+  cursor: "pointer",
 };
 
 export default PhanphatChitiet;

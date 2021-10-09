@@ -51,13 +51,17 @@ const CongcuThem = (props) => {
         className: "toastifyInfo",
         position: "center",
       }).showToast();
-      setTen("");
-      setMota("");
-      ref.current.value = "";
-      setCongdung("");
-      setSoluong(0);
-      setThuoctinh([{ ten: "", giatri: "" }]);
+      resetFields();
     }
+  };
+
+  const resetFields = () => {
+    setTen("");
+    setMota("");
+    ref.current.value = "";
+    setCongdung("");
+    setSoluong("");
+    setThuoctinh([{ ten: "", giatri: "" }]);
   };
 
   // handle click event of the Remove button
@@ -183,6 +187,7 @@ const CongcuThem = (props) => {
                                   onChange={(e) => handleInputChange(e, key)}
                                   placeholder="Giá trị"
                                 />
+
                                 {thuoctinh.length !== 1 && (
                                   <button
                                     className="removeElement"

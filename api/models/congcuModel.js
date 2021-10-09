@@ -19,6 +19,7 @@ const congcuSchema = new mongoose.Schema(
     soluong: {
       type: Number,
     },
+    ngaytao: String,
   },
   {
     timestamps: true,

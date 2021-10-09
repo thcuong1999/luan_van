@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import GsvDashboard from "../../phanquyen/giamsatvung/GsvDashboard";
+import Dashboard from "../../phanquyen/giamsatvung/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import RouteProvider from "../RouteProvider";
 import NotfoundPage from "../../components/NotfoundPage";
@@ -10,7 +10,9 @@ const GsvRoutes = () => {
     <Router>
       <Switch>
         <Route exact path="/" component={RouteProvider} />
-        <ProtectedRoute exact path="/giamsatvung" component={GsvDashboard} />
+        <ProtectedRoute exact path="/giamsatvung" component={Dashboard} />
+        <ProtectedRoute path="/giamsatvung/langnghe" component={Dashboard} />
+        <ProtectedRoute path="/giamsatvung/hodan" component={Dashboard} />
         <Route path="*" component={NotfoundPage} />
       </Switch>
     </Router>

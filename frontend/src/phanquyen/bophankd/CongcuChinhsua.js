@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import Axios from "axios";
-import Loading from "../../components/Loading";
+import BackdropMaterial from "../../components/BackdropMaterial";
 import InputText from "../../components/InputText";
 import ButtonMaterial from "../../components/ButtonMaterial";
+import styled from "styled-components";
+import Header from "../../components/Header";
 
 const CongcuChinhsua = (props) => {
   const [thuoctinh, setThuoctinh] = useState([{ ten: "", giatri: "" }]);
@@ -62,9 +64,7 @@ const CongcuChinhsua = (props) => {
         className: "toastifyInfo",
         position: "center",
       }).showToast();
-      setTimeout(() => {
-        props.history.push(`/bophankd/congcu/chitiet/${congcuId}`);
-      }, 1000);
+      props.history.push(`/bophankd/congcu/chitiet/${congcuId}`);
     }
   };
 
@@ -97,54 +97,50 @@ const CongcuChinhsua = (props) => {
   };
 
   if (loading) {
-    return <Loading />;
+    return <BackdropMaterial />;
   }
 
   return (
     <>
-      <div id="bophankdThemcongcu">
-        <div className="header">
-          <h5
-            className="title"
-            onClick={() =>
-              props.history.push(`/bophankd/congcu/chitiet/${congcuId}`)
-            }
-          >
-            <i class="fas fa-angle-left"></i>
-            <span>Quay lại trang chi tiết công cụ</span>
-          </h5>
-          <div className="btns">
+      <Container>
+        <Header
+          title="Quay lại trang danh sách công cụ"
+          titleBack
+          onClick={() => props.history.push("/bophankd/congcu")}
+          headerRight={
             <ButtonMaterial variant="contained" onClick={submitForm}>
               Cập nhật
             </ButtonMaterial>
-          </div>
-        </div>
-        <div className="content">
-          <div className="form">
+          }
+        />
+        <Content>
+          <Form>
             <div className="row">
               <div className="col-lg-6">
-                <div className="formGroup">
-                  <InputText
-                    label="Tên công cụ"
+                <FormGroup>
+                  <Label>Tên công cụ:</Label>
+                  <Input
+                    type="text"
+                    placeholder="Nhập tên công cụ"
                     value={congcu.ten}
                     name="ten"
                     onChange={handleChange}
                   />
-                </div>
+                  {/* {!ten && <ErrMsg>{errMsg}</ErrMsg>} */}
+                </FormGroup>
 
-                <div className="formGroup">
-                  <InputText
-                    label="Mô tả công cụ"
+                <FormGroup>
+                  <Label>Mô tả công cụ:</Label>
+                  <TextArea
                     value={congcu.mota}
                     name="mota"
                     onChange={handleChange}
-                    multiline
-                    rows={5}
+                    rows="5"
                   />
-                </div>
+                </FormGroup>
 
-                <div className="formGroup">
-                  <span>Hình ảnh</span>
+                <FormGroup>
+                  <Label>Hình ảnh:</Label>
                   <input
                     type="file"
                     onChange={(e) =>
@@ -153,23 +149,27 @@ const CongcuChinhsua = (props) => {
                         hinhanh: e.target.files[0],
                       })
                     }
-                    style={{ border: "none", paddingLeft: 0 }}
                   />
-                </div>
+                </FormGroup>
               </div>
               <div className="col-lg-6">
-                <div className="formGroup">
-                  <InputText
-                    label="Công dụng"
+                <FormGroup>
+                  <Label>Công dụng:</Label>
+                  <Input
+                    type="text"
+                    placeholder="Nhập công dụng"
                     name="congdung"
                     value={congcu.congdung}
                     onChange={handleChange}
                   />
-                </div>
+                  {/* {!congdung && <ErrMsg>{errMsg}</ErrMsg>} */}
+                </FormGroup>
 
-                <div className="formGroup">
-                  <InputText
-                    label="Số lượng"
+                <FormGroup>
+                  <Label>Số lượng:</Label>
+                  <Input
+                    type="text"
+                    placeholder="Nhập số lượng"
                     value={congcu.soluong}
                     onChange={(e) => {
                       let val = e.target.value;
@@ -187,77 +187,167 @@ const CongcuChinhsua = (props) => {
                       }
                     }}
                   />
-                </div>
+                  {/* {!soluong && <ErrMsg>{errMsg}</ErrMsg>} */}
+                </FormGroup>
 
-                <div className="themThuocTinh">
-                  <h5>
-                    Thuộc tính
-                    <a
-                      data-toggle="collapse"
-                      href="#themThuocTinh"
-                      role="button"
-                      aria-expanded="false"
-                      aria-controls="collapseExample"
-                    >
-                      <i class="fas fa-plus"></i>
-                    </a>
-                  </h5>
-
-                  <div id="themThuocTinh" className="collapse show">
-                    <div className="productInfoWrapper">
-                      {thuoctinh.map((item, key) => {
-                        return (
-                          <div className="row">
-                            <div className="col-lg-4 pl-0">
-                              <input
-                                type="text"
-                                name="ten"
-                                value={item.ten}
-                                onChange={(e) => handleInputChange(e, key)}
-                                placeholder="Ten thuoc tinh"
-                              />
-                            </div>
-                            <div className="col-lg-8">
-                              <div className="d-flex align-items-center">
-                                <input
-                                  type="text"
-                                  name="giatri"
-                                  value={item.giatri}
-                                  onChange={(e) => handleInputChange(e, key)}
-                                  placeholder="Gia tri"
-                                />
-                                {thuoctinh.length !== 1 && (
-                                  <button
-                                    className="removeElement"
-                                    onClick={() => handleRemoveClick(key)}
-                                  >
-                                    <i class="fas fa-times"></i>
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-
-                            <div className="addElementBtn">
-                              {thuoctinh.length - 1 === key && (
-                                <button onClick={handleAddClick}>
-                                  <i class="fas fa-plus"></i>
-                                  <span>Thêm thuộc tính khác</span>
-                                </button>
-                              )}
-                            </div>
+                <FormGroup>
+                  <Label>Thuộc tính:</Label>
+                  {thuoctinh.map((item, key) => {
+                    return (
+                      <div className="row">
+                        <div className="col-lg-4">
+                          <FormGroup style={{ marginBottom: 10 }}>
+                            <Input
+                              type="text"
+                              name="ten"
+                              value={item.ten}
+                              onChange={(e) => handleInputChange(e, key)}
+                              placeholder="Tên thuộc tính"
+                            />
+                          </FormGroup>
+                        </div>
+                        <div className="col-lg-8">
+                          <div className="d-flex align-items-center">
+                            <Input
+                              type="text"
+                              name="giatri"
+                              value={item.giatri}
+                              onChange={(e) => handleInputChange(e, key)}
+                              placeholder="Giá trị"
+                            />
+                            {thuoctinh.length !== 1 && (
+                              <CrossButton
+                                onClick={() => handleRemoveClick(key)}
+                              >
+                                <i class="fas fa-times"></i>
+                              </CrossButton>
+                            )}
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+                        </div>
+
+                        <div className="addElementBtn">
+                          {thuoctinh.length - 1 === key && (
+                            <PlusButton onClick={handleAddClick}>
+                              <i class="fas fa-plus"></i>
+                              <span>Thêm thuộc tính khác</span>
+                            </PlusButton>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </FormGroup>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </Form>
+        </Content>
+      </Container>
     </>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  background: #f0eeee;
+  padding: 20px 36px;
+`;
+
+const Form = styled.div`
+  background: #fff;
+  padding: 36px 20px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 26px;
+`;
+
+const CrossButton = styled.button`
+  border: none;
+  margin-left: 10px;
+  background: #fff;
+  outline: none;
+  i {
+    font-size: 26px;
+    color: rgba(0, 0, 0, 0.3);
+  }
+  &:active {
+    outline: none;
+  }
+`;
+
+const PlusButton = styled.button`
+  margin-left: 20px;
+  background: #fff;
+  border: none;
+  outline: none;
+  i {
+    font-size: 13px;
+    color: #0088ff;
+    width: 25px;
+    height: 25px;
+    line-height: 20px;
+    border: 3px solid #0088ff;
+    text-align: center;
+    border-radius: 50%;
+  }
+  span {
+    color: #0088ff;
+    margin-left: 8px;
+  }
+  &:active {
+    outline: none;
+  }
+`;
+
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+
+const SmallLabel = styled.span`
+  font-size: 15px;
+  color: blue;
+  display: block;
+  margin-top: 4px;
+  cursor: pointer;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+
+const ErrMsg = styled.span`
+  font-size: 15px;
+  color: red !important;
+  margin-top: 3px;
+`;
 
 export default CongcuChinhsua;

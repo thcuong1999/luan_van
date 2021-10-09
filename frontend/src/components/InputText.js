@@ -9,6 +9,7 @@ const InputText = ({
   disabled,
   multiline,
   rows,
+  size = "medium",
 }) => {
   return (
     <TextField
@@ -23,6 +24,7 @@ const InputText = ({
       disabled={disabled}
       multiline={multiline}
       rows={rows}
+      size={size}
     />
   );
 };

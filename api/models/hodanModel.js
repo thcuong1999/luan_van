@@ -14,19 +14,9 @@ const hodanSchema = new mongoose.Schema(
     cmnd: {
       type: String,
     },
-    ngaysinh: {
-      type: Date,
+    namsinh: {
+      type: Number,
     },
-    thanhvien: [
-      {
-        hoten: {
-          type: String,
-        },
-        namsinh: {
-          type: Date,
-        },
-      },
-    ],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -42,7 +32,12 @@ const hodanSchema = new mongoose.Schema(
     items: [
       {
         congcu: { type: mongoose.Schema.Types.ObjectId, ref: "Congcu" },
-        soluongphatphat: Number,
+        soluongphanphat: Number,
+        ngaytiepnhan: String,
+        daguitra: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
   },

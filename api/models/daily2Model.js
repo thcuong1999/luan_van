@@ -24,7 +24,12 @@ const daily2Schema = new mongoose.Schema(
     items: [
       {
         congcu: { type: mongoose.Schema.Types.ObjectId, ref: "Congcu" },
-        soluongphatphat: Number,
+        soluongphanphat: Number,
+        ngaytiepnhan: String,
+        daphanphat: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
     daily1: {
