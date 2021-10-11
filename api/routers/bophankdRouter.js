@@ -226,6 +226,30 @@ bophankdRouter.get("/dsdaily1/:bophankdId", async (req, res) => {
   }
 });
 
+// lay danh sach phan phat cua bophankd
+bophankdRouter.get("/dsphanphat/:bophankdId", async (req, res) => {
+  try {
+    const { dsphanphat } = await Bophankd.findById(req.params.bophankdId)
+      .select("dsphanphat")
+      .populate({
+        path: "dsphanphat",
+        populate: {
+          path: "phanphat",
+          populate: {
+            path: "from to",
+            populate: {
+              path: "bophankd daily1 daily2 hodan",
+            },
+          },
+        },
+      });
+
+    res.send({ dsphanphat, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
 // xoa 1 sp thuoc bophankd
 bophankdRouter.put("/xoasanpham", async (req, res) => {
   const { bophankdId, sanphamId } = req.body;

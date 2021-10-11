@@ -36,8 +36,20 @@ langngheRouter.get("/danhsach", async (req, res) => {
   }
 });
 
+// lay ds hodan
+langngheRouter.get("/danhsachhodan/:langngheId", async (req, res) => {
+  try {
+    const { hodan } = await Langnghe.findById(req.params.langngheId)
+      .select("hodan")
+      .populate("hodan");
+    res.send({ hodan, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
 // lay thong tin 1 langnghe
-langngheRouter.get("/chitiet/:id", async (req, res) => {
+langngheRouter.get("/single/:id", async (req, res) => {
   try {
     const langnghe = await Langnghe.findById(req.params.id);
     if (!langnghe) {

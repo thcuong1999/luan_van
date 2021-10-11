@@ -9,8 +9,6 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link, useHistory } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiPhanphat from "../../../axios/apiPhanphat";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
 // ====
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
@@ -97,29 +95,12 @@ const EnhancedTableToolbar = (props) => {
   ) : null;
 };
 
-const TableCongcu = () => {
+const TablePhanphatDanhsach = ({ dsPhanphat }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  // api
-  const [loading, setLoading] = React.useState(false);
-  const [dsPhanphat, setDsPhanphat] = React.useState([]);
-
-  // console.log(selected);
-
-  const fetchCongcu = async () => {
-    setLoading(true);
-    const data = await apiPhanphat.dsPhanphat();
-    setDsPhanphat(data.dsphanphat);
-    setLoading(false);
-  };
-
-  React.useEffect(() => {
-    fetchCongcu();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -170,10 +151,6 @@ const TableCongcu = () => {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsPhanphat.length) : 0;
-
-  if (loading) {
-    return <BackdropMaterial />;
-  }
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -227,25 +204,39 @@ const TableCongcu = () => {
                         />
                       </TableCell>
                       <TableCell align="right">
-                        {row.from.bophankd.ten}
+                        {row.phanphat?.to.hodan.daidien}
                       </TableCell>
-                      <TableCell align="right">{row.to.daily1.ten}</TableCell>
-                      <TableCell align="right">{row.items.length}</TableCell>
                       <TableCell align="right">
-                        {row.trangthai === "choxn"
+                        {`${row.phanphat?.to.daily1.ten}, ${row.phanphat?.to.daily2.ten}`}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.phanphat?.items.length}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.phanphat?.trangthai === "choxn"
                           ? "Chờ xác nhận"
                           : "Đã xác nhận"}
                       </TableCell>
-                      <TableCell align="right">{row.ngaytao}</TableCell>
                       <TableCell align="right">
-                        {row.trangthai === "daxn" && row.hoanthanh ? (
+                        {row.phanphat?.baocao === "daydu"
+                          ? "Đầy đủ"
+                          : row.phanphat?.baocao === "thieu"
+                          ? "Thiếu"
+                          : null}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.phanphat?.trangthai === "daxn" &&
+                        row.phanphat?.hoanthanh ? (
                           <CheckIcon />
-                        ) : row.trangthai === "daxn" && !row.hoanthanh ? (
+                        ) : row.phanphat?.trangthai === "daxn" &&
+                          !row.phanphat?.hoanthanh ? (
                           <ClearIcon />
                         ) : null}
                       </TableCell>
                       <TableCell align="right">
-                        <Link to={`/bophankd/phanphat/chitiet/${row._id}`}>
+                        <Link
+                          to={`/bophankd/phanphat/chitiet/${row.phanphat?._id}`}
+                        >
                           <VisibilityIcon />
                         </Link>
                       </TableCell>
@@ -286,4 +277,4 @@ const TableCongcu = () => {
   );
 };
 
-export default TableCongcu;
+export default TablePhanphatDanhsach;

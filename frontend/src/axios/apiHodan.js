@@ -27,7 +27,13 @@ const apiHodan = {
 
   // danh sach ho dan co' daily 2 null
   dsHodanDaily2Null(langngheId) {
-    const url = '/hodan/dsdaily2null';
+    const url = "/hodan/dsdaily2null";
+    return axiosClient.get(url);
+  },
+
+  // search ho dan
+  searchHodan(query) {
+    const url = `/hodan/search?${query}`;
     return axiosClient.get(url);
   },
 

@@ -30,15 +30,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const TablePhanphat = (props) => {
-  const { setItems } = props;
-  const [rows, setRows] = React.useState(props.rows);
-
-  const handleDeleteRow = (id) => {
-    setRows(rows.filter((row) => row._id !== id));
-    setItems(rows.filter((row) => row._id !== id));
-  };
-
+const TablePhanphatDi = ({
+  danhsachCongcu,
+  setDanhsachCongcu,
+  handleRemoveRow,
+}) => {
   const compareSoluong = (sl, slphatphat) => {
     if (parseInt(slphatphat) > sl) {
       return sl;
@@ -49,30 +45,24 @@ const TablePhanphat = (props) => {
     }
   };
 
-  const handleChangeSoluong = (e, _row) => {
+  const handleChangeSoluong = (e, row) => {
     let val = e.target.value;
-
     if (isNaN(val)) {
       e.target.value = 1;
     } else {
-      const rs = rows.map((row) => {
-        if (row._id === _row._id) {
+      const updatedDsCongcu = danhsachCongcu.map((item) => {
+        if (item._id === row._id) {
           return {
-            ...row,
-            soluongphanphat: compareSoluong(row.soluong, e.target.value),
+            ...item,
+            soluongphanphat: compareSoluong(item.slsaukhipp, e.target.value),
           };
         } else {
-          return row;
+          return item;
         }
       });
-      setRows(rs);
-      setItems(rs);
+      setDanhsachCongcu(updatedDsCongcu);
     }
   };
-
-  React.useEffect(() => {
-    setItems(rows);
-  }, []);
 
   return (
     <TableContainer component={Paper}>
@@ -92,7 +82,7 @@ const TablePhanphat = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {danhsachCongcu.map((row) => (
             <StyledTableRow key={row.name}>
               <StyledTableCell component="th" scope="row">
                 <img
@@ -117,7 +107,7 @@ const TablePhanphat = (props) => {
               <StyledTableCell>
                 <DeleteOutlineIcon
                   style={{ cursor: "pointer" }}
-                  onClick={() => handleDeleteRow(row._id)}
+                  onClick={() => handleRemoveRow(row._id)}
                 />
               </StyledTableCell>
             </StyledTableRow>
@@ -128,4 +118,4 @@ const TablePhanphat = (props) => {
   );
 };
 
-export default TablePhanphat;
+export default TablePhanphatDi;

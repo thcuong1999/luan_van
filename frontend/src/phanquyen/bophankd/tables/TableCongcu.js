@@ -32,11 +32,29 @@ import DropdownCustom from "../../../components/DropdownCustom";
 import DialogMaterial from "../../../components/DialogMaterial";
 import apiBophankd from "../../../axios/apiBophankd";
 import ButtonMaterial from "../../../components/ButtonMaterial";
+// modal
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import TablePhanphatDi from "./TablePhanphatDi";
+import ModalDaily1Select from "../ModalDaily1Select";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 1300,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 const EnhancedTableToolbar = ({
   numSelected,
   rowsSelected,
   toolbarSelectedDropdownVal,
+  handleRedirect,
 }) => {
   return numSelected > 0 ? (
     <>
@@ -93,10 +111,7 @@ const EnhancedTableToolbar = ({
         {numSelected > 0 && (
           <Tooltip title="Delete">
             <IconButton>
-              <ButtonMaterial
-                variant="contained"
-                //onClick={() => handleThemDaily(selected)}
-              >
+              <ButtonMaterial variant="contained" onClick={handleRedirect}>
                 Phân phát
               </ButtonMaterial>
             </IconButton>
@@ -128,6 +143,13 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
     } else if (val === "Xóa công cụ") {
       handleOpen();
     }
+  };
+
+  const handleRedirect = () => {
+    history.push({
+      pathname: "/bophankd/phanphat/them",
+      state: getArrOfCongcuObject(dsCongcu, selected),
+    });
   };
 
   const handleDeleteRow = async () => {
@@ -162,7 +184,7 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
     setSelected([]);
   };
 
-  const handleClick = (event, _id) => {
+  const handleClick = (event, _id, row) => {
     const selectedIndex = selected.indexOf(_id);
     let newSelected = [];
 
@@ -178,7 +200,6 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
 
@@ -197,6 +218,24 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsCongcu?.length) : 0;
 
+  const getArrOfCongcuObject = (arrOfObj, arrOfId) => {
+    let arrOfCongcuObj = [];
+    arrOfObj.forEach((x) => {
+      arrOfId.forEach((y) => {
+        if (x._id === y) {
+          arrOfCongcuObj.push(x);
+        }
+      });
+    });
+    arrOfCongcuObj = arrOfCongcuObj
+      .filter((item) => item.soluong > 0)
+      .map((item) => ({
+        ...item,
+        soluongphanphat: 1,
+      }));
+    return arrOfCongcuObj;
+  };
+
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -205,6 +244,7 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
             numSelected={selected.length}
             rowsSelected={selected}
             toolbarSelectedDropdownVal={toolbarSelectedDropdownVal}
+            handleRedirect={handleRedirect}
           />
           <TableContainer>
             <Table
@@ -234,7 +274,7 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row._id)}
+                        onClick={(event) => handleClick(event, row._id, row)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -267,8 +307,8 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
                             {row.ten}
                           </Link>
                         </TableCell>
+                        <TableCell align="right">{row.slsaukhipp}</TableCell>
                         <TableCell align="right">{row.congdung}</TableCell>
-                        <TableCell align="right">{row.soluong}</TableCell>
                         <TableCell align="right">{row.ngaytao}</TableCell>
                       </TableRow>
                     );

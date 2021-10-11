@@ -19,6 +19,9 @@ const congcuSchema = new mongoose.Schema(
     soluong: {
       type: Number,
     },
+    slsaukhipp: {
+      type: Number,
+    },
     ngaytao: String,
   },
   {

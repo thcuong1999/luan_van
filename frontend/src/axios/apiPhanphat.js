@@ -1,6 +1,7 @@
 import axiosClient from "./axiosClient";
 
 const apiPhanphat = {
+  // them phan phat
   themPhanphat(data) {
     const url = "/phanphat/them";
     return axiosClient.post(url, data);
@@ -11,11 +12,13 @@ const apiPhanphat = {
     return axiosClient.put(url, data);
   },
 
+  // lay danh sach phan phat
   dsPhanphat() {
     const url = "/phanphat/danhsach";
     return axiosClient.get(url);
   },
 
+  // lay thong tin 1 phan phat
   singlePhanphat(id) {
     const url = `/phanphat/single/${id}`;
     return axiosClient.get(url);

@@ -87,6 +87,26 @@ hodanRouter.get("/dsdaily2null", async (req, res) => {
   }
 });
 
+// search hodan
+hodanRouter.get("/search", async (req, res) => {
+  const { daidien, diachi, sdt } = req.query;
+  const filterDaidien = daidien ? { daidien } : {};
+  const filterDiachi = diachi
+    ? { diachi: { $regex: diachi, $options: "i" } }
+    : {};
+  const filterSdt = sdt ? { sdt } : {};
+  try {
+    const hodan = await Hodan.findOne({
+      ...filterDaidien,
+      ...filterSdt,
+      ...filterDiachi,
+    });
+    res.send({ hodan, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
 // chinh sua hodan
 hodanRouter.put("/single/:id", async (req, res) => {
   const { daidien, taikhoan, matkhau, sdt, cmnd, namsinh, diachi } = req.body;

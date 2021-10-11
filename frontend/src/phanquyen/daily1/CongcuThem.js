@@ -11,7 +11,7 @@ const CongcuThem = (props) => {
   const [mota, setMota] = useState("");
   const [hinhanh, sethinhanh] = useState(null);
   const [congdung, setCongdung] = useState("");
-  const [soluong, setSoluong] = useState(0);
+  const [soluong, setSoluong] = useState("");
   const ref = useRef();
 
   const getThuocTinh = () => {
@@ -46,7 +46,7 @@ const CongcuThem = (props) => {
     console.log(data);
     if (data.success) {
       Toastify({
-        text: "Then nhan hieu thanh cong",
+        text: "Thêm công cụ thành công",
         backgroundColor: "#0DB473",
         className: "toastifyInfo",
         position: "center",

@@ -13,15 +13,16 @@ import { useSelector } from "react-redux";
 import apiBophankd from "../../axios/apiBophankd";
 import apiHodan from "../../axios/apiHodan";
 import apiPhanphat from "../../axios/apiPhanphat";
+import BackdropMaterial from "../../components/BackdropMaterial";
+import TablePhanphatChinhsua from "./tables/TablePhanphatChinhsua";
 
-const PhanphatThem = (props) => {
-  const { state: dsCongcu } = props.location;
-  const [danhsachCongcu, setDanhsachCongcu] = useState(dsCongcu);
-  const { userInfo } = useSelector((state) => state.user);
+const PhanphatChinhsua = (props) => {
+  const [dsCongcu, setDsCongcu] = useState([]);
+  const { id: phanphatId } = props.match.params;
   //===
+  const [phanphat, setPhanphat] = useState(null);
   const [langnghe, setLangnghe] = useState("Chọn làng nghề");
   const [dsLangnghe, SetDsLangnghe] = useState([]);
-  const [bophankdInfo, setBophankdInfo] = useState(null);
   const [hodan, setHodan] = useState("Chọn hộ dân");
   const [hodanInfo, setHodanInfo] = useState(null);
   const [dsHodan, setDsHodan] = useState([]);
@@ -30,11 +31,11 @@ const PhanphatThem = (props) => {
   const [errMsg, setErrMsg] = useState("");
 
   const handleRemoveRow = (id) => {
-    setDanhsachCongcu(danhsachCongcu.filter((item) => item._id !== id));
+    setDsCongcu(dsCongcu.filter((item) => item._id !== id));
   };
 
   const emptyFields = () => {
-    if (langnghe === "Chọn làng nghề" || hodan === "Chọn hộ dân") {
+    if (hodan === "Chọn hộ dân") {
       setErrMsg("Trường này không được để trống");
       return true;
     } else {
@@ -43,33 +44,36 @@ const PhanphatThem = (props) => {
     }
   };
 
-  const handleThemPhanphat = async () => {
+  const handleChinhPhanphat = async () => {
     if (!emptyFields()) {
       const payload = {
-        items: danhsachCongcu.map((item) => ({
-          congcu: item._id,
+        items: dsCongcu.map((item) => ({
+          congcu: item.congcu._id,
           soluongphanphat: item.soluongphanphat,
         })),
         from: {
-          bophankd: bophankdInfo._id,
+          bophankd: phanphat.from.bophankd._id,
         },
         to: {
           daily1: daily1._id,
           daily2: daily2._id,
-          hodan: hodanInfo._id,
+          hodan: hodanInfo ? hodanInfo._id : phanphat.to.hodan._id,
         },
       };
       // console.log({ payload });
-      const data = await apiPhanphat.themPhanphat({ payload });
+      const data = await apiPhanphat.suaPhanphat(phanphatId, {
+        phanphatId,
+        payload,
+      });
       // console.log(data);
       if (data.success) {
         Toastify({
-          text: "Thêm phân phát thành công",
+          text: "Cập nhật phân phát thành công",
           backgroundColor: "#0DB473",
           className: "toastifyInfo",
           position: "center",
         }).showToast();
-        props.history.push("/bophankd/phanphat");
+        props.history.push(`/bophankd/phanphat/chitiet/${phanphatId}`);
       }
     }
   };
@@ -81,7 +85,7 @@ const PhanphatThem = (props) => {
   };
 
   const fetchDsHodan = async () => {
-    if (langnghe !== "Chọn làng nghề") {
+    if (langnghe && dsLangnghe.length) {
       const langngheId = dsLangnghe.find(
         (item) => item.ten === langnghe.split(",")[0]
       )._id;
@@ -93,20 +97,18 @@ const PhanphatThem = (props) => {
   };
 
   const fetchDsDaily = async () => {
-    if (hodan !== "Chọn hộ dân") {
+    if (hodan !== "Chọn hộ dân" && dsHodan.length) {
       // lấy hộ dân obj dựa vào hodan state
       const hd = dsHodan.find(
         (item) => item.sdt === hodan.split(",")[2].trim()
       );
-      // lấy đại lý 2 obj dựa vào field daily2 của hd ở trên
+      // // lấy đại lý 2 obj dựa vào field daily2 của hd ở trên
       const { daily2 } = await apiDaily2.singleDaily2(hd.daily2);
-      // console.log({ daily2 });
       setDaily2(daily2);
-      // lấy đại lý 1 obj dựa vào field daily1 của daily2 ở trên
+      // // lấy đại lý 1 obj dựa vào field daily1 của daily2 ở trên
       const { daily1 } = await apiDaily1.singleDaily1(daily2.daily1);
-      // console.log({ daily1 });
       setDaily1(daily1);
-      // set hodanInfo
+      // // set hodanInfo
       let query = `daidien=${hodan.split(",")[0].trim()}&diachi=${hodan
         .split(",")[1]
         .trim()}&sdt=${hodan.split(",")[2].trim()}`;
@@ -115,20 +117,46 @@ const PhanphatThem = (props) => {
     }
   };
 
-  const fetchBophankdInfo = async () => {
-    const { bophankd } = await apiBophankd.bophankdBasedUserId(userInfo._id);
-    setBophankdInfo(bophankd);
+  const fetchDataFirstRender = async () => {
+    // fetch single phan phat
+    const { phanphat } = await apiPhanphat.singlePhanphat(phanphatId);
+    // fetch single langnghe
+    const { langnghe: singleLN } = await apiLangnghe.singleLangnghe(
+      phanphat.to.hodan.langnghe
+    );
+    // fetch single hodan
+    const { hodan: singleHodan } = await apiHodan.singleHodan(
+      phanphat.to.hodan._id
+    );
+    // fetch single daily2
+    const { daily2: singleDaily2 } = await apiDaily2.singleDaily2(
+      phanphat.to.daily2._id
+    );
+    // fetch single daily1
+    const { daily1: singleDaily1 } = await apiDaily1.singleDaily1(
+      phanphat.to.daily1._id
+    );
+    setDsCongcu(phanphat.items);
+    setPhanphat(phanphat);
+    setLangnghe(`${singleLN.ten}, ${singleLN.huyen}, ${singleLN.tinh}`);
+    setHodan(
+      `${singleHodan.daidien}, ${singleHodan.diachi.split(",")[0]}, ${
+        singleHodan.sdt
+      }`
+    );
+    setDaily2(singleDaily2);
+    setDaily1(singleDaily1);
   };
 
   useEffect(() => {
-    if (dsCongcu) {
-      setDanhsachCongcu(dsCongcu);
-    }
     fetchDsLangnghe();
     fetchDsHodan();
     fetchDsDaily();
-    fetchBophankdInfo();
   }, [langnghe, hodan]);
+
+  useEffect(() => {
+    fetchDataFirstRender();
+  }, []);
 
   return (
     <Wrapper>
@@ -152,15 +180,14 @@ const PhanphatThem = (props) => {
                 onClick={(val) => {
                   setLangnghe(val);
                   setHodan("Chọn hộ dân");
-                  setDaily2(null);
-                  setDaily1(null);
+                  setDaily2("");
+                  setDaily1("");
                   setErrMsg("");
                   // setSelectedDaily1(
                   //   dsLangnghe.find((item) => item.ten === val)
                   // );
                 }}
               />
-              {langnghe === "Chọn làng nghề" && <ErrMsg>{errMsg}</ErrMsg>}
             </FormGroup>
 
             <FormGroup>
@@ -176,7 +203,7 @@ const PhanphatThem = (props) => {
                 selected={hodan}
                 onClick={(val) => {
                   setHodan(val);
-                  // setErrMsg("");
+                  setErrMsg("");
                   // setSelectedDaily1(
                   //   dsLangnghe.find((item) => item.ten === val)
                   // );
@@ -189,7 +216,7 @@ const PhanphatThem = (props) => {
               <Label>Đại lý cấp 2:</Label>
               <Input
                 type="text"
-                value={daily2 ? `${daily2.ten}, ${daily2.diachi}` : ""}
+                value={daily2 && `${daily2.ten}, ${daily2.diachi}`}
               />
             </FormGroup>
 
@@ -197,7 +224,7 @@ const PhanphatThem = (props) => {
               <Label>Đại lý cấp 1:</Label>
               <Input
                 type="text"
-                value={daily1 ? `${daily1.ten}, ${daily1.diachi}` : ""}
+                value={daily1 && `${daily1.ten}, ${daily1.diachi}`}
               />
             </FormGroup>
           </Form>
@@ -208,16 +235,17 @@ const PhanphatThem = (props) => {
             <Title>Các công cụ đã chọn</Title>
           </TitleWrapper>
 
-          <TablePhanphatDi
-            danhsachCongcu={danhsachCongcu}
-            setDanhsachCongcu={setDanhsachCongcu}
+          <TablePhanphatChinhsua
+            dsCongcu={dsCongcu}
+            phanphat={phanphat}
             handleRemoveRow={handleRemoveRow}
+            setDsCongcu={setDsCongcu}
           />
         </FilterSection>
 
         <ButtonRight>
-          <ButtonMaterial variant="contained" onClick={handleThemPhanphat}>
-            Phân phát đi
+          <ButtonMaterial variant="contained" onClick={handleChinhPhanphat}>
+            Cập nhật
           </ButtonMaterial>
         </ButtonRight>
       </Content>
@@ -317,4 +345,4 @@ const ButtonRight = styled.div`
   padding: 20px;
 `;
 
-export default PhanphatThem;
+export default PhanphatChinhsua;

@@ -39,11 +39,14 @@ const phanphatSchema = new mongoose.Schema(
         ref: "Hodan",
       },
     },
-
     trangthai: {
       type: String,
       enum: ["choxn", "daxn"],
       default: "choxn",
+    },
+    baocao: {
+      type: String,
+      enum: ["daydu", "thieu"],
     },
     thieu: [
       {

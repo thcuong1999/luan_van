@@ -67,6 +67,12 @@ const apiBophankd = {
     return axiosClient.get(url);
   },
 
+  //=== lay danh sach phan phat cua bophankd
+  dsPhanphat(bophankdId) {
+    const url = `/bophankd/dsphanphat/${bophankdId}`;
+    return axiosClient.get(url);
+  },
+
   // xoa 1 sp thuoc bophankd
   bophankdXoaSanpham(payload) {
     const url = `/bophankd/xoasanpham`;

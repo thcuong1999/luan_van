@@ -14,7 +14,7 @@ tỉnh: name
 huyện: districts
 xã: wards
 
-db.daily2.update({}, {$set: {daily1: null}}, false, true);
+db.congcus.update({}, {$set: {slsaukhipp: 10}}, false, true);
 
 
 mỗi bộ phận kd quản lý riêng: công cụ, sản phẩm, đại lý 1, kho hàng, phân phát
@@ -135,8 +135,70 @@ xoa ho dan
     - Langnghe model update field: hodan 
 payload: { hodanId }
 
+gsv1
+    - lang nong san: ho dan A, B, C
+    - lang thu cong my nghe: ho dan D, E, F
+    - lang nguyen lieu: ho dan G, H, K
+bpkda
+    - daily1a, daily1b, daily1c
 
-Phanphat model 
-{
-  
+daily1a
+    - daily2a, daily2c
+daily1b
+    - daily2b
+
+daily2a
+    - ho dan A, B, C
+dail2b 
+    - ho dan D, E, F => daily2b chua co daily1 quan ly
+dail2c
+    - ho dan G, H, K
+
+=======================
+Daily1 model {
+    ...,
+    phanphats: [
+        phanphat: phanphatId,
+        trangthai
+    ]
 }
+
+Daily2 model {
+    ...,
+    phanphats: [
+        phanphat: phanphatId,
+        trangthai
+    ]
+}
+
+
+bpkd phan phat -> daily1: update Daily1 model -> phanphat.push(newPhanphat)
+daily1 phan phat -> daily2: update Daily2 model -> phanphat.push(newPhanphat)
+daily2 phan phat -> hodan -> hodan xac nhan: origin phat phat doc -> hoanthanh: true
+
+
+soluong: 10
+slsaukhipp: 10
+-> phanphat: 5
+    {
+        soluong: 10,
+        slsaukhipp: soluong - 5 = 5
+        hoanthanh: false
+    }
+-> chinhsua phanphat: 3
+    {
+        soluong: 10
+        slsaukhipp: soluong - 3 = 7
+        hoanthanh: false
+    }
+-> hoanthanh: true
+    {
+        soluong = soluong - soluongphanphat = 7
+        slsaukhipp: soluong = 7
+    }
+->  xoa: 3
+    {
+        soluong: 10
+        slsaukhipp: soluong + soluongphanphat(3) = 10
+        hoanthanh: false
+    }

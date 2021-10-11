@@ -39,6 +39,18 @@ const daily1Schema = new mongoose.Schema(
         },
       },
     ],
+    dsphanphat: [
+      {
+        phanphat: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Phanphat",
+        },
+        daphanphatxuong: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

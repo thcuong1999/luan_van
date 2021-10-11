@@ -9,13 +9,19 @@ const apiLangnghe = {
 
   // lay thong tin 1 langnghe
   singleLangnghe(langngheId) {
-    const url = `/langnghe/chitiet/${langngheId}`;
+    const url = `/langnghe/single/${langngheId}`;
     return axiosClient.get(url);
   },
 
   // lay ds Langnghe
   dsLangnghe() {
     const url = "/langnghe/danhsach";
+    return axiosClient.get(url);
+  },
+
+  // lay ds ho dan
+  dsHodan(langngheId) {
+    const url = `/langnghe/danhsachhodan/${langngheId}`;
     return axiosClient.get(url);
   },
 

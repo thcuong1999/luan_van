@@ -1,119 +1,50 @@
-import React, { useState, useEffect } from "react";
-import BackdropMaterial from "../../components/BackdropMaterial";
-import img_placeholder from "../../assets/images/img_placeholder.png";
+import React, { useEffect, useState } from "react";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-import InputText from "../../components/InputText";
-import DialogMaterial from "../../components/DialogMaterial";
-import DeleteIcon from "@mui/icons-material/Delete";
+import styled from "styled-components";
+import apiDaily1 from "../../axios/apiDaily1";
+import apiDaily2 from "../../axios/apiDaily2";
+import apiLangnghe from "../../axios/apiLangnghe";
 import ButtonMaterial from "../../components/ButtonMaterial";
-import apiPhanphat from "../../axios/apiPhanphat";
-import TablePhanphatChitiet from "./tables/TablePhanphatChitiet";
-import TableBaocaoThieu from "./tables/TableBaocaoThieu";
+import DropdownCustom from "../../components/DropdownCustom";
+import Header from "../../components/Header";
+import TablePhanphatDi from "./tables/TablePhanphatDi";
 import { useSelector } from "react-redux";
-// icons
-import ClearIcon from "@mui/icons-material/Clear";
-import CheckIcon from "@mui/icons-material/Check";
-// modal
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
 import apiBophankd from "../../axios/apiBophankd";
+import apiHodan from "../../axios/apiHodan";
+import apiPhanphat from "../../axios/apiPhanphat";
+import BackdropMaterial from "../../components/BackdropMaterial";
+import TablePhanphatChitiet from "./tables/TablePhanphatChitiet";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 950,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
-
-const PhanphatChitiet = (props) => {
-  const [open, setOpen] = React.useState(false);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+const PhanphatThem = (props) => {
+  const [phanphat, setPhanphat] = useState(null);
+  const [langnghe, setLangnghe] = useState(null);
+  const [hodan, setHodan] = useState(null);
+  const [daily1, setDaily1] = useState(null);
+  const [daily2, setDaily2] = useState(null);
+  const [dsCongcu, setDsCongcu] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { id: phanphatId } = props.match.params;
 
-  // api
-  const [loading, setLoading] = useState(false);
-  const [phanphat, setPhanphat] = useState(null);
-
-  const fetchSinglePhanphat = async () => {
+  const fetchData = async () => {
     setLoading(true);
-    const data = await apiPhanphat.singlePhanphat(phanphatId);
-    if (data.success) {
-      setPhanphat(data.phanphat);
-      setLoading(false);
-    }
+    const { phanphat } = await apiPhanphat.singlePhanphat(phanphatId);
+    console.log({ phanphat });
+    // fetch lang nghe dua vao hodanId
+    const { langnghe } = await apiLangnghe.singleLangnghe(
+      phanphat.to.hodan.langnghe
+    );
+    setPhanphat(phanphat);
+    setLangnghe(langnghe);
+    setDaily1(phanphat.to.daily1);
+    setDaily2(phanphat.to.daily2);
+    setHodan(phanphat.to.hodan);
+    setDsCongcu(phanphat.items);
     setLoading(false);
   };
 
-  const handleOpenDialog = () => {
-    setDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleTaoPhanphatMoi = async () => {
-    const ccthieu = phanphat?.thieu.map((item) => ({
-      congcu: item?.congcu._id,
-      soluongphanphat: item.soluongthieu,
-    }));
-    const dl = {
-      oldPhanphatId: phanphatId,
-      items: ccthieu,
-      from: {
-        bophankd: phanphat?.from.bophankd._id,
-      },
-      to: {
-        daily1: phanphat?.to.daily1._id,
-      },
-      redo: true,
-    };
-    // console.log(dl);
-    const data = await apiPhanphat.themPhanphat(dl);
-    // console.log(data);
-    if (data.success) {
-      handleClose();
-      Toastify({
-        text: "Phân phát công cụ thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
-      props.history.push(`/bophankd/phanphat`);
-    }
-  };
-
-  // const handleDelete = async () => {
-  //   const { data } = await Axios.delete(`/api/congcu/single/${congcuId}`);
-  //   if (data.success) {
-  //     setOpen(false);
-  //     Toastify({
-  //       text: "Xoa cong cu thanh cong",
-  //       backgroundColor: "#0DB473",
-  //       className: "toastifyInfo",
-  //       position: "center",
-  //     }).showToast();
-  //     props.history.push("/bophankd/congcu");
-  //   }
-  // };
-
   useEffect(() => {
-    fetchSinglePhanphat();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData();
   }, []);
 
   if (loading) {
@@ -121,224 +52,200 @@ const PhanphatChitiet = (props) => {
   }
 
   return (
-    <>
-      <div id="bophankdPhanphatChitiet">
-        <div className="header">
-          <h5
-            className="title"
-            onClick={() => props.history.push("/bophankd/phanphat")}
-          >
-            <i class="fas fa-angle-left"></i>
-            <span>Quay lại trang danh sách phân phát</span>
-          </h5>
-          {/* <div className="btns">
-            <ButtonMaterial
-              variant="outlined"
-              startIcon={<DeleteIcon />}
-              onClick={handleClickOpen}
-            >
-              Xóa
-            </ButtonMaterial>
-            <ButtonMaterial
-              variant="contained"
-              onClick={() =>
-                props.history.push(`/bophankd/congcu/chinhsua/${congcuId}`)
-              }
-            >
-              Chỉnh sửa công cụ
-            </ButtonMaterial>
-          </div> */}
-        </div>
-        <div className="content">
-          <div className="section">
-            <div className="row">
-              <div className="col-lg-6">
-                <h6>Bên gửi (Bộ phận kinh doanh)</h6>
-                <div className="formGroup">
-                  <InputText
-                    label="Tên bên cấp"
-                    value={phanphat?.from.bophankd.ten}
-                    disabled
-                  />
-                </div>
+    <Wrapper>
+      <Header
+        title="Quay về trang danh sách phân phát"
+        titleBack
+        onClick={() => props.history.push("/bophankd/phanphat")}
+      />
+      <Content>
+        <FormWrapper>
+          <Form>
+            <FormTitle>Chi tiết phân phát</FormTitle>
+            <FormGroup>
+              <Label>Làng nghề:</Label>
+              <Input
+                type="text"
+                value={`${langnghe?.ten}, ${langnghe?.tinh}, ${langnghe?.huyen}`}
+              />
+            </FormGroup>
 
-                <div className="formGroup">
-                  <InputText
-                    label="Số điện thoại"
-                    value={phanphat?.from.bophankd.sdt}
-                    disabled
-                  />
-                </div>
+            <FormGroup>
+              <Label>Hộ dân:</Label>
+              <Input
+                type="text"
+                value={`${hodan?.daidien}, ${hodan?.diachi.split(",")[0]}, ${
+                  hodan?.sdt
+                }`}
+              />
+            </FormGroup>
 
-                <div className="formGroup">
-                  <InputText
-                    label="E-mail"
-                    value={phanphat?.from.bophankd.email}
-                    disabled
-                  />
-                </div>
+            <FormGroup>
+              <Label>Đại lý cấp 2:</Label>
+              <Input type="text" value={`${daily2?.ten}, ${daily2?.diachi}`} />
+            </FormGroup>
 
-                <div className="formGroup">
-                  <InputText
-                    label="Địa chỉ"
-                    rows={5}
-                    multiline
-                    value={phanphat?.from.bophankd.diachi}
-                    disabled
-                  />
-                </div>
-              </div>
-              <div className="col-lg-6">
-                <h6>Bên nhận (đại lý 1)</h6>
-                <div className="formGroup">
-                  <InputText
-                    label="Tên đại lý nhận"
-                    value={phanphat?.to.daily1.ten}
-                    disabled
-                  />
-                </div>
+            <FormGroup>
+              <Label>Đại lý cấp 1:</Label>
+              <Input type="text" value={`${daily1?.ten}, ${daily1?.diachi}`} />
+            </FormGroup>
+          </Form>
+        </FormWrapper>
 
-                <div className="formGroup">
-                  <InputText
-                    label="Số điện thoại"
-                    value={phanphat?.to.daily1.sdt}
-                    disabled
-                  />
-                </div>
+        <FilterSection>
+          <TitleWrapper>
+            <Title>Các công cụ đã phân phát</Title>
+          </TitleWrapper>
 
-                <div className="formGroup">
-                  <InputText
-                    label="E-mail"
-                    value={phanphat?.to.daily1.email}
-                    disabled
-                  />
-                </div>
+          <TablePhanphatChitiet dsCongcu={dsCongcu} phanphat={phanphat} />
+        </FilterSection>
 
-                <div className="formGroup">
-                  <InputText
-                    label="Địa chỉ"
-                    rows={5}
-                    multiline
-                    value={phanphat?.to.daily1.diachi}
-                    disabled
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="section">
-            <h6>Danh sách công cụ</h6>
-            <div className="sectionTable">
-              <TablePhanphatChitiet rows={phanphat} />
-            </div>
-          </div>
-
+        <StatusSection>
           <div className="row">
-            <div className="col-lg-7"></div>
-            <div className="col-lg-5">
-              <div className="section">
-                <h6>Tiến trình cấp phát</h6>
-                <div className="row">
-                  <div className="col-lg-5">
-                    <p>Trạng thái</p>
-                    <p>Báo cáo bên đại lý 1</p>
-                    <p>Hoàn thành phân phát</p>
-                  </div>
-                  <div className="col-lg-7">
-                    <p>
-                      {phanphat?.trangthai === "choxn"
-                        ? ": Chờ xác nhận"
-                        : ": Đã xác nhận"}
-                    </p>
-                    <p>
-                      {phanphat?.trangthai === "choxn" ? (
-                        ": Đang chờ"
-                      ) : phanphat?.trangthai === "daxn" &&
-                        phanphat?.thieu.length ? (
-                        <span style={thieuCongcu} onClick={handleOpen}>
-                          : Thiếu công cụ
-                        </span>
-                      ) : (
-                        ": Đã nhận đầy đủ"
-                      )}
-                    </p>
-                    <p>{phanphat?.hoanthanh ? <CheckIcon /> : <ClearIcon />}</p>
-                  </div>
+            <div className="col-lg-8"></div>
+            <div className="col-lg-4">
+              <div className="row mt-4">
+                <div className="col-lg-5 text-right">
+                  <p style={{ fontWeight: "500" }}>Trạng thái:</p>
+                  <p style={{ fontWeight: "500" }}>Báo cáo:</p>
+                  <p style={{ fontWeight: "500" }}>Hoàn thành phân phát:</p>
+                </div>
+                <div className="col-lg-7 text-right">
+                  <p>
+                    {phanphat?.trangthai === "choxn"
+                      ? "Đang chờ xác nhận"
+                      : "Đã xác nhận"}
+                  </p>
+                  <p>
+                    {phanphat?.baocao === "daydu"
+                      ? "Đầy đủ"
+                      : phanphat?.baocao === "thieu"
+                      ? "Thiếu"
+                      : "Đang chờ"}
+                  </p>
+                  <p>
+                    {phanphat?.hoanthanh === "daydu"
+                      ? "Hoàn thành"
+                      : "Chưa hoàn thành"}
+                  </p>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Báo cáo thiếu
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <TableBaocaoThieu rows={phanphat} />
-            <div className="text-right mt-4">
-              {phanphat?.thieu.length ? (
-                phanphat?.hoanthanh ? (
-                  <ButtonMaterial variant="outlined" onClick={handleClose}>
-                    Thoát
-                  </ButtonMaterial>
-                ) : (
-                  <>
-                    <ButtonMaterial variant="outlined" onClick={handleClose}>
-                      Hủy
-                    </ButtonMaterial>
-                    <ButtonMaterial
-                      variant="contained"
-                      style={{ marginLeft: 16 }}
-                      onClick={handleOpenDialog}
-                    >
-                      Tạo phân phát mới
-                    </ButtonMaterial>
-                  </>
-                )
-              ) : (
-                <>
-                  <ButtonMaterial variant="outlined" onClick={handleClose}>
-                    Hủy
-                  </ButtonMaterial>
+              {phanphat?.trangthai === "choxn" && (
+                <ButtonRight>
                   <ButtonMaterial
                     variant="contained"
-                    style={{ marginLeft: 14 }}
-                    // onClick={handleXacnhan}
+                    onClick={() =>
+                      props.history.push(
+                        `/bophankd/phanphat/chinhsua/${phanphatId}`
+                      )
+                    }
                   >
-                    Xác nhận
+                    Có thể chỉnh sửa
                   </ButtonMaterial>
-                </>
+                </ButtonRight>
               )}
             </div>
-          </Typography>
-        </Box>
-      </Modal>
-
-      <DialogMaterial
-        open={dialogOpen}
-        onClose={handleCloseDialog}
-        title="Tạo phân phát mới?"
-        text1="Hủy"
-        text2="Tạo"
-        content="Phân phát lại các công cụ còn thiếu."
-        onClick1={handleCloseDialog}
-        onClick2={handleTaoPhanphatMoi}
-      />
-    </>
+          </div>
+        </StatusSection>
+      </Content>
+    </Wrapper>
   );
 };
 
-const thieuCongcu = {
-  color: "blue",
-  cursor: "pointer",
-};
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
 
-export default PhanphatChitiet;
+const Content = styled.div`
+  flex: 1;
+  background: #f0eeee;
+  padding: 20px 36px;
+`;
+
+const FormWrapper = styled.div`
+  background: #fff;
+  padding: 36px 20px 16px 36px;
+  width: 100%;
+`;
+
+const Form = styled.div`
+  width: 570px;
+  margin: auto;
+  padding: 0 26px;
+`;
+
+const FormTitle = styled.div`
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 20px;
+  span {
+    font-size: 15px;
+    color: #555;
+    display: block;
+    margin-bottom: 10px;
+  }
+`;
+
+const ErrMsg = styled.span`
+  font-size: 15px;
+  color: red !important;
+  margin-top: -10px;
+`;
+
+const FilterSection = styled.div`
+  background: #fff;
+`;
+
+const Title = styled.div`
+  margin: 0;
+  padding: 14px 17px;
+  font-weight: 500;
+  color: #1e93e8;
+  display: inline-block;
+  border-bottom: 2px solid #1e93e8;
+`;
+
+const TitleWrapper = styled.div`
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+`;
+
+const ButtonRight = styled.div`
+  text-align: right;
+  margin-top: 12px;
+`;
+
+const StatusSection = styled.div`
+  background-color: #fff;
+  margin-top: 16px;
+  padding: 20px;
+`;
+
+export default PhanphatThem;

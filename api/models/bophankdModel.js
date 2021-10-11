@@ -40,6 +40,14 @@ const bophankdSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Khohang",
     },
+    dsphanphat: [
+      {
+        phanphat: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Phanphat",
+        },
+      },
+    ],
   },
   {
     timestamps: true,

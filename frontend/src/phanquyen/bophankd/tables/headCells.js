@@ -150,16 +150,16 @@ export const headCellsDaily1 = [
 
 export const headCellsPhanphat = [
   {
-    id: "bengui",
+    id: "hodan",
     numeric: false,
     disablePadding: true,
-    label: "Bên gửi",
+    label: "Hộ dân",
   },
   {
-    id: "bennhan",
+    id: "dailytrunggian",
     numeric: false,
     disablePadding: false,
-    label: "Bên nhận (đại lý 1)",
+    label: "Đại lý trung gian",
   },
   {
     id: "tongcongcu",
@@ -174,10 +174,10 @@ export const headCellsPhanphat = [
     label: "Trạng thái",
   },
   {
-    id: "ngaytao",
+    id: "baocao",
     numeric: false,
     disablePadding: false,
-    label: "Ngày tạo",
+    label: "Báo cáo",
   },
   {
     id: "hoanthanh",

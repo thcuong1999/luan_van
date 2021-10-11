@@ -13,6 +13,12 @@ const apiDaily2 = {
     return axiosClient.put(url, payload);
   },
 
+  // lay thong tin daily 2
+  singleDaily2(daily2Id) {
+    const url = `/single/${daily2Id}`;
+    return axiosClient.get(url);
+  },
+
   // chinh sua 2 dai ly 2
   suaDaily2(id, data) {
     const url = `/daily2/single/${id}`;

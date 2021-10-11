@@ -30,7 +30,44 @@ const StyledTableRow = styledMaterial(TableRow)(({ theme }) => ({
   },
 }));
 
-const TablePhanphatChitiet = ({ dsCongcu, phanphat }) => {
+const TablePhanphatChinhsua = ({
+  dsCongcu,
+  phanphat,
+  handleRemoveRow,
+  setDsCongcu,
+}) => {
+  const compareSoluong = (sl, slphatphat) => {
+    if (parseInt(slphatphat) > sl) {
+      return sl;
+    } else if (parseInt(slphatphat) === 0) {
+      return 1;
+    } else {
+      return slphatphat;
+    }
+  };
+
+  const handleChangeSoluong = (e, row) => {
+    let val = e.target.value;
+    if (isNaN(val)) {
+      e.target.value = 1;
+    } else {
+      const updatedDsCongcu = dsCongcu.map((item) => {
+        if (item._id === row._id) {
+          return {
+            ...item,
+            soluongphanphat: compareSoluong(
+              item.congcu.soluong,
+              e.target.value
+            ),
+          };
+        } else {
+          return item;
+        }
+      });
+      setDsCongcu(updatedDsCongcu);
+    }
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table
@@ -46,30 +83,41 @@ const TablePhanphatChitiet = ({ dsCongcu, phanphat }) => {
             <StyledTableCell>Số lượng</StyledTableCell>
             <StyledTableCell>Số lượng phân phát</StyledTableCell>
             <StyledTableCell>Ngày phân phát</StyledTableCell>
+            <StyledTableCell>Xóa</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {dsCongcu.map((row) => (
             <StyledTableRow key={row.congcu._id}>
               <StyledTableCell component="th" scope="row">
-                {/* <img
+                <img
                   src={
-                    row?.congcu.hinhanh
-                      ? `/uploads/${row?.congcu?.hinhanh}`
+                    row.congcu.hinhanh
+                      ? `/uploads/${row.congcu.hinhanh}`
                       : img_placeholder
                   }
                   alt="anhcongcu"
                   style={{ width: "30px" }}
-                  className={!row?.congcu?.hinhanh && "noImage"}
-                /> */}
+                  className={!row.congcu.hinhanh && "noImage"}
+                />
               </StyledTableCell>
-              <StyledTableCell>{row?.congcu?.ten}</StyledTableCell>
-              <StyledTableCell>{row?.congcu?.congdung}</StyledTableCell>
-              <StyledTableCell>{row?.congcu?.soluong}</StyledTableCell>
+              <StyledTableCell>{row.congcu.ten}</StyledTableCell>
+              <StyledTableCell>{row.congcu.congdung}</StyledTableCell>
+              <StyledTableCell>{row.congcu.soluong}</StyledTableCell>
               <StyledTableCell>
-                <input type="text" value={row?.soluongphanphat} />
+                <input
+                  type="text"
+                  value={row.soluongphanphat}
+                  onChange={(e) => handleChangeSoluong(e, row)}
+                />
               </StyledTableCell>
-              <StyledTableCell>{phanphat.ngaytao}</StyledTableCell>
+              <StyledTableCell>{phanphat?.ngaytao}</StyledTableCell>
+              <StyledTableCell>
+                <DeleteOutlineIcon
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleRemoveRow(row._id)}
+                />
+              </StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
@@ -78,4 +126,4 @@ const TablePhanphatChitiet = ({ dsCongcu, phanphat }) => {
   );
 };
 
-export default TablePhanphatChitiet;
+export default TablePhanphatChinhsua;

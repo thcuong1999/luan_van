@@ -15,6 +15,7 @@ congcuRouter.post("/them", upload.single("hinhanh"), async (req, res) => {
     hinhanh: req.file ? req.file.filename : "",
     congdung,
     soluong,
+    slsaukhipp: soluong,
     ngaytao: getCurrentDatetime(),
   });
   try {
