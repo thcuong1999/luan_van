@@ -66,10 +66,16 @@ export const headCellsPhanphat = [
     label: "Bên gửi",
   },
   {
-    id: "bennhan",
+    id: "dailytrunggian",
     numeric: false,
-    disablePadding: false,
-    label: "Bên nhận (đại lý 1)",
+    disablePadding: true,
+    label: "Đại lý trung gian",
+  },
+  {
+    id: "hodandich",
+    numeric: false,
+    disablePadding: true,
+    label: "Hộ dân đích",
   },
   {
     id: "tongcongcu",
@@ -84,21 +90,48 @@ export const headCellsPhanphat = [
     label: "Trạng thái",
   },
   {
-    id: "ngaytao",
+    id: "ngayphanphat",
     numeric: false,
     disablePadding: false,
-    label: "Ngày tạo",
-  },
-  {
-    id: "hoanthanh",
-    numeric: false,
-    disablePadding: false,
-    label: "Hoàn thành",
+    label: "Ngày phân phát",
   },
   {
     id: "chitiet",
     numeric: false,
     disablePadding: false,
     label: "Chi tiết",
+  },
+];
+
+export const headCellsPhanphatChitiet = [
+  {
+    id: "hinhanh",
+    numeric: false,
+    disablePadding: true,
+    label: "Hình ảnh",
+  },
+  {
+    id: "tencongcu",
+    numeric: false,
+    disablePadding: true,
+    label: "Tên công cụ",
+  },
+  {
+    id: "soluongphanphat",
+    numeric: false,
+    disablePadding: true,
+    label: "Số lượng phân phát",
+  },
+  {
+    id: "ngayphanphat",
+    numeric: true,
+    disablePadding: false,
+    label: "Ngày phân phát",
+  },
+  {
+    id: "xacnhan",
+    numeric: false,
+    disablePadding: false,
+    label: "Xác nhận",
   },
 ];

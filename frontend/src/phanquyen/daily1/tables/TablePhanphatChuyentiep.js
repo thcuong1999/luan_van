@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { Link } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -30,38 +30,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const TablePhanphatDi = ({
-  danhsachCongcu,
-  setDanhsachCongcu,
-  handleRemoveRow,
+const TablePhanphatChuyentiep = ({
+  dsCongcu = [],
+  setSingleCongcu,
+  handleOpenModal,
 }) => {
-  const compareSoluong = (sl, slphatphat) => {
-    if (parseInt(slphatphat) > sl) {
-      return sl;
-    } else if (parseInt(slphatphat) === 0) {
-      return 1;
-    } else {
-      return slphatphat;
-    }
-  };
-
-  const handleChangeSoluong = (e, row) => {
-    let val = e.target.value;
-    if (isNaN(val)) {
-      e.target.value = 1;
-    } else {
-      const updatedDsCongcu = danhsachCongcu.map((item) => {
-        if (item._id === row._id) {
-          return {
-            ...item,
-            soluongphanphat: compareSoluong(item.slsaukhipp, e.target.value),
-          };
-        } else {
-          return item;
-        }
-      });
-      setDanhsachCongcu(updatedDsCongcu);
-    }
+  const handleClick = (congcu) => {
+    setSingleCongcu(congcu);
+    handleOpenModal();
   };
 
   return (
@@ -76,40 +52,31 @@ const TablePhanphatDi = ({
             <StyledTableCell>Hình ảnh</StyledTableCell>
             <StyledTableCell>Tên công cụ</StyledTableCell>
             <StyledTableCell>Công dụng</StyledTableCell>
-            <StyledTableCell>Số lượng</StyledTableCell>
             <StyledTableCell>Số lượng phân phát</StyledTableCell>
-            <StyledTableCell>Xóa</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {danhsachCongcu.map((row) => (
+          {dsCongcu.map((row) => (
             <StyledTableRow key={row.name}>
               <StyledTableCell component="th" scope="row">
                 <img
                   src={
-                    row.hinhanh ? `/uploads/${row.hinhanh}` : img_placeholder
+                    row?.congcu.hinhanh
+                      ? `/uploads/${row?.congcu.hinhanh}`
+                      : img_placeholder
                   }
                   alt="anhcongcu"
                   style={{ width: "30px" }}
-                  className={!row.hinhanh && "noImage"}
-                />
-              </StyledTableCell>
-              <StyledTableCell>{row.ten}</StyledTableCell>
-              <StyledTableCell>{row.congdung}</StyledTableCell>
-              <StyledTableCell>{row.slsaukhipp}</StyledTableCell>
-              <StyledTableCell>
-                <input
-                  type="text"
-                  value={row.soluongphanphat}
-                  onChange={(e) => handleChangeSoluong(e, row)}
+                  className={!row?.congcu.hinhanh && "noImage"}
                 />
               </StyledTableCell>
               <StyledTableCell>
-                <DeleteOutlineIcon
-                  style={{ cursor: "pointer" }}
-                  onClick={() => handleRemoveRow(row._id)}
-                />
+                <Link to="#" onClick={() => handleClick(row.congcu)}>
+                  {row?.congcu.ten}
+                </Link>
               </StyledTableCell>
+              <StyledTableCell>{row?.congcu.congdung}</StyledTableCell>
+              <StyledTableCell>{row?.soluongphanphat}</StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
@@ -118,4 +85,4 @@ const TablePhanphatDi = ({
   );
 };
 
-export default TablePhanphatDi;
+export default TablePhanphatChuyentiep;

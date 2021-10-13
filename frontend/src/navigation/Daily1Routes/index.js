@@ -36,6 +36,10 @@ const Daily1Routes = () => {
           path="/daily1/phanphat/chitiet/:id"
           component={Dashboard}
         />
+        <ProtectedRoute
+          path="/daily1/phanphat/chuyentiep/:id"
+          component={Dashboard}
+        />
 
         <Route path="*" component={NotfoundPage} />
       </Switch>

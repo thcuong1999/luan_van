@@ -130,7 +130,7 @@ const PhanphatThem = (props) => {
                   </p>
                 </div>
               </div>
-              {phanphat?.trangthai === "choxn" && (
+              {phanphat?.trangthai.daily1 === "choxn" && (
                 <ButtonRight>
                   <ButtonMaterial
                     variant="contained"

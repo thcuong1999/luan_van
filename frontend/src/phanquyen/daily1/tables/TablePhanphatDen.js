@@ -21,7 +21,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-const TablePhanphatDen = ({ dsPhanphatDen }) => {
+const TablePhanphatDen = ({ dsPhanphat }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -52,7 +52,7 @@ const TablePhanphatDen = ({ dsPhanphatDen }) => {
   //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = dsPhanphatDen.map((item) => item._id);
+      const newSelecteds = dsPhanphat.map((item) => item._id);
       setSelected(newSelecteds);
       return;
     }
@@ -92,7 +92,7 @@ const TablePhanphatDen = ({ dsPhanphatDen }) => {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsPhanphatDen.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsPhanphat.length) : 0;
 
   // if (loading) {
   //   return <BackdropMaterial />;
@@ -115,11 +115,11 @@ const TablePhanphatDen = ({ dsPhanphatDen }) => {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={dsPhanphatDen.length}
+              rowCount={dsPhanphat.length}
               headCells={headCellsPhanphat}
             />
             <TableBody>
-              {dsPhanphatDen
+              {dsPhanphat
                 .slice()
                 .sort(getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -147,25 +147,29 @@ const TablePhanphatDen = ({ dsPhanphatDen }) => {
                         />
                       </TableCell>
                       <TableCell align="right">
-                        {row.from.bophankd.ten}
+                        {row.phanphat?.from.bophankd.ten}
                       </TableCell>
-                      <TableCell align="right"> {row.to.daily1.ten}</TableCell>
-                      <TableCell align="right">{row.items.length}</TableCell>
                       <TableCell align="right">
-                        {row.trangthai === "choxn"
+                        {row.phanphat?.to.daily2.ten}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.phanphat?.to.hodan.daidien}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.phanphat?.items.length}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.phanphat?.trangthai.daily1 === "choxn"
                           ? "Chờ xác nhận"
                           : "Đã xác nhận"}
                       </TableCell>
-                      <TableCell align="right">{row.ngaytao}</TableCell>
                       <TableCell align="right">
-                        {row.trangthai === "daxn" && row.hoanthanh ? (
-                          <CheckIcon />
-                        ) : row.trangthai === "daxn" && !row.hoanthanh ? (
-                          <ClearIcon />
-                        ) : null}
+                        {row.phanphat?.ngaytao}
                       </TableCell>
                       <TableCell align="right">
-                        <Link to={`/daily1/phanphat/chitiet/${row._id}`}>
+                        <Link
+                          to={`/daily1/phanphat/chitiet/${row.phanphat?._id}`}
+                        >
                           <VisibilityIcon />
                         </Link>
                       </TableCell>
@@ -187,7 +191,7 @@ const TablePhanphatDen = ({ dsPhanphatDen }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
           colSpan={3}
-          count={dsPhanphatDen.length}
+          count={dsPhanphat.length}
           rowsPerPage={rowsPerPage}
           page={page}
           SelectProps={{

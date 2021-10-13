@@ -50,6 +50,10 @@ const daily2Schema = new mongoose.Schema(
           type: Boolean,
           default: false,
         },
+        danhapkho: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
   },

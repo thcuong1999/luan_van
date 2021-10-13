@@ -37,6 +37,10 @@ const daily1Schema = new mongoose.Schema(
           type: Boolean,
           default: false,
         },
+        phanphat: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Phanphat",
+        },
       },
     ],
     dsphanphat: [
@@ -46,6 +50,10 @@ const daily1Schema = new mongoose.Schema(
           ref: "Phanphat",
         },
         daphanphatxuong: {
+          type: Boolean,
+          default: false,
+        },
+        danhapkho: {
           type: Boolean,
           default: false,
         },

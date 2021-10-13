@@ -65,7 +65,7 @@ const PhanphatChinhsua = (props) => {
         phanphatId,
         payload,
       });
-      // console.log(data);
+      console.log(data);
       if (data.success) {
         Toastify({
           text: "Cập nhật phân phát thành công",

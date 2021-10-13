@@ -14,7 +14,7 @@ tỉnh: name
 huyện: districts
 xã: wards
 
-db.congcus.update({}, {$set: {slsaukhipp: 10}}, false, true);
+db.bophankds.update({}, {$set: {dsphanphat: []}}, false, true);
 
 
 mỗi bộ phận kd quản lý riêng: công cụ, sản phẩm, đại lý 1, kho hàng, phân phát
@@ -172,33 +172,10 @@ Daily2 model {
 }
 
 
-bpkd phan phat -> daily1: update Daily1 model -> phanphat.push(newPhanphat)
-daily1 phan phat -> daily2: update Daily2 model -> phanphat.push(newPhanphat)
-daily2 phan phat -> hodan -> hodan xac nhan: origin phat phat doc -> hoanthanh: true
-
-
-soluong: 10
-slsaukhipp: 10
--> phanphat: 5
-    {
-        soluong: 10,
-        slsaukhipp: soluong - 5 = 5
-        hoanthanh: false
-    }
--> chinhsua phanphat: 3
-    {
-        soluong: 10
-        slsaukhipp: soluong - 3 = 7
-        hoanthanh: false
-    }
--> hoanthanh: true
-    {
-        soluong = soluong - soluongphanphat = 7
-        slsaukhipp: soluong = 7
-    }
-->  xoa: 3
-    {
-        soluong: 10
-        slsaukhipp: soluong + soluongphanphat(3) = 10
-        hoanthanh: false
-    }
+daily1 phanphat -> daily2
+    Phanphat collection: update:
+    - trangthai: { daily1: 'daxn', daily2: 'choxn' }
+    Daily2 collection: update:
+    - dsphanphat
+payload: { phanphatId }
+=> props.history.push(ds pp of daily1)

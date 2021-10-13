@@ -103,7 +103,7 @@ const TablePhanphatChinhsua = ({
               </StyledTableCell>
               <StyledTableCell>{row.congcu.ten}</StyledTableCell>
               <StyledTableCell>{row.congcu.congdung}</StyledTableCell>
-              <StyledTableCell>{row.congcu.soluong}</StyledTableCell>
+              <StyledTableCell>{row.congcu.slsaukhipp}</StyledTableCell>
               <StyledTableCell>
                 <input
                   type="text"

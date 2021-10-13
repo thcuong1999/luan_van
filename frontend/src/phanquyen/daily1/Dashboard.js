@@ -14,6 +14,7 @@ import CongcuChitiet from "./CongcuChitiet";
 import CongcuChinhsua from "./CongcuChinhsua";
 import Phanphat from "./Phanphat";
 import PhanphatChitiet from "./PhanphatChitiet";
+import PhanphatChuyentiep from "./PhanphatChuyentiep";
 
 const Dashboard = (props) => {
   const dispatch = useDispatch();
@@ -80,6 +81,10 @@ const Dashboard = (props) => {
         <Route
           path="/daily1/phanphat/chitiet/:id"
           component={PhanphatChitiet}
+        />
+        <Route
+          path="/daily1/phanphat/chuyentiep/:id"
+          component={PhanphatChuyentiep}
         />
       </div>
     </div>

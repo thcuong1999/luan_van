@@ -213,7 +213,7 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
                         {row.phanphat?.items.length}
                       </TableCell>
                       <TableCell align="right">
-                        {row.phanphat?.trangthai === "choxn"
+                        {row.phanphat?.trangthai.daily1 === "choxn"
                           ? "Chờ xác nhận"
                           : "Đã xác nhận"}
                       </TableCell>
@@ -222,16 +222,14 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
                           ? "Đầy đủ"
                           : row.phanphat?.baocao === "thieu"
                           ? "Thiếu"
-                          : null}
+                          : "Đang chờ"}
                       </TableCell>
                       <TableCell align="right">
-                        {row.phanphat?.trangthai === "daxn" &&
-                        row.phanphat?.hoanthanh ? (
+                        {row.phanphat?.hoanthanh ? (
                           <CheckIcon />
-                        ) : row.phanphat?.trangthai === "daxn" &&
-                          !row.phanphat?.hoanthanh ? (
+                        ) : (
                           <ClearIcon />
-                        ) : null}
+                        )}
                       </TableCell>
                       <TableCell align="right">
                         <Link

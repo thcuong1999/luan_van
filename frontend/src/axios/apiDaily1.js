@@ -31,6 +31,18 @@ const apiDaily1 = {
     return axiosClient.get(url);
   },
 
+  // lay ds phan phat thuoc daily1
+  dsPhanphat(daily1Id) {
+    const url = `/daily1/dsphanphat/${daily1Id}`;
+    return axiosClient.get(url);
+  },
+
+  // lay thong tin 1 phan phat thuocd daily1
+  singlePhanphat(daily1Id, phanphatId) {
+    const url = `/daily1/singlephanphat/${daily1Id}/${phanphatId}`;
+    return axiosClient.get(url);
+  },
+
   // xoa 1 dai ly 1
   xoa1Daily1(id) {
     const url = `/daily1/single/${id}`;

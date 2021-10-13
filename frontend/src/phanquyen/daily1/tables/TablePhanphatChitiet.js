@@ -1,124 +1,211 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import img_placeholder from "../../../assets/images/img_placeholder.png";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
+import BackdropMaterial from "../../../components/BackdropMaterial";
+import apiDaily2 from "../../../axios/apiDaily2";
+import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
+import { getComparator } from "../../../utils";
+import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
+import { headCellsPhanphatChitiet } from "./headCells";
+import img_placeholder from "../../../assets/images/img_placeholder.png";
+// icon
+import ClearIcon from "@mui/icons-material/Clear";
+import CheckIcon from "@mui/icons-material/Check";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+const TablePhanphatChitiet = ({
+  dsCongcu,
+  singlePhanphat,
+  setCongcu,
+  handleOpenModal,
+}) => {
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("calories");
+  const [selected, setSelected] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
-
-const TablePhanphatChitiet = ({ rows, handleClickOpen }) => {
-  //   const { setItems, rows } = props;
-  // const [rows, setRows] = React.useState(props.rows);
-
-  const handleDeleteRow = (id) => {
-    // setRows(rows.filter((row) => row._id !== id));
-    // setItems(rows.filter((row) => row._id !== id));
+  const handleClickTableCell = (congcuObj) => {
+    setCongcu(congcuObj);
+    handleOpenModal();
   };
 
-  const compareSoluong = (sl, slphatphat) => {
-    if (parseInt(slphatphat) > sl) {
-      return sl;
-    } else if (parseInt(slphatphat) === 0) {
-      return 1;
-    } else {
-      return slphatphat;
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  //===
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = dsCongcu.map((item) => item._id);
+      setSelected(newSelecteds);
+      return;
     }
+    setSelected([]);
   };
 
-  const handleChangeSoluong = (e, _row) => {
-    let val = e.target.value;
+  const handleClick = (event, _id) => {
+    const selectedIndex = selected.indexOf(_id);
+    let newSelected = [];
 
-    if (isNaN(val)) {
-      e.target.value = 1;
-    } else {
-      const rs = rows.map((row) => {
-        if (row._id === _row._id) {
-          return {
-            ...row,
-            soluongphanphat: compareSoluong(row.soluong, e.target.value),
-          };
-        } else {
-          return row;
-        }
-      });
-      // setRows(rs);
-      // setItems(rs);
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, _id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
     }
+
+    setSelected(newSelected);
   };
 
-  React.useEffect(() => {
-    // setItems(rows);
-  }, []);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const isSelected = (_id) => selected.indexOf(_id) !== -1;
+
+  // Avoid a layout jump when reaching the last page with empty rows.
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsCongcu.length) : 0;
+
+  // if (loading) {
+  //   return <BackdropMaterial />;
+  // }
 
   return (
-    <TableContainer component={Paper}>
-      <Table
-        sx={{ minWidth: 700 }}
-        aria-label="customized table"
-        className="chitietCongcuPhanphat"
-      >
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Hình ảnh</StyledTableCell>
-            <StyledTableCell>Tên công cụ</StyledTableCell>
-            <StyledTableCell>Công dụng</StyledTableCell>
-            <StyledTableCell>Số lượng cấp</StyledTableCell>
-            <StyledTableCell>Ngày cấp</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows?.items.map((row) => (
-            <StyledTableRow key={row.name}>
-              <StyledTableCell component="th" scope="row">
-                <img
-                  src={
-                    row.congcu?.hinhanh
-                      ? `/uploads/${row.congcu?.hinhanh}`
-                      : img_placeholder
-                  }
-                  alt="anhcongcu"
-                  style={{ width: "30px" }}
-                  className={!row.congcu?.hinhanh && "noImage"}
-                />
-              </StyledTableCell>
-              <StyledTableCell>
-                <span onClick={() => handleClickOpen(row.congcu?._id)}>
-                  {row.congcu.ten}
-                </span>
-              </StyledTableCell>
-              <StyledTableCell>{row.congcu.congdung}</StyledTableCell>
-              <StyledTableCell>{row.soluongphanphat}</StyledTableCell>
-              <StyledTableCell>{rows.ngaytao}</StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box sx={{ width: "100%" }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size="small"
+            id="tableMaterial"
+          >
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={dsCongcu.length}
+              headCells={headCellsPhanphatChitiet}
+            />
+            <TableBody>
+              {dsCongcu
+                .slice()
+                .sort(getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row._id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
+
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row._id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row._id}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            "aria-labelledby": labelId,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        <img
+                          src={
+                            row.congcu.hinhanh
+                              ? `/uploads/${row.congcu.hinhanh}`
+                              : img_placeholder
+                          }
+                          alt="anhcongcu"
+                          style={{ width: "30px" }}
+                          className={!row.congcu.hinhanh && "noImage"}
+                        />
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        onClick={() => handleClickTableCell(row.congcu)}
+                      >
+                        <Link to="#">{row.congcu.ten}</Link>
+                      </TableCell>
+                      <TableCell align="right">{row.soluongphanphat}</TableCell>
+                      <TableCell align="right">
+                        {singlePhanphat.phanphat.ngaytao}
+                      </TableCell>
+                      <TableCell align="right">
+                        {singlePhanphat.phanphat.trangthai.daily1 === "choxn"
+                          ? "Chờ xác nhận"
+                          : "Đã xác nhận"}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: 53 * emptyRows,
+                  }}
+                >
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+          colSpan={3}
+          count={dsCongcu.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          SelectProps={{
+            inputProps: {
+              "aria-label": "rows per page",
+            },
+            native: true,
+          }}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          ActionsComponent={TablePaginationActions}
+          component="div"
+        />
+      </Paper>
+    </Box>
   );
 };
 

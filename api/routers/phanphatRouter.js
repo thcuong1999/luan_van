@@ -2,6 +2,7 @@ const express = require("express");
 const Bophankd = require("../models/bophankdModel");
 const Congcu = require("../models/congcuModel");
 const Daily1 = require("../models/daily1Model");
+const Daily2 = require("../models/daily2Model");
 const Phanphat = require("../models/phanphatModel");
 const { getCurrentDatetime } = require("../utils");
 const phanphatRouter = express.Router();
@@ -12,6 +13,9 @@ phanphatRouter.post("/them", async (req, res) => {
   try {
     const newPhanphat = new Phanphat({
       ...payload,
+      trangthai: {
+        daily1: "choxn",
+      },
       ngaytao: getCurrentDatetime(),
     });
     const savedPhanphat = await newPhanphat.save();
@@ -50,14 +54,14 @@ phanphatRouter.put("/single/:id", async (req, res) => {
     const phanphat = await Phanphat.findById(phanphatId);
     const payloadItemsArr = payload.items.map((x) => x.congcu);
     // update congcu reference
-    let arr = [];
     for (const item of phanphat.items) {
       if (payloadItemsArr.includes(item.congcu.toString())) {
         let newSoluongpp = payload.items.find(
           (i) => i.congcu == item.congcu.toString()
         ).soluongphanphat;
         const ccu = await Congcu.findById(item.congcu.toString());
-        ccu.slsaukhipp = ccu.soluong - parseInt(newSoluongpp);
+        ccu.slsaukhipp =
+          ccu.slsaukhipp + item.soluongphanphat - parseInt(newSoluongpp);
         await ccu.save();
       } else {
         // not includes
@@ -123,6 +127,86 @@ phanphatRouter.get("/single/:id", async (req, res) => {
       });
     }
     res.send({ phanphat, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// nhap cong cu vao kho
+phanphatRouter.put("/nhapkhocongcu", async (req, res) => {
+  const { items, daily1Id, phanphatId } = req.body;
+  try {
+    // cap nhat trang thai Phanphat coll
+    const phanphat = await Phanphat.findById(phanphatId);
+    phanphat.trangthai = { daily1: "daxn" };
+    await phanphat.save();
+    // nhap kho cho dai ly 1
+    const daily1 = await Daily1.findById(daily1Id);
+    daily1.items = [
+      ...items.map((item) => ({
+        ...item,
+        ngaytiepnhan: getCurrentDatetime(),
+        daphanphat: false,
+      })),
+      ...daily1.items,
+    ];
+    daily1.dsphanphat = daily1.dsphanphat.map((item) =>
+      item.phanphat.toString() === phanphatId
+        ? { phanphat: phanphatId, daphanphatxuong: false, danhapkho: true }
+        : item
+    );
+    await daily1.save();
+
+    res.send({ success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// daily1 phanphat -> daily2
+phanphatRouter.put("/daily1ppdaily2", async (req, res) => {
+  const { phanphatId, daily2Id, daily1Id } = req.body;
+  try {
+    // update Phanphat coll
+    const phanphat = await Phanphat.findById(phanphatId);
+    phanphat.trangthai = { daily1: "daxn", daily2: "choxn" };
+    await phanphat.save();
+    // update Daily2 coll
+    const daily2 = await Daily2.findById(daily2Id);
+    daily2.dsphanphat = [
+      {
+        phanphat: phanphatId,
+        daphanphatxuong: false,
+        danhapkho: false,
+      },
+      ...daily2.dsphanphat,
+    ];
+    await daily2.save();
+    // update Daily1 coll
+    const daily1 = await Daily1.findById(daily1Id);
+    // nếu chưa nhập kho => nhập kho cc
+    const danhapkho = daily1.dsphanphat.find(
+      (item) => item.phanphat.toString() === phanphatId
+    )?.danhapkho;
+    daily1.items = daily1.items.map((item) =>
+      item.phanphat.toString() === phanphatId
+        ? {
+            congcu: item.congcu,
+            soluongphanphat: item.soluongphanphat,
+            ngaytiepnhan: item.ngaytiepnhan,
+            daphanphat: true,
+            phanphat: item.phanphat,
+          }
+        : item
+    );
+    daily1.dsphanphat = daily1.dsphanphat.map((item) =>
+      item.phanphat.toString() === phanphatId
+        ? { phanphat: item.phanphat, daphanphatxuong: true, danhapkho: true }
+        : item
+    );
+    await daily1.save();
+
+    res.send({ success: true });
   } catch (error) {
     res.send({ message: error.message, success: false });
   }

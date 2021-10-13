@@ -229,6 +229,56 @@ daily1Router.put("/xoanhieudaily2", async (req, res) => {
   }
 });
 
+// lay danh sach phan phat thuoc dly1
+daily1Router.get("/dsphanphat/:daily1Id", async (req, res) => {
+  try {
+    const { dsphanphat } = await Daily1.findById(req.params.daily1Id)
+      .select("dsphanphat")
+      .populate({
+        path: "dsphanphat",
+        populate: {
+          path: "phanphat",
+          populate: {
+            path: "from to items",
+            populate: {
+              path: "bophankd daily1 daily2 hodan",
+            },
+          },
+        },
+      });
+
+    res.send({ dsphanphat, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// lay 1 phan phat thuoc dly1
+daily1Router.get("/singlephanphat/:daily1Id/:phanphatId", async (req, res) => {
+  try {
+    const { dsphanphat } = await Daily1.findById(req.params.daily1Id)
+      .select("dsphanphat")
+      .populate({
+        path: "dsphanphat",
+        populate: {
+          path: "phanphat",
+          populate: {
+            path: "from to items",
+            populate: {
+              path: "bophankd daily1 daily2 hodan congcu",
+            },
+          },
+        },
+      });
+    const phanphat = dsphanphat.find(
+      (item) => item.phanphat._id.toString() == req.params.phanphatId
+    );
+    res.send({ phanphat, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
 //==================================
 
 // lay danh sach cong cu thuoc daily 1

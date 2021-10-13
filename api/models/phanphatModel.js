@@ -16,6 +16,7 @@ const phanphatSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Bophankd",
       },
+      // daily1, daily2 properties có thể bị thừa, sau này xóa sau
       daily1: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Daily1",
@@ -40,9 +41,18 @@ const phanphatSchema = new mongoose.Schema(
       },
     },
     trangthai: {
-      type: String,
-      enum: ["choxn", "daxn"],
-      default: "choxn",
+      daily1: {
+        type: String,
+        enum: ["choxn", "daxn"],
+      },
+      daily2: {
+        type: String,
+        enum: ["choxn", "daxn"],
+      },
+      hodan: {
+        type: String,
+        enum: ["choxn", "daxn"],
+      },
     },
     baocao: {
       type: String,
