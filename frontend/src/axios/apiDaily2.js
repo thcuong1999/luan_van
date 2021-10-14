@@ -15,7 +15,7 @@ const apiDaily2 = {
 
   // lay thong tin daily 2
   singleDaily2(daily2Id) {
-    const url = `/single/${daily2Id}`;
+    const url = `/daily2/single/${daily2Id}`;
     return axiosClient.get(url);
   },
 
@@ -37,17 +37,29 @@ const apiDaily2 = {
     return axiosClient.get(url);
   },
 
+  // lay ds phan phat thuoc daily2
+  dsPhanphat(daily2Id) {
+    const url = `/daily2/dsphanphat/${daily2Id}`;
+    return axiosClient.get(url);
+  },
+
+  // lay thong tin 1 phan phat thuoc daily2
+  singlePhanphat(daily2Id, phanphatId) {
+    const url = `/daily2/singlephanphat/${daily2Id}/${phanphatId}`;
+    return axiosClient.get(url);
+  },
+
   // lay ds daily 2 + daily1: null
   dsDaily2Daily1Null() {
     const url = "/daily2/dsdly2dly1null";
     return axiosClient.get(url);
   },
 
-  // lay thong tin 2 daily 2
-  singleDaily2(id) {
-    const url = `/daily2/single/${id}`;
-    return axiosClient.get(url);
-  },
+  // // lay thong tin 2 daily 2
+  // singleDaily2(id) {
+  //   const url = `/daily2/single/${id}`;
+  //   return axiosClient.get(url);
+  // },
 
   // xoa 1 dai ly 2
   xoa1daily2(id) {

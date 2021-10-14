@@ -4,6 +4,7 @@ const Congcu = require("../models/congcuModel");
 const Daily1 = require("../models/daily1Model");
 const Daily2 = require("../models/daily2Model");
 const Phanphat = require("../models/phanphatModel");
+const Hodan = require("../models/hodanModel");
 const { getCurrentDatetime } = require("../utils");
 const phanphatRouter = express.Router();
 
@@ -134,28 +135,51 @@ phanphatRouter.get("/single/:id", async (req, res) => {
 
 // nhap cong cu vao kho
 phanphatRouter.put("/nhapkhocongcu", async (req, res) => {
-  const { items, daily1Id, phanphatId } = req.body;
+  const { items, daily1Id, phanphatId, daily2Id } = req.body;
   try {
-    // cap nhat trang thai Phanphat coll
-    const phanphat = await Phanphat.findById(phanphatId);
-    phanphat.trangthai = { daily1: "daxn" };
-    await phanphat.save();
-    // nhap kho cho dai ly 1
-    const daily1 = await Daily1.findById(daily1Id);
-    daily1.items = [
-      ...items.map((item) => ({
-        ...item,
-        ngaytiepnhan: getCurrentDatetime(),
-        daphanphat: false,
-      })),
-      ...daily1.items,
-    ];
-    daily1.dsphanphat = daily1.dsphanphat.map((item) =>
-      item.phanphat.toString() === phanphatId
-        ? { phanphat: phanphatId, daphanphatxuong: false, danhapkho: true }
-        : item
-    );
-    await daily1.save();
+    if (daily1Id) {
+      // cap nhat trang thai Phanphat coll
+      const phanphat = await Phanphat.findById(phanphatId);
+      phanphat.trangthai = { daily1: "daxn" };
+      await phanphat.save();
+      // nhap kho cho dai ly 1
+      const daily1 = await Daily1.findById(daily1Id);
+      daily1.items = [
+        ...items.map((item) => ({
+          ...item,
+          ngaytiepnhan: getCurrentDatetime(),
+          daphanphat: false,
+        })),
+        ...daily1.items,
+      ];
+      daily1.dsphanphat = daily1.dsphanphat.map((item) =>
+        item.phanphat.toString() === phanphatId
+          ? { phanphat: phanphatId, daphanphatxuong: false, danhapkho: true }
+          : item
+      );
+      await daily1.save();
+    } else if (daily2Id) {
+      // cap nhat trang thai Phanphat coll
+      const phanphat = await Phanphat.findById(phanphatId);
+      phanphat.trangthai = { daily1: "daxn", daily2: "daxn" };
+      await phanphat.save();
+      // nhap kho cho dai ly 2
+      const daily2 = await Daily2.findById(daily2Id);
+      daily2.items = [
+        ...items.map((item) => ({
+          ...item,
+          ngaytiepnhan: getCurrentDatetime(),
+          daphanphat: false,
+        })),
+        ...daily2.items,
+      ];
+      daily2.dsphanphat = daily2.dsphanphat.map((item) =>
+        item.phanphat.toString() === phanphatId
+          ? { phanphat: phanphatId, daphanphatxuong: false, danhapkho: true }
+          : item
+      );
+      await daily2.save();
+    }
 
     res.send({ success: true });
   } catch (error) {
@@ -184,27 +208,104 @@ phanphatRouter.put("/daily1ppdaily2", async (req, res) => {
     await daily2.save();
     // update Daily1 coll
     const daily1 = await Daily1.findById(daily1Id);
-    // nếu chưa nhập kho => nhập kho cc
     const danhapkho = daily1.dsphanphat.find(
       (item) => item.phanphat.toString() === phanphatId
     )?.danhapkho;
-    daily1.items = daily1.items.map((item) =>
-      item.phanphat.toString() === phanphatId
-        ? {
-            congcu: item.congcu,
-            soluongphanphat: item.soluongphanphat,
-            ngaytiepnhan: item.ngaytiepnhan,
-            daphanphat: true,
-            phanphat: item.phanphat,
-          }
-        : item
-    );
+    if (!danhapkho) {
+      // nếu chưa nhập kho => nhập kho cc
+      daily1.items = [
+        ...phanphat.items.map((item) => ({
+          congcu: item.congcu,
+          soluongphanphat: item.soluongphanphat,
+          ngaytiepnhan: getCurrentDatetime(),
+          daphanphat: true,
+          phanphat: phanphatId,
+        })),
+        ...daily1.items,
+      ];
+    } else {
+      daily1.items = daily1.items.map((item) =>
+        item.phanphat.toString() === phanphatId
+          ? {
+              congcu: item.congcu,
+              soluongphanphat: item.soluongphanphat,
+              ngaytiepnhan: item.ngaytiepnhan,
+              daphanphat: true,
+              phanphat: item.phanphat,
+            }
+          : item
+      );
+    }
+
     daily1.dsphanphat = daily1.dsphanphat.map((item) =>
       item.phanphat.toString() === phanphatId
         ? { phanphat: item.phanphat, daphanphatxuong: true, danhapkho: true }
         : item
     );
     await daily1.save();
+
+    res.send({ success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// daily2 phanphat -> hodan
+phanphatRouter.put("/daily2pphodan", async (req, res) => {
+  const { phanphatId, hodanId, daily2Id } = req.body;
+  try {
+    // update Phanphat coll
+    const phanphat = await Phanphat.findById(phanphatId);
+    phanphat.trangthai = { daily1: "daxn", daily2: "daxn", hodan: "choxn" };
+    await phanphat.save();
+    // them phan phat vao Hodan collection
+    const hodan = await Hodan.findById(hodanId);
+    hodan.dsphanphat = [
+      {
+        phanphat: phanphatId,
+        daphanphatxuong: false,
+        danhapkho: false,
+      },
+      ...hodan.dsphanphat,
+    ];
+    await hodan.save();
+    // update Daily2 collection
+    const daily2 = await Daily2.findById(daily2Id);
+    const danhapkho = daily2.dsphanphat.find(
+      (item) => item.phanphat.toString() === phanphatId
+    )?.danhapkho;
+    if (!danhapkho) {
+      // nếu chưa nhập kho => nhập kho cc
+      daily2.items = [
+        ...phanphat.items.map((item) => ({
+          congcu: item.congcu,
+          soluongphanphat: item.soluongphanphat,
+          ngaytiepnhan: getCurrentDatetime(),
+          daphanphat: true,
+          phanphat: phanphatId,
+        })),
+        ...daily2.items,
+      ];
+    } else {
+      daily2.items = daily2.items.map((item) =>
+        item.phanphat.toString() === phanphatId
+          ? {
+              congcu: item.congcu,
+              soluongphanphat: item.soluongphanphat,
+              ngaytiepnhan: item.ngaytiepnhan,
+              daphanphat: true,
+              phanphat: item.phanphat,
+            }
+          : item
+      );
+    }
+
+    daily2.dsphanphat = daily2.dsphanphat.map((item) =>
+      item.phanphat.toString() === phanphatId
+        ? { phanphat: item.phanphat, daphanphatxuong: true, danhapkho: true }
+        : item
+    );
+    await daily2.save();
 
     res.send({ success: true });
   } catch (error) {

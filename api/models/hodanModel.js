@@ -40,6 +40,22 @@ const hodanSchema = new mongoose.Schema(
         },
       },
     ],
+    dsphanphat: [
+      {
+        phanphat: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Phanphat",
+        },
+        daphanphatxuong: {
+          type: Boolean,
+          default: false,
+        },
+        danhapkho: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

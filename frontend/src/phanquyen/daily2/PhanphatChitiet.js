@@ -12,7 +12,6 @@ import apiCongcu from "../../axios/apiCongcu";
 import apiDaily1 from "../../axios/apiDaily1";
 import apiDaily2 from "../../axios/apiDaily2";
 import TablePhanphatChitiet from "./tables/TablePhanphatChitiet";
-import TableBaocaoThieu from "./tables/TableBaocaoThieu";
 import { useSelector } from "react-redux";
 import Alert from "@mui/material/Alert";
 import styled from "styled-components";
@@ -44,15 +43,15 @@ const style = {
 
 const PhanphatChitiet = (props) => {
   const [loading, setLoading] = useState(false);
-  const [phanphat, setPhanphat] = useState(false);
+  const [phanphat, setPhanphat] = useState(null);
   const [bophankdInfo, setBophankdInfo] = useState(null);
-  const [hodanInfo, setHodanInfo] = useState(null);
-  const [daily1Info, setDaily1Info] = useState(null);
-  const [dsCongcu, setDsCongcu] = useState([]);
-  const [congcu, setCongcu] = useState(null);
   const [langngheInfo, setLangngheInfo] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [hodanInfo, setHodanInfo] = useState(null);
+  const [daily2Info, setDaily2Info] = useState(null);
+  const [dsCongcu, setDsCongcu] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [congcu, setCongcu] = useState(null);
   const [success, setSuccess] = useState(false);
   const { userInfo } = useSelector((state) => state.user);
   const { id: phanphatId } = props.match.params;
@@ -71,7 +70,7 @@ const PhanphatChitiet = (props) => {
     }));
     const payload = {
       items,
-      daily1Id: daily1Info._id,
+      daily2Id: daily2Info._id,
       phanphatId,
     };
     //  console.log(payload);
@@ -91,19 +90,18 @@ const PhanphatChitiet = (props) => {
 
   const fetchSinglePhanphat = async () => {
     setLoading(true);
-    const { daily1 } = await apiDaily1.singleDaily1BasedUser(userInfo._id);
-    const { phanphat: singlePhanphat } = await apiDaily1.singlePhanphat(
-      daily1._id,
-      phanphatId
-    );
+    const { daily2 } = await apiDaily2.singleBophankdBasedUser(userInfo._id);
+    const { phanphat } = await apiDaily2.singlePhanphat(daily2._id, phanphatId);
     const { langnghe } = await apiLangnghe.singleLangnghe(
-      singlePhanphat.phanphat.to.hodan.langnghe
+      phanphat.phanphat.to.hodan.langnghe
     );
-    setPhanphat(singlePhanphat);
-    setBophankdInfo(singlePhanphat.phanphat.from.bophankd);
-    setHodanInfo(singlePhanphat.phanphat.to.hodan);
-    setDaily1Info(daily1);
-    setDsCongcu(singlePhanphat.phanphat.items);
+    console.log(phanphat);
+    // set data
+    setPhanphat(phanphat);
+    setBophankdInfo(phanphat.phanphat.from.bophankd);
+    setHodanInfo(phanphat.phanphat.to.hodan);
+    setDaily2Info(daily2);
+    setDsCongcu(phanphat.phanphat.items);
     setLangngheInfo(langnghe);
     setLoading(false);
   };
@@ -117,8 +115,6 @@ const PhanphatChitiet = (props) => {
   if (loading) {
     return <BackdropMaterial />;
   }
-
-  console.log(phanphat);
 
   return (
     <>
@@ -196,14 +192,14 @@ const PhanphatChitiet = (props) => {
             <TableSection>
               <TablePhanphatChitiet
                 dsCongcu={dsCongcu}
-                singlePhanphat={phanphat}
+                phanphat={phanphat}
                 setCongcu={setCongcu}
                 handleOpenModal={handleOpenModal}
               />
             </TableSection>
           </Section>
           <ButtonRight>
-            {phanphat.danhapkho ? (
+            {phanphat?.danhapkho ? (
               <ButtonMaterial variant="outlined">
                 <CheckIcon /> Đã nhập kho
               </ButtonMaterial>
@@ -213,7 +209,7 @@ const PhanphatChitiet = (props) => {
               </ButtonMaterial>
             )}
 
-            {phanphat.daphanphatxuong ? (
+            {phanphat?.daphanphatxuong ? (
               <ButtonMaterial variant="outlined" style={{ marginLeft: 16 }}>
                 <CheckIcon /> Đã chuyển tiếp
               </ButtonMaterial>
@@ -222,7 +218,7 @@ const PhanphatChitiet = (props) => {
                 variant="contained"
                 onClick={() =>
                   props.history.push(
-                    `/daily1/phanphat/chuyentiep/${phanphatId}`
+                    `/daily2/phanphat/chuyentiep/${phanphatId}`
                   )
                 }
                 style={{ marginLeft: 16 }}

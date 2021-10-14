@@ -11,7 +11,6 @@ import ChinhsuaDaily2 from "./Daily2Chinhsua";
 import Congcu from "./Congcu";
 import CongcuThem from "./CongcuThem";
 import CongcuChitiet from "./CongcuChitiet";
-import CongcuChinhsua from "./CongcuChinhsua";
 import Phanphat from "./Phanphat";
 import PhanphatChitiet from "./PhanphatChitiet";
 import PhanphatChuyentiep from "./PhanphatChuyentiep";
@@ -71,11 +70,6 @@ const Dashboard = (props) => {
           exact
           path="/daily1/congcu/chitiet/:id"
           component={CongcuChitiet}
-        />
-        <Route
-          exact
-          path="/daily1/congcu/chinhsua/:id"
-          component={CongcuChinhsua}
         />
         <Route exact path="/daily1/phanphat" component={Phanphat} />
         <Route

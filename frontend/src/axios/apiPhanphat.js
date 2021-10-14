@@ -37,6 +37,11 @@ const apiPhanphat = {
     return axiosClient.put(url, payload);
   },
 
+  daily2ppHodan(payload) {
+    const url = `/phanphat/daily2pphodan`;
+    return axiosClient.put(url, payload);
+  },
+
   xoa1Phanphat(id) {
     const url = `/phanphat/single/${id}`;
     return axiosClient.delete(url);

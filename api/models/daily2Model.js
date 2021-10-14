@@ -30,6 +30,10 @@ const daily2Schema = new mongoose.Schema(
           type: Boolean,
           default: false,
         },
+        phanphat: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Phanphat",
+        },
       },
     ],
     daily1: {

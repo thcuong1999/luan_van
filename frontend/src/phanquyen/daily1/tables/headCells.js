@@ -18,16 +18,22 @@ export const headCellsCongcu = [
     label: "Số lượng",
   },
   {
-    id: "congdung",
+    id: "bophangui",
     numeric: false,
     disablePadding: false,
-    label: "Công dụng",
+    label: "Bộ phận gửi",
   },
   {
     id: "ngaytiepnhan",
     numeric: false,
     disablePadding: false,
     label: "Ngày tiếp nhận",
+  },
+  {
+    id: "daphanphat",
+    numeric: false,
+    disablePadding: false,
+    label: "Đã phân phát",
   },
 ];
 

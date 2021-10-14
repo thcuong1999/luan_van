@@ -15,6 +15,8 @@ const Daily2Routes = () => {
         <Route exact path="/daily2/hodan" component={Dashboard} />
         <Route path="/daily2/hodan/them" component={Dashboard} />
         <Route exact path="/daily2/phanphat" component={Dashboard} />
+        <Route path="/daily2/phanphat/chitiet/:id" component={Dashboard} />
+        <Route path="/daily2/phanphat/chuyentiep/:id" component={Dashboard} />
         <Route path="*" component={NotfoundPage} />
       </Switch>
     </Router>

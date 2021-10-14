@@ -279,8 +279,6 @@ daily1Router.get("/singlephanphat/:daily1Id/:phanphatId", async (req, res) => {
   }
 });
 
-//==================================
-
 // lay danh sach cong cu thuoc daily 1
 daily1Router.get("/danhsachcongcu/:daily1Id", async (req, res) => {
   try {
@@ -289,11 +287,21 @@ daily1Router.get("/danhsachcongcu/:daily1Id", async (req, res) => {
       .populate({
         path: "items",
         populate: {
-          path: "congcu",
-          model: "Congcu",
+          path: "phanphat",
+          populate: {
+            path: "from to",
+            populate: {
+              path: "bophankd daily1 daily2 hodan",
+            },
+          },
         },
       })
-      .sort({ createdAt: "desc" });
+      .populate({
+        path: "items",
+        populate: {
+          path: "congcu",
+        },
+      });
 
     if (!congcu) {
       return res.send({

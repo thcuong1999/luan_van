@@ -1,46 +1,31 @@
 import React, { useEffect, useState } from "react";
 import ButtonMaterial from "../../components/ButtonMaterial";
-import TableCongcu from "./tables/TableCongcu";
+import { useSelector } from "react-redux";
 import apiDaily1 from "../../axios/apiDaily1";
 import BackdropMaterial from "../../components/BackdropMaterial";
-import { useSelector } from "react-redux";
+import styled from "styled-components";
+import Header from "../../components/Header";
+import TableCongcu from "./tables/TableCongcu";
+import ModalChitietCongcu from "../../components/ModalChitietCongcu";
 
 const Congcu = (props) => {
-  const [query, setQuery] = useState("");
-  const [searchColumns] = useState(["ten", "congdung"]);
   const [loading, setLoading] = useState(false);
   const [dsCongcu, setDsCongcu] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [congcu, setCongcu] = useState(null);
   const { userInfo } = useSelector((state) => state.user);
 
-  // console.log(dsCongcu);
+  const handleOpenModal = () => setModalOpen(true);
+  const handleCloseModal = () => setModalOpen(false);
 
-  const fetchData = async () => {
-    setLoading(true);
-    const data1 = await apiDaily1.singleBophankdBasedUser(userInfo._id);
-    const data2 = await apiDaily1.dsCongcu(data1.daily1._id);
-    // console.log(data2);
-    setDsCongcu(
-      data2.items.map((item) => ({
-        ...item,
-        ten: item.congcu.ten,
-        congdung: item.congcu.congdung,
-      }))
-    );
-    setLoading(false);
-  };
-
-  const search = (dsDaily2) => {
-    return dsDaily2.filter((item) =>
-      searchColumns.some(
-        (col) =>
-          item[col].toString().toLowerCase().indexOf(query.toLowerCase()) > -1
-      )
-    );
+  const fetchDsCongcu = async () => {
+    const { daily1 } = await apiDaily1.singleDaily1BasedUser(userInfo._id);
+    const data = await apiDaily1.dsCongcu(daily1._id);
+    setDsCongcu(data.items);
   };
 
   useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchDsCongcu();
   }, []);
 
   if (loading) {
@@ -48,48 +33,116 @@ const Congcu = (props) => {
   }
 
   return (
-    <div id="daily1Congcu">
-      <div className="header">
-        <h5 className="title">Danh sách công cụ</h5>
-        <div className="user">
-          <i className="fas fa-user-circle"></i>
-          <span>Hoàng Cương Trần</span>
-          <i className="fas fa-angle-down"></i>
-        </div>
-      </div>
-      <div className="content">
-        <div className="btnRight">
-          {/* <ButtonMaterial
-            onClick={() => props.history.push("/daily1/congcu/them")}
-            variant="contained"
-          >
-            Thêm công cụ
-          </ButtonMaterial> */}
-        </div>
+    <>
+      <Wrapper>
+        <Header title="Danh sách công cụ" />
+        <Content>
+          {/* <BtnRight>
+            <ButtonMaterial
+              variant="contained"
+              onClick={() => props.history.push("/bophankd/congcu/them")}
+            >
+              Thêm công cụ
+            </ButtonMaterial>
+          </BtnRight> */}
+          <FilterSection>
+            <TitleWrapper>
+              <Title>Tất cả công cụ</Title>
+            </TitleWrapper>
+            <Filter>
+              <SearchBox>
+                <i class="fas fa-search"></i>
+                <input
+                  type="text"
+                  placeholder="Tim công cụ theo tên, công dụng"
+                  // value={query}
+                  // onChange={(e) => setQuery(e.target.value)}
+                />
+              </SearchBox>
+            </Filter>
 
-        <div className="filterSection">
-          <div className="title">
-            <p>Tất cả công cụ</p>
-          </div>
-          <div className="filterTypes">
-            <div className="searchBox">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Tim công cụ theo tên, công dụng"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+            <TableSection>
+              <TableCongcu
+                dsCongcu={dsCongcu}
+                handleOpenModal={handleOpenModal}
+                setCongcu={setCongcu}
               />
-            </div>
-          </div>
-        </div>
+            </TableSection>
+          </FilterSection>
+        </Content>
+      </Wrapper>
 
-        <div className="tableSection">
-          <TableCongcu dsCongcu={search(dsCongcu)} />
-        </div>
-      </div>
-    </div>
+      <ModalChitietCongcu
+        open={modalOpen}
+        onClose={handleCloseModal}
+        congcu={congcu}
+      />
+    </>
   );
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
+const Content = styled.div`
+  flex: 1;
+  background: #f0eeee;
+  padding: 26px 36px;
+`;
+const FilterSection = styled.div`
+  background: #fff;
+`;
+const Title = styled.div`
+  margin: 0;
+  padding: 14px 17px;
+  font-weight: 500;
+  color: #1e93e8;
+  display: inline-block;
+  border-bottom: 2px solid #1e93e8;
+`;
+const TitleWrapper = styled.div`
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+`;
+const Filter = styled.div`
+  background: #fff;
+  padding: 14px 17px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+`;
+const SearchBox = styled.div`
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  width: 50%;
+  border-radius: 4px;
+  display: flex;
+  overflow: hidden;
+  i {
+    display: inline-block;
+    padding: 10px;
+    color: rgba(0, 0, 0, 0.35);
+  }
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 10px;
+    color: #182537;
+    font-size: 14px;
+    &::placeholder {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.35);
+    }
+  }
+`;
+const TableSection = styled.div`
+  table {
+    th:first-child {
+      display: none;
+    }
+    td:first-child {
+      display: none;
+    }
+  }
+`;
 
 export default Congcu;

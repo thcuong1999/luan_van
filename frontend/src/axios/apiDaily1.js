@@ -79,6 +79,7 @@ const apiDaily1 = {
     return axiosClient.get(url);
   },
 
+  // lay danh sach congcu thuoc daily1
   dsCongcu(daily1Id) {
     const url = `/daily1/danhsachcongcu/${daily1Id}`;
     return axiosClient.get(url);

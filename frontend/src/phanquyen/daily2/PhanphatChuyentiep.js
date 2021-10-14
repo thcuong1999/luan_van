@@ -16,6 +16,7 @@ import TablePhanphatChuyentiep from "./tables/TablePhanphatChuyentiep";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import ModalChitietCongcu from "../../components/ModalChitietCongcu";
 import ModalTienhanhPhanphat from "./ModalTienhanhPhanphat";
+// import ModalTienhanhPhanphat from "./ModalTienhanhPhanphat";
 
 const PhanphatChuyentiep = (props) => {
   const [loading, setLoading] = useState(false);
@@ -39,10 +40,10 @@ const PhanphatChuyentiep = (props) => {
   const handleTienhanhPhanphat = async () => {
     const payload = {
       phanphatId,
+      hodanId: hodanInfo._id,
       daily2Id: daily2Info._id,
-      daily1Id: daily1Info._id,
     };
-    const data = await apiPhanphat.daily1ppDaily2(payload);
+    const data = await apiPhanphat.daily2ppHodan(payload);
     console.log(data);
     if (data.success) {
       Toastify({
@@ -51,7 +52,7 @@ const PhanphatChuyentiep = (props) => {
         className: "toastifyInfo",
         position: "center",
       }).showToast();
-      props.history.push(`/daily1/phanphat/chitiet/${phanphatId}`);
+      props.history.push(`/daily2/phanphat/chitiet/${phanphatId}`);
     }
   };
 
@@ -88,7 +89,7 @@ const PhanphatChuyentiep = (props) => {
           title="Quay về trang danh sách phân phát"
           titleBack
           onClick={() =>
-            props.history.push(`/daily1/phanphat/chitiet/${phanphatId}`)
+            props.history.push(`/daily2/phanphat/chitiet/${phanphatId}`)
           }
         />
         <Content>
@@ -100,6 +101,15 @@ const PhanphatChuyentiep = (props) => {
                 <Input
                   type="text"
                   value={`${bophankdInfo?.ten}, ${bophankdInfo?.diachi}`}
+                  readOnly
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Đại lý cấp 1:</Label>
+                <Input
+                  type="text"
+                  value={`${daily1Info?.ten}, ${daily1Info?.diachi}`}
                   readOnly
                 />
               </FormGroup>
@@ -118,15 +128,6 @@ const PhanphatChuyentiep = (props) => {
                 <Input
                   type="text"
                   value={`${hodanInfo?.daidien}, ${hodanInfo?.diachi}`}
-                  readOnly
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Đại lý cấp 2:</Label>
-                <Input
-                  type="text"
-                  value={`${daily2Info?.ten}, ${daily2Info?.diachi}`}
                   readOnly
                 />
               </FormGroup>
@@ -156,7 +157,7 @@ const PhanphatChuyentiep = (props) => {
       <ModalTienhanhPhanphat
         open={modalTienhanhpp}
         onClose={handleCloseModalTienhanhpp}
-        info={{ daily2Info, hodanInfo }}
+        hodanInfo={hodanInfo}
         handleTienhanhPhanphat={handleTienhanhPhanphat}
       />
 

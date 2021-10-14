@@ -100,11 +100,11 @@ const PhanphatThem = (props) => {
       );
       // lấy đại lý 2 obj dựa vào field daily2 của hd ở trên
       const { daily2 } = await apiDaily2.singleDaily2(hd.daily2);
-      // console.log({ daily2 });
+      console.log({ daily2 });
       setDaily2(daily2);
       // lấy đại lý 1 obj dựa vào field daily1 của daily2 ở trên
       const { daily1 } = await apiDaily1.singleDaily1(daily2.daily1);
-      // console.log({ daily1 });
+      console.log({ daily1 });
       setDaily1(daily1);
       // set hodanInfo
       let query = `daidien=${hodan.split(",")[0].trim()}&diachi=${hodan

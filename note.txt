@@ -14,7 +14,13 @@ tỉnh: name
 huyện: districts
 xã: wards
 
+db.phanphats.drop()
 db.bophankds.update({}, {$set: {dsphanphat: []}}, false, true);
+db.congcus.update({}, {$set: {slsaukhipp: 10}}, false, true);
+db.daily1.update({}, {$set: {items: [], dsphanphat: []}}, false, true);
+db.daily2.update({}, {$set: {items: [], dsphanphat: []}}, false, true);
+db.hodans.update({}, {$set: {dsphanphat: []}}, false, true);
+
 
 
 mỗi bộ phận kd quản lý riêng: công cụ, sản phẩm, đại lý 1, kho hàng, phân phát
