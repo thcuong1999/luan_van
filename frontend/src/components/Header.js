@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Link } from "react-router-dom";
 
-const Header = ({ title, onClick, titleBack, headerRight }) => {
+const Header = ({ title, onClick, titleBack, headerRight, arrOfLinks }) => {
+  const [active, setActive] = useState(false);
+
   return (
     <Wrapper>
       {titleBack ? (
@@ -15,7 +18,7 @@ const Header = ({ title, onClick, titleBack, headerRight }) => {
         <Title>{title}</Title>
       )}
       {!titleBack ? (
-        <AvatarWrapper>
+        <AvatarWrapper onClick={() => setActive(!active)}>
           <Avatar
             alt="Remy Sharp"
             src="/static/images/avatar/1.jpg"
@@ -23,6 +26,16 @@ const Header = ({ title, onClick, titleBack, headerRight }) => {
           />
           <span>Hoang Cuong Tran</span>
           <ExpandMoreIcon style={{ color: "#666" }} />
+          <div className={`dropdown ${active && "active"}`}>
+            <ul>
+              {arrOfLinks &&
+                arrOfLinks.map((link) => (
+                  <li>
+                    <Link to={link.url}>{link.text}</Link>
+                  </li>
+                ))}
+            </ul>
+          </div>
         </AvatarWrapper>
       ) : (
         <HeaderRight>{headerRight}</HeaderRight>
@@ -39,12 +52,10 @@ const Wrapper = styled.div`
   background: #fff;
   min-height: 50px;
 `;
-
 const Title = styled.h5`
   font-size: 18px;
   margin: 0;
 `;
-
 const TitleBack = styled.h5`
   margin: 0;
   font-size: 14px;
@@ -59,8 +70,8 @@ const TitleBack = styled.h5`
     font-size: 20px;
   }
 `;
-
 const AvatarWrapper = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -69,8 +80,39 @@ const AvatarWrapper = styled.div`
     margin-left: 10px;
     color: #444;
   }
-`;
+  .dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: #fff;
+    top: 38px;
+    left: -30%;
+    z-index: 1;
+    width: 130%;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    ul {
+      list-style: none;
+      width: 100%;
+      height: 100%;
+      padding-top: 12px;
+      li > a {
+        display: block;
+        padding: 10px 0 10px 26px;
+        text-decoration: none;
+        color: rgba(0, 0, 0, 0.45);
 
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+          font-weight: bold;
+        }
+      }
+    }
+
+    &.active {
+      display: block;
+    }
+  }
+`;
 const HeaderRight = styled.div`
   display: flex;
 `;

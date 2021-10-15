@@ -37,6 +37,12 @@ const apiPhanphat = {
     return axiosClient.put(url, payload);
   },
 
+  // hoan thanh phan phat (ho dan xac nhan)
+  hoanthanhPhanphat(payload) {
+    const url = `/phanphat/hoanthanhpp`;
+    return axiosClient.put(url, payload);
+  },
+
   daily2ppHodan(payload) {
     const url = `/phanphat/daily2pphodan`;
     return axiosClient.put(url, payload);

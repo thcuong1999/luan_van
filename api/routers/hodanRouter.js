@@ -203,4 +203,101 @@ hodanRouter.get("/single/:id", async (req, res) => {
   }
 });
 
+// lay ds phan phat thuoc ho dan
+hodanRouter.get("/dsphanphat/:hodanId", async (req, res) => {
+  try {
+    const { dsphanphat } = await Hodan.findById(req.params.hodanId)
+      .select("dsphanphat")
+      .populate({
+        path: "dsphanphat",
+        populate: {
+          path: "phanphat",
+          populate: {
+            path: "from to items",
+            populate: {
+              path: "bophankd daily1 daily2 hodan",
+            },
+          },
+        },
+      });
+
+    res.send({ dsphanphat, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// lay 1 phan phat thuoc hodan
+hodanRouter.get("/singlephanphat/:hodanId/:phanphatId", async (req, res) => {
+  try {
+    const { dsphanphat } = await Hodan.findById(req.params.hodanId)
+      .select("dsphanphat")
+      .populate({
+        path: "dsphanphat",
+        populate: {
+          path: "phanphat",
+          populate: {
+            path: "from to items",
+            populate: {
+              path: "bophankd daily1 daily2 hodan congcu",
+            },
+          },
+        },
+      });
+    const phanphat = dsphanphat.find(
+      (item) => item.phanphat._id.toString() === req.params.phanphatId
+    );
+    res.send({ phanphat, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// lay thong tin 1 ho dan based userId
+hodanRouter.get("/singlehdbaseduser/:userId", async (req, res) => {
+  try {
+    const hodan = await Hodan.findOne({ user: req.params.userId });
+
+    res.send({ hodan, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// lay danh sach cong cu thuoc ho dan
+hodanRouter.get("/danhsachcongcu/:hodanId", async (req, res) => {
+  try {
+    const congcu = await Hodan.findById(req.params.hodanId)
+      .select("items")
+      .populate({
+        path: "items",
+        populate: {
+          path: "phanphat",
+          populate: {
+            path: "from to",
+            populate: {
+              path: "bophankd daily1 daily2 hodan",
+            },
+          },
+        },
+      })
+      .populate({
+        path: "items",
+        populate: {
+          path: "congcu",
+        },
+      });
+
+    if (!congcu) {
+      return res.send({
+        message: "Không có công cụ nào trong kho",
+        success: false,
+      });
+    }
+    res.send({ congcu, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
 module.exports = hodanRouter;

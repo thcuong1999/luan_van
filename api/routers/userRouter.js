@@ -4,7 +4,7 @@ const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils");
 
-// admin signin
+// user signin
 userRouter.post("/login", async (req, res) => {
   const { taikhoan, matkhau } = req.body;
   // check email
@@ -15,7 +15,7 @@ userRouter.post("/login", async (req, res) => {
       .send({ message: "Thông tin không chính xác", success: false });
   } else {
     // check password
-    //const validPwd = bcrypt.compareSync(matkhau, user.matkhau); // false
+    //const validPwd = bcrypt.compareSync(matkhau, user.matkhau); // falses
     const token = generateToken(user);
     if (bcrypt.compareSync(matkhau, user.matkhau)) {
       // passwd matched, -> tìm thông tin user tương ứng với vaitro
@@ -24,6 +24,7 @@ userRouter.post("/login", async (req, res) => {
         _id: user._id,
         taikhoan: user.taikhoan,
         vaitro: user.vaitro,
+        vaitro2: user.vaitro2 ? user.vaitro2 : "",
         token,
         success: true,
       });

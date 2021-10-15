@@ -39,7 +39,10 @@ const Dashboard = (props) => {
 
         <ul className="menu">
           <li>
-            <Link to="/bophankd" className={props.match.isExact && "active"}>
+            <Link
+              to="/bophankd/tongquan"
+              className={props.match.isExact && "active"}
+            >
               <i className="fas fa-home"></i>
               <span>Tổng quan</span>
             </Link>
@@ -86,7 +89,7 @@ const Dashboard = (props) => {
         </ul>
       </div>
       <div className="rightSide">
-        <Route exact path="/bophankd" component={TongQuan} />
+        <Route exact path="/bophankd/tongquan" component={TongQuan} />
         <Route exact path="/bophankd/sanpham" component={Sanpham} />
         <Route path="/bophankd/sanpham/them" component={SanphamThem} />
         <Route

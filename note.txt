@@ -20,6 +20,9 @@ db.congcus.update({}, {$set: {slsaukhipp: 10}}, false, true);
 db.daily1.update({}, {$set: {items: [], dsphanphat: []}}, false, true);
 db.daily2.update({}, {$set: {items: [], dsphanphat: []}}, false, true);
 db.hodans.update({}, {$set: {dsphanphat: []}}, false, true);
+db.hodans.update({}, {$set: {items: []}}, false, true);
+
+db.users.update({taikhoan: bophankda}, {$set: {vaitro2: giamsatvung}}, false, true);
 
 
 

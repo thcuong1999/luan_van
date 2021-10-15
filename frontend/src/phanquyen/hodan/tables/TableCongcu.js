@@ -8,99 +8,30 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import { Link, useHistory } from "react-router-dom";
-import img_placeholder from "../../../assets/images/img_placeholder.png";
-// ====
+import { Link } from "react-router-dom";
+import BackdropMaterial from "../../../components/BackdropMaterial";
+import apiDaily2 from "../../../axios/apiDaily2";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
-// import EnhancedTableToolbar from "../../../components/table/EnhancedTableToolbar";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
-import { headCellsPhanphat } from "./headCells";
-// === toolbar
-import { alpha } from "@mui/material/styles";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Toolbar from "@mui/material/Toolbar";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import Typography from "@mui/material/Typography";
+import { headCellsCongcu } from "./headCells";
+import img_placeholder from "../../../assets/images/img_placeholder.png";
 // icon
 import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-const EnhancedTableToolbar = (props) => {
-  const { numSelected, selectedCongcu } = props;
-  let history = useHistory();
-
-  const handleChange = (e) => {
-    const selected = e.target.value;
-    if (selected === "phanphat") {
-      history.push({
-        pathname: "/bophankd/phanphat/them",
-        state: { congcu: selectedCongcu },
-      });
-    }
-  };
-
-  return numSelected > 0 ? (
-    <Toolbar
-      sx={{
-        pl: { sm: 8 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
-      }}
-      id="tableCongcuToolbar"
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          <span>Đã chọn {numSelected} công cụ</span>
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Nutrition
-        </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  ) : null;
-};
-
-const TablePhanphatDanhsach = ({ dsPhanphat }) => {
+const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleClickOpenModal = (congcu) => {
+    setCongcu(congcu);
+    handleOpenModal();
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -111,19 +42,19 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
   //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = dsPhanphat.map((item) => item);
+      const newSelecteds = dsCongcu.map((item) => item._id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, rowObj) => {
-    const selectedIndex = selected.indexOf(rowObj);
+  const handleClick = (event, _id) => {
+    const selectedIndex = selected.indexOf(_id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, rowObj);
+      newSelected = newSelected.concat(selected, _id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -134,6 +65,7 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
         selected.slice(selectedIndex + 1)
       );
     }
+
     setSelected(newSelected);
   };
 
@@ -146,19 +78,15 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
     setPage(0);
   };
 
-  const isSelected = (rowObj) => selected.indexOf(rowObj) !== -1;
+  const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsPhanphat.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsCongcu.length) : 0;
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          selectedCongcu={selected}
-        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -172,22 +100,22 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={dsPhanphat.length}
-              headCells={headCellsPhanphat}
+              rowCount={dsCongcu.length}
+              headCells={headCellsCongcu}
             />
             <TableBody>
-              {dsPhanphat
+              {dsCongcu
                 .slice()
                 .sort(getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row);
+                  const isItemSelected = isSelected(row._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row)}
+                      onClick={(event) => handleClick(event, row._id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -204,40 +132,39 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
                         />
                       </TableCell>
                       <TableCell align="right">
-                        {row.phanphat?.to.hodan.daidien}
-                      </TableCell>
-                      <TableCell align="right">
-                        {`${row.phanphat?.to.daily1.ten}, ${row.phanphat?.to.daily2.ten}`}
-                      </TableCell>
-                      <TableCell align="right">
-                        {row.phanphat?.items.length}
-                      </TableCell>
-                      <TableCell align="right">
-                        {row.phanphat?.trangthai.daily1 === "choxn"
-                          ? "Chờ xác nhận"
-                          : "Đã xác nhận"}
-                      </TableCell>
-                      {/* <TableCell align="right">
-                        {row.phanphat?.baocao === "daydu"
-                          ? "Đầy đủ"
-                          : row.phanphat?.baocao === "thieu"
-                          ? "Thiếu"
-                          : "Đang chờ"}
-                      </TableCell> */}
-                      <TableCell align="right">
-                        {row.phanphat?.hoanthanh ? (
-                          <CheckIcon />
-                        ) : (
-                          <ClearIcon />
-                        )}
+                        <img
+                          src={
+                            row.congcu.hinhanh
+                              ? `/uploads/${row.congcu.hinhanh}`
+                              : img_placeholder
+                          }
+                          alt="anhcongcu"
+                          style={{ width: "30px" }}
+                          className={!row.congcu.hinhanh && "noImage"}
+                        />
                       </TableCell>
                       <TableCell align="right">
                         <Link
-                          to={`/bophankd/phanphat/chitiet/${row.phanphat?._id}`}
+                          to="#"
+                          onClick={() => handleClickOpenModal(row.congcu)}
+                        >
+                          {row.congcu.ten}
+                        </Link>
+                      </TableCell>
+                      <TableCell align="right">{row.soluongphanphat}</TableCell>
+                      <TableCell align="right">
+                        {row.phanphat.from.bophankd.ten}
+                      </TableCell>
+                      <TableCell align="right">{`${row.phanphat.to.daily1.ten}, ${row.phanphat.to.daily2.ten}`}</TableCell>
+                      <TableCell align="right">{row.ngaytiepnhan}</TableCell>
+
+                      {/* <TableCell align="right">
+                        <Link
+                          to={`/daily1/phanphat/chitiet/${row.phanphat?._id}`}
                         >
                           <VisibilityIcon />
                         </Link>
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   );
                 })}
@@ -256,7 +183,7 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
           colSpan={3}
-          count={dsPhanphat.length}
+          count={dsCongcu.length}
           rowsPerPage={rowsPerPage}
           page={page}
           SelectProps={{
@@ -275,4 +202,4 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
   );
 };
 
-export default TablePhanphatDanhsach;
+export default TableCongcu;

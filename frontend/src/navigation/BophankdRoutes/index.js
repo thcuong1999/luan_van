@@ -4,13 +4,15 @@ import Dashboard from "../../phanquyen/bophankd/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import RouteProvider from "../RouteProvider";
 import NotfoundPage from "../../components/NotfoundPage";
+import DashboardOption from "../../phanquyen/bophankd/DashboardOption";
 
 const BophankdRoutes = () => {
   return (
     <Router>
       <Switch>
         <Route exact path="/" component={RouteProvider} />
-        <ProtectedRoute path="/bophankd" component={Dashboard} />
+        <ProtectedRoute exact path="/bophankd" component={DashboardOption} />
+        <ProtectedRoute path="/bophankd/tongquan" component={Dashboard} />
         <ProtectedRoute path="/bophankd/sanpham" component={Dashboard} />
         <ProtectedRoute
           path="/bophankd/sanpham/chitiet/:id"

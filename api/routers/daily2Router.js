@@ -265,6 +265,55 @@ daily2Router.get("/singlephanphat/:daily2Id/:phanphatId", async (req, res) => {
   }
 });
 
+// lay danh sach cong cu thuoc daily 2
+daily2Router.get("/danhsachcongcu/:daily2Id", async (req, res) => {
+  try {
+    const congcu = await Daily2.findById(req.params.daily2Id)
+      .select("items")
+      .populate({
+        path: "items",
+        populate: {
+          path: "phanphat",
+          populate: {
+            path: "from to",
+            populate: {
+              path: "bophankd daily1 daily2 hodan",
+            },
+          },
+        },
+      })
+      .populate({
+        path: "items",
+        populate: {
+          path: "congcu",
+        },
+      });
+
+    if (!congcu) {
+      return res.send({
+        message: "Không có công cụ nào trong kho",
+        success: false,
+      });
+    }
+    res.send(congcu);
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// get single daily2 based userId
+daily2Router.get("/user/:id", async (req, res) => {
+  try {
+    const daily2 = await Daily2.findOne({ user: req.params.id });
+    if (!daily2) {
+      return res.send({ message: "Không tìm thấy đại lý", success: false });
+    }
+    res.send({ daily2, success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
 // ===========================================
 
 // them dai ly 2 vao ds daily2 cua daily1
@@ -300,45 +349,6 @@ daily2Router.post("/them", async (req, res) => {
     await dl1.save();
 
     res.send({ savedDaily2, success: true });
-  } catch (error) {
-    res.send({ message: error.message, success: false });
-  }
-});
-
-// get single daily2 based userId
-daily2Router.get("/user/:id", async (req, res) => {
-  try {
-    const daily2 = await Daily2.findOne({ user: req.params.id });
-    if (!daily2) {
-      return res.send({ message: "Không tìm thấy đại lý", success: false });
-    }
-    res.send({ daily2, success: true });
-  } catch (error) {
-    res.send({ message: error.message, success: false });
-  }
-});
-
-// lay danh sach cong cu thuoc daily 2
-daily2Router.get("/danhsachcongcu/:daily2Id", async (req, res) => {
-  try {
-    const congcu = await Daily2.findById(req.params.daily2Id)
-      .select("items")
-      .populate({
-        path: "items",
-        populate: {
-          path: "congcu",
-          model: "Congcu",
-        },
-      })
-      .sort({ createdAt: "desc" });
-
-    if (!congcu) {
-      return res.send({
-        message: "Không có công cụ nào trong kho",
-        success: false,
-      });
-    }
-    res.send(congcu);
   } catch (error) {
     res.send({ message: error.message, success: false });
   }

@@ -173,12 +173,12 @@ export const headCellsPhanphat = [
     disablePadding: false,
     label: "Trạng thái",
   },
-  {
-    id: "baocao",
-    numeric: false,
-    disablePadding: false,
-    label: "Báo cáo",
-  },
+  // {
+  //   id: "baocao",
+  //   numeric: false,
+  //   disablePadding: false,
+  //   label: "Báo cáo",
+  // },
   {
     id: "hoanthanh",
     numeric: false,

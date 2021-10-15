@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ButtonMaterial from "../../components/ButtonMaterial";
 import { useSelector } from "react-redux";
-import apiDaily1 from "../../axios/apiDaily1";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import TableCongcu from "./tables/TableCongcu";
 import ModalChitietCongcu from "../../components/ModalChitietCongcu";
+import apiDaily2 from "../../axios/apiDaily2";
+import apiHodan from "../../axios/apiHodan";
 
 const Congcu = (props) => {
   const [loading, setLoading] = useState(false);
@@ -20,9 +21,10 @@ const Congcu = (props) => {
 
   const fetchDsCongcu = async () => {
     setLoading(true);
-    const { daily1 } = await apiDaily1.singleDaily1BasedUser(userInfo._id);
-    const data = await apiDaily1.dsCongcu(daily1._id);
-    setDsCongcu(data.items);
+    const { hodan } = await apiHodan.singleHodanBasedUser(userInfo._id);
+    const { congcu } = await apiHodan.dsCongcu(hodan._id);
+    // console.log(congcu);
+    setDsCongcu(congcu.items);
     setLoading(false);
   };
 
@@ -37,7 +39,7 @@ const Congcu = (props) => {
   return (
     <>
       <Wrapper>
-        <Header title="Danh sách công cụ" />
+        <Header title="Công cụ" />
         <Content>
           {/* <BtnRight>
             <ButtonMaterial
@@ -49,7 +51,7 @@ const Congcu = (props) => {
           </BtnRight> */}
           <FilterSection>
             <TitleWrapper>
-              <Title>Tất cả công cụ</Title>
+              <Title>Danh sách công cụ</Title>
             </TitleWrapper>
             <Filter>
               <SearchBox>

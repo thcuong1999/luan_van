@@ -54,6 +54,30 @@ const apiHodan = {
     const url = `/hodan/multiple`;
     return axiosClient.put(url, arrOfId);
   },
+
+  // lay danh sach phan phat thuoc ho dan
+  dsPhanphat(hodanId) {
+    const url = `/hodan/dsphanphat/${hodanId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay hodan info based userId
+  singleHodanBasedUser(userId) {
+    const url = `/hodan/singlehdbaseduser/${userId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay thong tin 1 phan phat thuoc hodan
+  singlePhanphat(hodanId, phanphatId) {
+    const url = `/hodan/singlephanphat/${hodanId}/${phanphatId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay danh sach cong cu thuoc ho dan
+  dsCongcu(hodanId) {
+    const url = `/hodan/danhsachcongcu/${hodanId}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default apiHodan;

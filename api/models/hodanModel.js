@@ -38,6 +38,10 @@ const hodanSchema = new mongoose.Schema(
           type: Boolean,
           default: false,
         },
+        phanphat: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Phanphat",
+        },
       },
     ],
     dsphanphat: [
@@ -46,11 +50,7 @@ const hodanSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Phanphat",
         },
-        daphanphatxuong: {
-          type: Boolean,
-          default: false,
-        },
-        danhapkho: {
+        daxacnhan: {
           type: Boolean,
           default: false,
         },

@@ -263,8 +263,7 @@ phanphatRouter.put("/daily2pphodan", async (req, res) => {
     hodan.dsphanphat = [
       {
         phanphat: phanphatId,
-        daphanphatxuong: false,
-        danhapkho: false,
+        daxacnhan: false,
       },
       ...hodan.dsphanphat,
     ];
@@ -313,4 +312,37 @@ phanphatRouter.put("/daily2pphodan", async (req, res) => {
   }
 });
 
+// hoan thanh phan phat (ho dan xac nhan)
+phanphatRouter.put("/hoanthanhpp", async (req, res) => {
+  const { phanphatId, hodanId, dsCongcu } = req.body;
+  try {
+    // Phanphat collection
+    const phanphat = await Phanphat.findById(phanphatId);
+    phanphat.trangthai = { daily1: "daxn", daily2: "daxn", hodan: "daxn" };
+    phanphat.hoanthanh = true;
+    await phanphat.save();
+
+    // Hodan collection
+    const hodan = await Hodan.findById(hodanId);
+    hodan.items = [
+      ...dsCongcu.map((item) => ({
+        congcu: item.congcu,
+        soluongphanphat: item.soluongphanphat,
+        ngaytiepnhan: getCurrentDatetime(),
+        phanphat: phanphatId,
+      })),
+      ...hodan.items,
+    ];
+    hodan.dsphanphat = hodan.dsphanphat.map((item) =>
+      item.phanphat.toString() === phanphatId
+        ? { phanphat: phanphatId, daxacnhan: true }
+        : item
+    );
+    await hodan.save();
+
+    res.send({ success: true });
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
 module.exports = phanphatRouter;

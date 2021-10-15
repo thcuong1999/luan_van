@@ -85,8 +85,9 @@ const apiDaily2 = {
     return axiosClient.get(url);
   },
 
-  dsCongcu(daily1Id) {
-    const url = `/daily2/danhsachcongcu/${daily1Id}`;
+  // lay ds congcu thuoc daily 2
+  dsCongcu(daily2Id) {
+    const url = `/daily2/danhsachcongcu/${daily2Id}`;
     return axiosClient.get(url);
   },
 };

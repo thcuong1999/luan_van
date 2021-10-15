@@ -14,22 +14,27 @@ import apiDaily2 from "../../../axios/apiDaily2";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
-import { headCellsCongcu } from "./headCells";
+import { headCellsPhanphatChitiet } from "./headCells";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
 // icon
 import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
+const TablePhanphatChitiet = ({
+  dsCongcu,
+  phanphat,
+  setCongcu,
+  handleOpenModal,
+}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const handleClickOpenModal = (congcu) => {
-    setCongcu(congcu);
+  const handleClickTableCell = (congcuObj) => {
+    setCongcu(congcuObj);
     handleOpenModal();
   };
 
@@ -84,6 +89,10 @@ const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsCongcu.length) : 0;
 
+  // if (loading) {
+  //   return <BackdropMaterial />;
+  // }
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
@@ -100,75 +109,73 @@ const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={dsCongcu.length}
-              headCells={headCellsCongcu}
+              rowCount={dsCongcu?.length}
+              headCells={headCellsPhanphatChitiet}
             />
             <TableBody>
-              {dsCongcu
-                .slice()
-                .sort(getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row._id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {dsCongcu &&
+                dsCongcu
+                  .slice()
+                  .sort(getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row._id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row._id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row._id}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <img
-                          src={
-                            row.congcu.hinhanh
-                              ? `/uploads/${row.congcu.hinhanh}`
-                              : img_placeholder
-                          }
-                          alt="anhcongcu"
-                          style={{ width: "30px" }}
-                          className={!row.congcu.hinhanh && "noImage"}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Link
-                          to="#"
-                          onClick={() => handleClickOpenModal(row.congcu)}
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row._id)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row._id}
+                        selected={isItemSelected}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              "aria-labelledby": labelId,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
                         >
-                          {row.congcu.ten}
-                        </Link>
-                      </TableCell>
-                      <TableCell align="right">{row.soluongphanphat}</TableCell>
-                      <TableCell align="right">
-                        {row.phanphat.from.bophankd.ten}
-                      </TableCell>
-                      <TableCell align="right">{row.ngaytiepnhan}</TableCell>
-                      <TableCell align="right">
-                        {row.daphanphat ? "Đã phân phát" : "Đang chờ"}
-                      </TableCell>
-                      {/* <TableCell align="right">
-                        <Link
-                          to={`/daily1/phanphat/chitiet/${row.phanphat?._id}`}
+                          <img
+                            src={
+                              row.congcu.hinhanh
+                                ? `/uploads/${row.congcu.hinhanh}`
+                                : img_placeholder
+                            }
+                            alt="anhcongcu"
+                            style={{ width: "30px" }}
+                            className={!row.congcu.hinhanh && "noImage"}
+                          />
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          onClick={() => handleClickTableCell(row.congcu)}
                         >
-                          <VisibilityIcon />
-                        </Link>
-                      </TableCell> */}
-                    </TableRow>
-                  );
-                })}
+                          <Link to="#">{row.congcu.ten}</Link>
+                        </TableCell>
+                        <TableCell align="right">
+                          {row.soluongphanphat}
+                        </TableCell>
+                        <TableCell align="right">{phanphat.ngaytao}</TableCell>
+                        <TableCell align="right">
+                          {phanphat.phanphat.trangthai.daily2 === "choxn"
+                            ? "Chờ xác nhận"
+                            : "Đã xác nhận"}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               {emptyRows > 0 && (
                 <TableRow
                   style={{
@@ -184,7 +191,7 @@ const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
           colSpan={3}
-          count={dsCongcu.length}
+          count={dsCongcu?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           SelectProps={{
@@ -203,4 +210,4 @@ const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
   );
 };
 
-export default TableCongcu;
+export default TablePhanphatChitiet;

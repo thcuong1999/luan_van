@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import Header from "../../components/Header";
 import styled from "styled-components";
+import { arrOfLinks } from "./links";
 
 const Sanpham = (props) => {
   const [query, setQuery] = React.useState("");
@@ -45,7 +46,7 @@ const Sanpham = (props) => {
   return (
     <>
       <Wrapper>
-        <Header title="Danh sách sản phẩm" />
+        <Header title="Danh sách sản phẩm" arrOfLinks={arrOfLinks} />
         <Content>
           <BtnRight>
             <ButtonMaterial

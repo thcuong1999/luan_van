@@ -42,13 +42,7 @@ export const headCellsPhanphat = [
     id: "trunggian",
     numeric: false,
     disablePadding: false,
-    label: "Trung gian đại lý 1",
-  },
-  {
-    id: "hodandich",
-    numeric: false,
-    disablePadding: false,
-    label: "Hộ dân đích",
+    label: "Đại lý trung gian",
   },
   {
     id: "tongcongcu",
@@ -135,15 +129,15 @@ export const headCellsCongcu = [
     label: "Bộ phận gửi",
   },
   {
+    id: "dailytrunggian",
+    numeric: false,
+    disablePadding: false,
+    label: "Đại lý trung gian",
+  },
+  {
     id: "ngaytiepnhan",
     numeric: false,
     disablePadding: false,
     label: "Ngày tiếp nhận",
-  },
-  {
-    id: "daphanphat",
-    numeric: false,
-    disablePadding: false,
-    label: "Đã phân phát",
   },
 ];
