@@ -5,8 +5,10 @@ import ButtonMaterial from "../../components/ButtonMaterial";
 import TableGSV from "./tables/TableGSV";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import apiGSV from "../../axios/apiGSV";
+import SnackbarMaterial from "../../components/SnackbarMaterial";
 
 const GSV = (props) => {
+  const [alert, setAlert] = React.useState(false);
   const [query, setQuery] = useState("");
   const [searchColumns] = useState(["ten", "sdt", "cmnd", "taikhoan", "email"]);
   const [dsGsv, setDsGsv] = useState([]);
@@ -43,6 +45,7 @@ const GSV = (props) => {
   useEffect(() => {
     setRowsRemoved(false);
     fetchDsGsv();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowsRemoved]);
 
   if (loading) {
@@ -50,36 +53,52 @@ const GSV = (props) => {
   }
 
   return (
-    <Container>
-      <Header title="Danh sách giám sát vùng" />
-      <Content>
-        <BtnRight>
-          <ButtonMaterial
-            variant="contained"
-            onClick={() => props.history.push("/admin/gsv/them")}
-          >
-            Thêm giám sát vùng
-          </ButtonMaterial>
-        </BtnRight>
-        <FilterSection>
-          <TitleWrapper>
-            <Title>Tất cả giám sát vùng</Title>
-          </TitleWrapper>
-          <Filter>
-            <SearchBox>
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Tim giám sát vùng theo tên đại diện, số điện thoại, cmnd, tài khoản, năm sinh"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+    <>
+      <Container>
+        <Header title="Danh sách giám sát vùng" />
+        <Content>
+          <BtnRight>
+            <ButtonMaterial
+              variant="contained"
+              onClick={() => props.history.push("/admin/gsv/them")}
+            >
+              Thêm giám sát vùng
+            </ButtonMaterial>
+          </BtnRight>
+          <FilterSection>
+            <TitleWrapper>
+              <Title>Tất cả giám sát vùng</Title>
+            </TitleWrapper>
+            <Filter>
+              <SearchBox>
+                <i class="fas fa-search"></i>
+                <input
+                  type="text"
+                  placeholder="Tim giám sát vùng theo tên đại diện, số điện thoại, cmnd, tài khoản, năm sinh"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </SearchBox>
+            </Filter>
+
+            <TableSection>
+              <TableGSV
+                dsGsv={search(dsGsv)}
+                setRowsRemoved={setRowsRemoved}
+                setAlert={setAlert}
               />
-            </SearchBox>
-          </Filter>
-          <TableGSV dsGsv={search(dsGsv)} setRowsRemoved={setRowsRemoved} />
-        </FilterSection>
-      </Content>
-    </Container>
+            </TableSection>
+          </FilterSection>
+        </Content>
+      </Container>
+
+      <SnackbarMaterial
+        severity="success"
+        message="Xóa thành công"
+        open={alert}
+        setOpen={setAlert}
+      />
+    </>
   );
 };
 
@@ -88,41 +107,35 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 0 36px;
 `;
-
 const BtnRight = styled.div`
   text-align: right;
   padding: 16px 0;
 `;
-
 const FilterSection = styled.div`
   background: #fff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
   font-weight: 500;
   color: #1e93e8;
+  font-family: "Poppins", sans-serif;
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const Filter = styled.div`
   background: #fff;
   padding: 14px 17px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const SearchBox = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
   width: 50%;
@@ -141,10 +154,18 @@ const SearchBox = styled.div`
     padding: 0 10px;
     color: #182537;
     font-size: 14px;
+    font-family: "Poppins", sans-serif;
     &::placeholder {
       font-size: 14px;
       color: rgba(0, 0, 0, 0.35);
+      font-family: "Poppins", sans-serif;
     }
+  }
+`;
+const TableSection = styled.div`
+  th,
+  td {
+    font-family: "Poppins", sans-serif;
   }
 `;
 

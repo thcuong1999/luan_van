@@ -8,7 +8,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 const StyledTableCell = styledMaterial(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -30,7 +29,8 @@ const StyledTableRow = styledMaterial(TableRow)(({ theme }) => ({
   },
 }));
 
-const TablePhanphatChitiet = ({ dsCongcu, phanphat }) => {
+const TablePhanphatChitiet = ({ dsCongcu = [], phanphat }) => {
+  console.log({ DSCC: dsCongcu });
   return (
     <TableContainer component={Paper}>
       <Table
@@ -52,7 +52,7 @@ const TablePhanphatChitiet = ({ dsCongcu, phanphat }) => {
           {dsCongcu.map((row) => (
             <StyledTableRow key={row.congcu._id}>
               <StyledTableCell component="th" scope="row">
-                {/* <img
+                <img
                   src={
                     row?.congcu.hinhanh
                       ? `/uploads/${row?.congcu?.hinhanh}`
@@ -61,7 +61,7 @@ const TablePhanphatChitiet = ({ dsCongcu, phanphat }) => {
                   alt="anhcongcu"
                   style={{ width: "30px" }}
                   className={!row?.congcu?.hinhanh && "noImage"}
-                /> */}
+                />
               </StyledTableCell>
               <StyledTableCell>{row?.congcu?.ten}</StyledTableCell>
               <StyledTableCell>{row?.congcu?.congdung}</StyledTableCell>

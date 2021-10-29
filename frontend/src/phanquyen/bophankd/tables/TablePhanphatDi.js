@@ -31,7 +31,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const TablePhanphatDi = ({
-  danhsachCongcu,
+  danhsachCongcu = [],
   setDanhsachCongcu,
   handleRemoveRow,
 }) => {

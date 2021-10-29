@@ -9,16 +9,11 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiDaily2 from "../../../axios/apiDaily2";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import EnhancedTableToolbar from "../../../components/table/EnhancedTableToolbar";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsPhanphat } from "./headCells";
-// icon
-import ClearIcon from "@mui/icons-material/Clear";
-import CheckIcon from "@mui/icons-material/Check";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const TablePhanphatDen = ({ dsPhanphat = [] }) => {
@@ -34,7 +29,6 @@ const TablePhanphatDen = ({ dsPhanphat = [] }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsPhanphat.map((item) => item._id);

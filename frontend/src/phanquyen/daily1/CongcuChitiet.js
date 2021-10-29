@@ -12,10 +12,9 @@ import apiCongcu from "../../axios/apiCongcu";
 const CongcuChitiet = (props) => {
   const [open, setOpen] = React.useState(false);
   const { id: congcuId } = props.match.params;
-
-  // api
   const [loading, setLoading] = useState(false);
   const [congcu, setCongcu] = useState({});
+
   const fetchCongcu = async () => {
     setLoading(true);
     const data = await apiCongcu.singleCongcu(congcuId);
@@ -171,7 +170,7 @@ const CongcuChitiet = (props) => {
         open={open}
         onClose={handleClose}
         title="Xóa công cụ?"
-        content="Bạn chắc xóa vĩnh viễn công cụ này chứ ?"
+        content="Bạn chắc xóa công cụ này chứ ?"
         onClick1={handleDelete}
         onClick2={handleClose}
         text1="Xóa"

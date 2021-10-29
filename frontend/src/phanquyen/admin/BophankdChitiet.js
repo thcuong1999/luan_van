@@ -4,12 +4,10 @@ import "toastify-js/src/toastify.css";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import ButtonMaterial from "../../components/ButtonMaterial";
-import InputText from "../../components/InputText";
 import apiBophankd from "../../axios/apiBophankd";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DialogMaterial from "../../components/DialogMaterial";
-import Button from "@mui/material/Button";
 
 const BophankdChitiet = (props) => {
   const [bophankd, setBophankd] = useState(null);
@@ -24,7 +22,7 @@ const BophankdChitiet = (props) => {
     const data = await apiBophankd.xoa1Bophankd(bophankdId);
     if (data.success) {
       Toastify({
-        text: "Then nhan hieu thanh cong",
+        text: "Xóa thành công",
         backgroundColor: "#0DB473",
         className: "toastifyInfo",
         position: "center",
@@ -36,13 +34,13 @@ const BophankdChitiet = (props) => {
   const fetchBophankd = async () => {
     setLoading(true);
     const data = await apiBophankd.singleBophankd(bophankdId);
-    // console.log(data);
     setBophankd(data.bophankd);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchBophankd();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -51,7 +49,7 @@ const BophankdChitiet = (props) => {
 
   return (
     <>
-      <BophankinhdoanhThemWrapper>
+      <Container>
         <Header
           title="Quay lại danh sách bộ phận kinh doanh"
           titleBack
@@ -79,54 +77,40 @@ const BophankdChitiet = (props) => {
         />
         <Content>
           <Form>
-            <div className="row">
-              <div className="col-lg-6">
-                <FormGroup>
-                  <InputText
-                    label="Tên BPKD"
-                    name="ten"
-                    value={bophankd?.ten}
-                  />
-                </FormGroup>
+            <FormContent>
+              <FormTitle>Chi tiết bộ phận kinh doanh</FormTitle>
+              <FormGroup>
+                <Label>Tên bộ phận kinh doanh:</Label>
+                <Input type="text" name="ten" value={bophankd?.ten} />
+              </FormGroup>
 
-                <FormGroup>
-                  <InputText
-                    label="Tên tài khoản"
-                    name="taikhoan"
-                    value={bophankd?.user?.taikhoan}
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-lg-6">
-                <FormGroup>
-                  <InputText
-                    label="Số điện thoại"
-                    name="sdt"
-                    value={bophankd?.sdt}
-                  />
-                </FormGroup>
+              <FormGroup>
+                <Label>Tên tài khoản:</Label>
+                <Input
+                  type="text"
+                  name="taikhoan"
+                  value={bophankd?.user?.taikhoan}
+                />
+              </FormGroup>
 
-                <FormGroup>
-                  <InputText
-                    label="E-mail"
-                    name="email"
-                    value={bophankd?.email}
-                  />
-                </FormGroup>
+              <FormGroup>
+                <Label>Số điện thoại:</Label>
+                <Input type="text" name="sdt" value={bophankd?.sdt} />
+              </FormGroup>
 
-                <FormGroup>
-                  <InputText
-                    multiline
-                    rows={4}
-                    label="Địa chỉ"
-                    value={bophankd?.diachi}
-                  />
-                </FormGroup>
-              </div>
-            </div>
+              <FormGroup>
+                <Label>E-mail:</Label>
+                <Input type="text" name="email" value={bophankd?.email} />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Địa chỉ:</Label>
+                <TextArea value={bophankd?.diachi} rows="5" />
+              </FormGroup>
+            </FormContent>
           </Form>
         </Content>
-      </BophankinhdoanhThemWrapper>
+      </Container>
 
       <DialogMaterial
         open={open}
@@ -142,37 +126,62 @@ const BophankdChitiet = (props) => {
   );
 };
 
-const BophankinhdoanhThemWrapper = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
 `;
-
 const Form = styled.div`
   background: #fff;
   padding: 36px 20px;
 `;
-
+const FormContent = styled.div`
+  width: 750px;
+  margin: auto;
+  font-family: "Poppins", sans-serif;
+`;
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
+  margin-bottom: 36px;
+`;
 const FormGroup = styled.div`
-  margin-bottom: 20px;
-  span {
-    font-size: 15px;
-    color: #555;
-    display: block;
-    margin-bottom: 10px;
+  margin-bottom: 26px;
+`;
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
   }
 `;
-
-const ErrMsg = styled.div`
-  font-size: 13px;
-  color: red;
-  margin-top: 4px;
+const TextArea = styled.textarea`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
 `;
 
 export default BophankdChitiet;

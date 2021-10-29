@@ -16,7 +16,7 @@ import EnhancedTableToolbar from "../../../components/table/EnhancedTableToolbar
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsKhohang } from "./headCells";
 
-const TableKhohang = ({ dsSanpham }) => {
+const TableKhohang = ({ dsSanpham = [] }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -29,7 +29,6 @@ const TableKhohang = ({ dsSanpham }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsSanpham.map((item) => item._id);

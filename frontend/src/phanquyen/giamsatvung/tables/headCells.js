@@ -3,7 +3,7 @@ export const headCellsLangnghe = [
     id: "ten",
     numeric: false,
     disablePadding: false,
-    label: "Tên sản phẩm",
+    label: "Tên",
   },
   {
     id: "tinh",
@@ -50,6 +50,12 @@ export const headCellsHodan = [
     numeric: true,
     disablePadding: false,
     label: "Năm sinh",
+  },
+  {
+    id: "nghe",
+    numeric: false,
+    disablePadding: false,
+    label: "Nghề",
   },
   {
     id: "langnghe",

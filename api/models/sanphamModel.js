@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const sanphamSchema = new mongoose.Schema(
   {
-    sku: {
+    ma: {
       type: String,
     },
     ten: {
@@ -24,16 +24,10 @@ const sanphamSchema = new mongoose.Schema(
     thuoctinh: [],
     loai: {
       type: String,
-      enum: ["thucongmynghe", "nongsan", "nguyenlieu"],
     },
     nhanhieu: {
       type: String,
     },
-    tags: [
-      {
-        type: String,
-      },
-    ],
     chophepban: {
       type: Boolean,
     },
@@ -41,13 +35,8 @@ const sanphamSchema = new mongoose.Schema(
       type: Boolean,
     },
     cotheban: {
-      // so luong co the ban
       type: Number,
     },
-    // khohang: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Khohang",
-    // },
     ngaytao: String,
   },
   {

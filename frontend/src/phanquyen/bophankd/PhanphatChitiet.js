@@ -1,22 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import styled from "styled-components";
-import apiDaily1 from "../../axios/apiDaily1";
-import apiDaily2 from "../../axios/apiDaily2";
 import apiLangnghe from "../../axios/apiLangnghe";
 import ButtonMaterial from "../../components/ButtonMaterial";
-import DropdownCustom from "../../components/DropdownCustom";
 import Header from "../../components/Header";
-import TablePhanphatDi from "./tables/TablePhanphatDi";
-import { useSelector } from "react-redux";
-import apiBophankd from "../../axios/apiBophankd";
-import apiHodan from "../../axios/apiHodan";
 import apiPhanphat from "../../axios/apiPhanphat";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import TablePhanphatChitiet from "./tables/TablePhanphatChitiet";
 
-const PhanphatThem = (props) => {
+const PhanphatChitiet = (props) => {
   const [phanphat, setPhanphat] = useState(null);
   const [langnghe, setLangnghe] = useState(null);
   const [hodan, setHodan] = useState(null);
@@ -45,6 +36,7 @@ const PhanphatThem = (props) => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -157,25 +149,22 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
+  font-family: "Poppins", sans-serif;
 `;
-
 const FormWrapper = styled.div`
   background: #fff;
   padding: 36px 20px 16px 36px;
   width: 100%;
 `;
-
 const Form = styled.div`
   width: 570px;
   margin: auto;
   padding: 0 26px;
 `;
-
 const FormTitle = styled.div`
   font-size: 26px;
   font-weight: bold;
@@ -183,14 +172,12 @@ const FormTitle = styled.div`
   margin-bottom: 20px;
   text-align: center;
 `;
-
 const Label = styled.span`
   font-size: 16px;
   color: #333;
   display: block;
   margin-bottom: 10px;
 `;
-
 const Input = styled.input`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -202,7 +189,6 @@ const Input = styled.input`
     border: 1px solid blue;
   }
 `;
-
 const FormGroup = styled.div`
   margin-bottom: 20px;
   span {
@@ -212,17 +198,9 @@ const FormGroup = styled.div`
     margin-bottom: 10px;
   }
 `;
-
-const ErrMsg = styled.span`
-  font-size: 15px;
-  color: red !important;
-  margin-top: -10px;
-`;
-
 const FilterSection = styled.div`
   background: #fff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
@@ -231,21 +209,18 @@ const Title = styled.div`
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 `;
-
 const ButtonRight = styled.div`
   text-align: right;
   margin-top: 12px;
 `;
-
 const StatusSection = styled.div`
   background-color: #fff;
   margin-top: 16px;
   padding: 20px;
 `;
 
-export default PhanphatThem;
+export default PhanphatChitiet;

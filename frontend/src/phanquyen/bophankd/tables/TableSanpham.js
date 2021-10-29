@@ -1,6 +1,4 @@
 import * as React from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,28 +10,28 @@ import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link, useHistory } from "react-router-dom";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
-// ====
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsSanpham } from "./headCells";
-import DropdownCustom from "../../../components/DropdownCustom";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import DialogMaterial from "../../../components/DialogMaterial";
 import apiBophankd from "../../../axios/apiBophankd";
+import TableButton from "../../../components/TableButton";
 
 const EnhancedTableToolbar = ({
   numSelected,
   rowsSelected,
-  toolbarSelectedDropdownVal,
+  onClickChitiet,
+  onClickXoa,
 }) => {
   return numSelected > 0 ? (
     <>
       <Toolbar
         sx={{
-          pl: { sm: 8 },
+          pl: { sm: 7 },
           pr: { xs: 1, sm: 1 },
           ...(numSelected > 0 && {
             bgcolor: (theme) =>
@@ -52,22 +50,14 @@ const EnhancedTableToolbar = ({
             component="div"
           >
             <div className="d-flex align-items-center">
-              <span>Đã chọn {numSelected} dòng</span>
-              <DropdownCustom
-                selected="Chọn thao tác"
-                onClick={(val) => toolbarSelectedDropdownVal(val)}
-                data={
-                  rowsSelected.length === 1
-                    ? ["Chi tiết sản phẩm", "Cập nhật sản phẩm", "Xóa sản phẩm"]
-                    : ["Xóa sản phẩm"]
-                }
-                dropdownStyles={{ width: 250, marginLeft: 16 }}
-                dropdownBtnStyles={{
-                  paddingTop: 7,
-                  paddingBottom: 7,
-                  paddingLeft: 15,
-                }}
-              />
+              {rowsSelected.length === 1 ? (
+                <>
+                  <TableButton onClick={onClickChitiet}>Chi tiết</TableButton>
+                  <TableButton onClick={onClickXoa}>Xóa</TableButton>
+                </>
+              ) : (
+                <TableButton onClick={onClickXoa}>Xóa</TableButton>
+              )}
             </div>
           </Typography>
         ) : (
@@ -85,9 +75,7 @@ const EnhancedTableToolbar = ({
   ) : null;
 };
 
-const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
-  // console.log({dsSanpham})
-  // console.log({ khohang });
+const TableSanpham = ({ dsSanpham = [], setRowsRemoved, bophankdId, setAlert }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -99,15 +87,10 @@ const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const toolbarSelectedDropdownVal = (val) => {
-    if (val === "Chi tiết sản phẩm") {
-      history.push(`/bophankd/sanpham/chitiet/${selected[0]}`);
-    } else if (val === "Cập nhật sản phẩm") {
-      history.push(`/bophankd/sanpham/chinhsua/${selected[0]}`);
-    } else if (val === "Xóa sản phẩm") {
-      handleOpen();
-    }
-  };
+  const onClickChitiet = () =>
+    history.push(`/bophankd/sanpham/chitiet/${selected[0]}`);
+
+  const onClickXoa = () => handleOpen();
 
   const handleDeleteRow = async () => {
     console.log({
@@ -119,12 +102,7 @@ const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
       bophankdId,
     });
     if (data.success) {
-      Toastify({
-        text: "Xóa bộ phận kinh doanh thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
+      setAlert(true);
       setRowsRemoved(true);
     }
   };
@@ -135,7 +113,6 @@ const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsSanpham.map((item) => item._id);
@@ -180,14 +157,6 @@ const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsSanpham.length) : 0;
 
-  const getSlTonkho = (rowId) => {
-    const foundSp = khohang.find((item) => item.sanpham._id === rowId);
-    if (foundSp) {
-      return foundSp.tonkho;
-    }
-    return null;
-  };
-
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -195,7 +164,8 @@ const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
           <EnhancedTableToolbar
             numSelected={selected.length}
             rowsSelected={selected}
-            toolbarSelectedDropdownVal={toolbarSelectedDropdownVal}
+            onClickChitiet={onClickChitiet}
+            onClickXoa={onClickXoa}
           />
           <TableContainer>
             <Table
@@ -241,6 +211,7 @@ const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
                             }}
                           />
                         </TableCell>
+                        <TableCell align="right">{row.ma}</TableCell>
                         <TableCell
                           component="th"
                           id={labelId}
@@ -263,19 +234,9 @@ const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
                             {row.ten}
                           </Link>
                         </TableCell>
-                        <TableCell align="right">
-                          {row.loai === "nongsan"
-                            ? "Nông sản"
-                            : row.loai === "nguyenlieu"
-                            ? "Nguyên liệu"
-                            : "Thủ công mỹ nghệ"}
-                        </TableCell>
-                        <TableCell align="right">{row.nhanhieu}</TableCell>
                         <TableCell align="right">{row.cotheban}</TableCell>
-                        <TableCell align="right">
-                          {getSlTonkho(row._id)}
-                        </TableCell>
-                        <TableCell align="right">{row.ngaytao}</TableCell>
+                        <TableCell align="right">{row.loai}</TableCell>
+                        <TableCell align="right">{row.nhanhieu}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -314,8 +275,8 @@ const TableSanpham = ({ dsSanpham, khohang, setRowsRemoved, bophankdId }) => {
       <DialogMaterial
         open={open}
         onClose={handleClose}
-        title="Xóa bộ phận kinh doanh"
-        content="Bạn chắc xóa bộ phận kinh doanh này chứ?"
+        title="Xóa sản phẩm"
+        content="Bạn chắc xóa sản phẩm này chứ?"
         text1="Hủy"
         text2="Xóa"
         onClick1={handleClose}

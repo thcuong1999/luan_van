@@ -30,7 +30,7 @@ const StyledTableRow = styled1(TableRow)(({ theme }) => ({
   },
 }));
 
-const TableBaocaoThieu = ({ rows, setCongcuThieu }) => {
+const TableBaocaoThieu = ({ rows = [], setCongcuThieu }) => {
   const [dsCongcu, setDsCongcu] = React.useState([]);
   console.log({ rows });
 
@@ -66,8 +66,8 @@ const TableBaocaoThieu = ({ rows, setCongcuThieu }) => {
       soluongthieu: "",
       ...item,
     }));
-    // console.log(mappedState);
     setDsCongcu(mappedState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

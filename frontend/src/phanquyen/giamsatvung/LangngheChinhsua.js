@@ -87,6 +87,7 @@ const LangngheThem = (props) => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -94,21 +95,22 @@ const LangngheThem = (props) => {
   }
 
   return (
-    <Wrapper>
+    <Container>
       <Header
         title="Quay lại danh sách làng nghề"
         titleBack
         onClick={() => props.history.push("/giamsatvung/langnghe")}
-        // headerRight={
-        //   <ButtonMaterial variant="contained" onClick={handleSubmit}>
-        //     Lưu
-        //   </ButtonMaterial>
-        // }
+        headerRight={
+          <ButtonMaterial variant="contained" onClick={handleSubmit}>
+            Cập nhật
+          </ButtonMaterial>
+        }
       />
       <Content>
-        <FormWrapper>
-          <Form>
-            <Title>Chỉnh sửa làng nghề</Title>
+        <Form>
+          <FormContent>
+            <FormTitle>Cập nhật làng nghề</FormTitle>
+
             <FormGroup>
               <Label>Tên làng:</Label>
               <Input
@@ -149,7 +151,6 @@ const LangngheThem = (props) => {
             <FormGroup>
               <Label>Sản phẩm chính:</Label>
               <DropdownCustom
-                label="Chọn loại sản phẩm"
                 dropdownStyles={{ width: "100%" }}
                 selected={sanphamchinh}
                 data={dsLoaiSp.map((item) => item.ten)}
@@ -158,54 +159,39 @@ const LangngheThem = (props) => {
                 }}
               />
             </FormGroup>
-
-            <ButtonRight>
-              <ButtonMaterial variant="contained" onClick={handleSubmit}>
-                Cập nhật
-              </ButtonMaterial>
-            </ButtonRight>
-          </Form>
-        </FormWrapper>
+          </FormContent>
+        </Form>
       </Content>
-    </Wrapper>
+    </Container>
   );
 };
 
-const Wrapper = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
 `;
-
-const FormWrapper = styled.div`
-  width: 100%;
-  height: 90vh;
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 const Form = styled.div`
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  padding: 26px;
+  background: #fff;
+  padding: 36px 20px;
+`;
+const FormContent = styled.div`
   width: 570px;
+  margin: auto;
+  font-family: "Poppins", sans-serif;
 `;
-
-const Title = styled.div`
-  font-size: 26px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: 600;
   text-align: center;
+  color: #555;
+  margin-bottom: 36px;
 `;
-
 const FormGroup = styled.div`
   margin-bottom: 26px;
 `;
@@ -215,7 +201,6 @@ const Label = styled.span`
   display: block;
   margin-bottom: 10px;
 `;
-
 const Input = styled.input`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -227,9 +212,10 @@ const Input = styled.input`
     border: 1px solid blue;
   }
 `;
-
-const ButtonRight = styled.div`
-  text-align: right;
+const ErrMsg = styled.div`
+  font-size: 13px;
+  color: red;
+  margin-top: 4px;
 `;
 
 export default LangngheThem;

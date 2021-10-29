@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import styled from "styled-components";
 import apiDaily1 from "../../axios/apiDaily1";
 import apiDaily2 from "../../axios/apiDaily2";
@@ -8,18 +6,15 @@ import apiLangnghe from "../../axios/apiLangnghe";
 import ButtonMaterial from "../../components/ButtonMaterial";
 import DropdownCustom from "../../components/DropdownCustom";
 import Header from "../../components/Header";
-import TablePhanphatDi from "./tables/TablePhanphatDi";
-import { useSelector } from "react-redux";
-import apiBophankd from "../../axios/apiBophankd";
 import apiHodan from "../../axios/apiHodan";
 import apiPhanphat from "../../axios/apiPhanphat";
-import BackdropMaterial from "../../components/BackdropMaterial";
 import TablePhanphatChinhsua from "./tables/TablePhanphatChinhsua";
+import SnackbarMaterial from "../../components/SnackbarMaterial";
 
 const PhanphatChinhsua = (props) => {
+  const [alert, setAlert] = React.useState(false);
   const [dsCongcu, setDsCongcu] = useState([]);
   const { id: phanphatId } = props.match.params;
-  //===
   const [phanphat, setPhanphat] = useState(null);
   const [langnghe, setLangnghe] = useState("Chọn làng nghề");
   const [dsLangnghe, SetDsLangnghe] = useState([]);
@@ -65,15 +60,9 @@ const PhanphatChinhsua = (props) => {
         phanphatId,
         payload,
       });
-      console.log(data);
       if (data.success) {
-        Toastify({
-          text: "Cập nhật phân phát thành công",
-          backgroundColor: "#0DB473",
-          className: "toastifyInfo",
-          position: "center",
-        }).showToast();
-        props.history.push(`/bophankd/phanphat/chitiet/${phanphatId}`);
+        setAlert(true);
+        setErrMsg("");
       }
     }
   };
@@ -152,104 +141,115 @@ const PhanphatChinhsua = (props) => {
     fetchDsLangnghe();
     fetchDsHodan();
     fetchDsDaily();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [langnghe, hodan]);
 
   useEffect(() => {
     fetchDataFirstRender();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Wrapper>
-      <Header
-        title="Quay về trang danh sách phân phát"
-        titleBack
-        onClick={() => props.history.push("/bophankd/phanphat")}
+    <>
+      <Wrapper>
+        <Header
+          title="Quay về trang danh sách phân phát"
+          titleBack
+          onClick={() => props.history.push("/bophankd/phanphat")}
+        />
+        <Content>
+          <FormWrapper>
+            <Form>
+              <FormTitle>Tiến hành phân phát</FormTitle>
+              <FormGroup>
+                <Label>Làng nghề:</Label>
+                <DropdownCustom
+                  dropdownStyles={{ width: "100%", marginBottom: 16 }}
+                  data={dsLangnghe.map(
+                    (item) => `${item.ten}, ${item.tinh}, ${item.huyen}`
+                  )}
+                  selected={langnghe}
+                  onClick={(val) => {
+                    setLangnghe(val);
+                    setHodan("Chọn hộ dân");
+                    setDaily2("");
+                    setDaily1("");
+                    setErrMsg("");
+                    // setSelectedDaily1(
+                    //   dsLangnghe.find((item) => item.ten === val)
+                    // );
+                  }}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Hộ dân:</Label>
+                <DropdownCustom
+                  dropdownStyles={{ width: "100%", marginBottom: 16 }}
+                  data={dsHodan.map(
+                    (item) =>
+                      `${item.daidien},  ${item.diachi.split(",")[0]}, ${
+                        item.sdt
+                      }`
+                  )}
+                  selected={hodan}
+                  onClick={(val) => {
+                    setHodan(val);
+                    setErrMsg("");
+                    // setSelectedDaily1(
+                    //   dsLangnghe.find((item) => item.ten === val)
+                    // );
+                  }}
+                />
+                {hodan === "Chọn hộ dân" && <ErrMsg>{errMsg}</ErrMsg>}
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Đại lý cấp 2:</Label>
+                <Input
+                  type="text"
+                  value={daily2 && `${daily2.ten}, ${daily2.diachi}`}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Đại lý cấp 1:</Label>
+                <Input
+                  type="text"
+                  value={daily1 && `${daily1.ten}, ${daily1.diachi}`}
+                />
+              </FormGroup>
+            </Form>
+          </FormWrapper>
+
+          <FilterSection>
+            <TitleWrapper>
+              <Title>Các công cụ đã chọn</Title>
+            </TitleWrapper>
+
+            <TablePhanphatChinhsua
+              dsCongcu={dsCongcu}
+              phanphat={phanphat}
+              handleRemoveRow={handleRemoveRow}
+              setDsCongcu={setDsCongcu}
+            />
+          </FilterSection>
+
+          <ButtonRight>
+            <ButtonMaterial variant="contained" onClick={handleChinhPhanphat}>
+              Cập nhật
+            </ButtonMaterial>
+          </ButtonRight>
+        </Content>
+      </Wrapper>
+
+      <SnackbarMaterial
+        severity="success"
+        message="Chỉnh sửa thành công"
+        open={alert}
+        setOpen={setAlert}
       />
-      <Content>
-        <FormWrapper>
-          <Form>
-            <FormTitle>Tiến hành phân phát</FormTitle>
-            <FormGroup>
-              <Label>Làng nghề:</Label>
-              <DropdownCustom
-                dropdownStyles={{ width: "100%", marginBottom: 16 }}
-                data={dsLangnghe.map(
-                  (item) => `${item.ten}, ${item.tinh}, ${item.huyen}`
-                )}
-                selected={langnghe}
-                onClick={(val) => {
-                  setLangnghe(val);
-                  setHodan("Chọn hộ dân");
-                  setDaily2("");
-                  setDaily1("");
-                  setErrMsg("");
-                  // setSelectedDaily1(
-                  //   dsLangnghe.find((item) => item.ten === val)
-                  // );
-                }}
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Hộ dân:</Label>
-              <DropdownCustom
-                dropdownStyles={{ width: "100%", marginBottom: 16 }}
-                data={dsHodan.map(
-                  (item) =>
-                    `${item.daidien},  ${item.diachi.split(",")[0]}, ${
-                      item.sdt
-                    }`
-                )}
-                selected={hodan}
-                onClick={(val) => {
-                  setHodan(val);
-                  setErrMsg("");
-                  // setSelectedDaily1(
-                  //   dsLangnghe.find((item) => item.ten === val)
-                  // );
-                }}
-              />
-              {hodan === "Chọn hộ dân" && <ErrMsg>{errMsg}</ErrMsg>}
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Đại lý cấp 2:</Label>
-              <Input
-                type="text"
-                value={daily2 && `${daily2.ten}, ${daily2.diachi}`}
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Đại lý cấp 1:</Label>
-              <Input
-                type="text"
-                value={daily1 && `${daily1.ten}, ${daily1.diachi}`}
-              />
-            </FormGroup>
-          </Form>
-        </FormWrapper>
-
-        <FilterSection>
-          <TitleWrapper>
-            <Title>Các công cụ đã chọn</Title>
-          </TitleWrapper>
-
-          <TablePhanphatChinhsua
-            dsCongcu={dsCongcu}
-            phanphat={phanphat}
-            handleRemoveRow={handleRemoveRow}
-            setDsCongcu={setDsCongcu}
-          />
-        </FilterSection>
-
-        <ButtonRight>
-          <ButtonMaterial variant="contained" onClick={handleChinhPhanphat}>
-            Cập nhật
-          </ButtonMaterial>
-        </ButtonRight>
-      </Content>
-    </Wrapper>
+    </>
   );
 };
 
@@ -258,25 +258,22 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
+  font-family: "Poppins", sans-serif;
 `;
-
 const FormWrapper = styled.div`
   background: #fff;
   padding: 36px 20px 16px 36px;
   width: 100%;
 `;
-
 const Form = styled.div`
   width: 570px;
   margin: auto;
   padding: 0 26px;
 `;
-
 const FormTitle = styled.div`
   font-size: 26px;
   font-weight: bold;
@@ -284,14 +281,12 @@ const FormTitle = styled.div`
   margin-bottom: 20px;
   text-align: center;
 `;
-
 const Label = styled.span`
   font-size: 16px;
   color: #333;
   display: block;
   margin-bottom: 10px;
 `;
-
 const Input = styled.input`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -303,7 +298,6 @@ const Input = styled.input`
     border: 1px solid blue;
   }
 `;
-
 const FormGroup = styled.div`
   margin-bottom: 20px;
   span {
@@ -313,17 +307,14 @@ const FormGroup = styled.div`
     margin-bottom: 10px;
   }
 `;
-
 const ErrMsg = styled.span`
   font-size: 15px;
   color: red !important;
   margin-top: -10px;
 `;
-
 const FilterSection = styled.div`
   background: #fff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
@@ -332,12 +323,10 @@ const Title = styled.div`
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 `;
-
 const ButtonRight = styled.div`
   text-align: right;
   margin-top: 20px;

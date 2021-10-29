@@ -23,6 +23,7 @@ const ModalTienhanhPhanphat = ({
   handleTienhanhPhanphat,
 }) => {
   const { daily2Info, hodanInfo } = info;
+
   return (
     <div>
       <Modal

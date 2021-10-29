@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 
-const InputPassword = ({ value, onChange, label, name }) => {
+const InputPassword = ({ value, onChange, label, name, style }) => {
   const [values, setValues] = React.useState({
     amount: "",
     password: "",
@@ -50,6 +50,7 @@ const InputPassword = ({ value, onChange, label, name }) => {
             </InputAdornment>
           }
           label="Password"
+          style={style}
         />
       </FormControl>
     </div>

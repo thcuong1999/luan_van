@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import BackdropMaterial from "../../components/BackdropMaterial";
-import Axios from "axios";
 import img_placeholder from "../../assets/images/img_placeholder.png";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-import InputText from "../../components/InputText";
 import DialogMaterial from "../../components/DialogMaterial";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ButtonMaterial from "../../components/ButtonMaterial";
@@ -19,8 +17,6 @@ const CongcuChitiet = (props) => {
   const { id: congcuId } = props.match.params;
   const [bophankdInfo, setBophankdInfo] = useState(null);
   const { userInfo } = useSelector((state) => state.user);
-
-  // api
   const [loading, setLoading] = useState(false);
   const [congcu, setCongcu] = useState({});
 
@@ -98,6 +94,7 @@ const CongcuChitiet = (props) => {
         />
         <Content>
           <Form>
+            <FormTitle>Chi tiết công cụ</FormTitle>
             <div className="row">
               <div className="col-lg-6">
                 <FormGroup>
@@ -179,82 +176,38 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
-  padding: 20px 36px;
+  padding: 26px 36px;
 `;
-
 const Form = styled.div`
   background: #fff;
-  padding: 36px 20px;
+  padding: 30px 20px;
+  font-family: "Poppins", sans-serif;
 `;
-
 const FormGroup = styled.div`
   margin-bottom: 26px;
 `;
-
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: bold;
+  text-align: left;
+  color: #555;
+  margin-bottom: 26px;
+`;
 const Image = styled.img`
   width: 200px;
   &.noImage {
     opacity: 0.15;
   }
 `;
-
-const CrossButton = styled.button`
-  border: none;
-  margin-left: 10px;
-  background: #fff;
-  outline: none;
-  i {
-    font-size: 26px;
-    color: rgba(0, 0, 0, 0.3);
-  }
-  &:active {
-    outline: none;
-  }
-`;
-
-const PlusButton = styled.button`
-  margin-left: 20px;
-  background: #fff;
-  border: none;
-  outline: none;
-  i {
-    font-size: 13px;
-    color: #0088ff;
-    width: 25px;
-    height: 25px;
-    line-height: 20px;
-    border: 3px solid #0088ff;
-    text-align: center;
-    border-radius: 50%;
-  }
-  span {
-    color: #0088ff;
-    margin-left: 8px;
-  }
-  &:active {
-    outline: none;
-  }
-`;
-
 const Label = styled.span`
   font-size: 16px;
   color: #333;
   display: block;
   margin-bottom: 10px;
 `;
-
-const SmallLabel = styled.span`
-  font-size: 15px;
-  color: blue;
-  display: block;
-  margin-top: 4px;
-  cursor: pointer;
-`;
-
 const Input = styled.input`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -266,7 +219,6 @@ const Input = styled.input`
     border: 1px solid blue;
   }
 `;
-
 const TextArea = styled.textarea`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -277,12 +229,6 @@ const TextArea = styled.textarea`
   &:focus {
     border: 1px solid blue;
   }
-`;
-
-const ErrMsg = styled.span`
-  font-size: 15px;
-  color: red !important;
-  margin-top: 3px;
 `;
 
 export default CongcuChitiet;

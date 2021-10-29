@@ -41,7 +41,12 @@ langngheRouter.get("/danhsachhodan/:langngheId", async (req, res) => {
   try {
     const { hodan } = await Langnghe.findById(req.params.langngheId)
       .select("hodan")
-      .populate("hodan");
+      .populate({
+        path: "hodan",
+        populate: {
+          path: "langnghe",
+        },
+      });
     res.send({ hodan, success: true });
   } catch (error) {
     res.send({ message: error.message, success: false });

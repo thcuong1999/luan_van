@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import ButtonMaterial from "../../components/ButtonMaterial";
 import { useSelector } from "react-redux";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import styled from "styled-components";
@@ -9,6 +8,8 @@ import ModalChitietCongcu from "../../components/ModalChitietCongcu";
 import apiDaily2 from "../../axios/apiDaily2";
 
 const Congcu = (props) => {
+  const [query, setQuery] = useState("");
+  const [searchColumns] = useState(["ten", "bophankd"]);
   const [loading, setLoading] = useState(false);
   const [dsCongcu, setDsCongcu] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -21,13 +22,34 @@ const Congcu = (props) => {
   const fetchDsCongcu = async () => {
     setLoading(true);
     const { daily2 } = await apiDaily2.singleBophankdBasedUser(userInfo._id);
-    const data = await apiDaily2.dsCongcu(daily2._id);
-    setDsCongcu(data.items);
+    const { dscongcu } = await apiDaily2.dsCongcu(daily2._id);
+    setDsCongcu(
+      dscongcu && dscongcu.length
+        ? dscongcu.map((item) => ({
+            ...item,
+            ten: item.congcu.ten,
+            bophankd: item.phanphat.from.bophankd.ten,
+          }))
+        : []
+    );
     setLoading(false);
+  };
+
+  const search = (dsCongcu) => {
+    return (
+      dsCongcu &&
+      dsCongcu.filter((item) =>
+        searchColumns.some(
+          (col) =>
+            item[col].toString().toLowerCase().indexOf(query.toLowerCase()) > -1
+        )
+      )
+    );
   };
 
   useEffect(() => {
     fetchDsCongcu();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -39,14 +61,6 @@ const Congcu = (props) => {
       <Wrapper>
         <Header title="Danh sách công cụ" />
         <Content>
-          {/* <BtnRight>
-            <ButtonMaterial
-              variant="contained"
-              onClick={() => props.history.push("/bophankd/congcu/them")}
-            >
-              Thêm công cụ
-            </ButtonMaterial>
-          </BtnRight> */}
           <FilterSection>
             <TitleWrapper>
               <Title>Tất cả công cụ</Title>
@@ -57,15 +71,15 @@ const Congcu = (props) => {
                 <input
                   type="text"
                   placeholder="Tim công cụ theo tên, công dụng"
-                  // value={query}
-                  // onChange={(e) => setQuery(e.target.value)}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                 />
               </SearchBox>
             </Filter>
 
             <TableSection>
               <TableCongcu
-                dsCongcu={dsCongcu}
+                dsCongcu={search(dsCongcu)}
                 handleOpenModal={handleOpenModal}
                 setCongcu={setCongcu}
               />
@@ -92,6 +106,7 @@ const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 26px 36px;
+  font-family: "Poppins", sans-serif;
 `;
 const FilterSection = styled.div`
   background: #fff;
@@ -138,6 +153,10 @@ const SearchBox = styled.div`
 `;
 const TableSection = styled.div`
   table {
+    th,
+    td {
+      font-family: "Poppins", sans-serif;
+    }
     th:first-child {
       display: none;
     }

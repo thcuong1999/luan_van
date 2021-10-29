@@ -11,21 +11,17 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiDaily1 from "../../../axios/apiDaily1";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsHodan } from "./headCells";
 import { alpha } from "@mui/material/styles";
-// import Daily1Chitiet from "../Daily1Chitiet";
 import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import DialogMaterial from "../../../components/DialogMaterial";
-import apiBophankd from "../../../axios/apiBophankd";
 import apiDaily2 from "../../../axios/apiDaily2";
 import HodanChitiet from "../HodanChitiet";
 import apiHodan from "../../../axios/apiHodan";
@@ -76,7 +72,7 @@ const EnhancedTableToolbar = ({ numSelected, handleOpenModalConfirm }) => {
   ) : null;
 };
 
-const TableHodan = ({ dsHodan, daily2Id, setRowsRemoved }) => {
+const TableHodan = ({ dsHodan = [], daily2Id, setRowsRemoved }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -120,7 +116,6 @@ const TableHodan = ({ dsHodan, daily2Id, setRowsRemoved }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsHodan.map((item) => item._id);

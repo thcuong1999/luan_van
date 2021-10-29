@@ -1,6 +1,4 @@
 import * as React from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -15,27 +13,26 @@ import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsLangnghe } from "./headCells";
-import DropdownCustom from "../../../components/DropdownCustom";
 import DialogMaterial from "../../../components/DialogMaterial";
 import apiLangnghe from "../../../axios/apiLangnghe";
 import { useHistory } from "react-router";
-//
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
+import TableButton from "../../../components/TableButton";
 
 const EnhancedTableToolbar = ({
   numSelected,
   rowsSelected,
-  toolbarSelectedDropdownVal,
+  onClickChitiet,
+  onClickCapnhat,
+  onClickXoa,
 }) => {
   return numSelected > 0 ? (
     <>
       <Toolbar
         sx={{
-          pl: { sm: 8 },
+          pl: { sm: 7 },
           pr: { xs: 1, sm: 1 },
           ...(numSelected > 0 && {
             bgcolor: (theme) =>
@@ -54,22 +51,15 @@ const EnhancedTableToolbar = ({
             component="div"
           >
             <div className="d-flex align-items-center">
-              <span>Đã chọn {numSelected} dòng</span>
-              <DropdownCustom
-                selected="Chọn thao tác"
-                onClick={(val) => toolbarSelectedDropdownVal(val)}
-                data={
-                  rowsSelected.length === 1
-                    ? ["Cập nhật làng nghề", "Xóa làng nghề"]
-                    : ["Xóa làng nghề"]
-                }
-                dropdownStyles={{ width: 250, marginLeft: 16 }}
-                dropdownBtnStyles={{
-                  paddingTop: 7,
-                  paddingBottom: 7,
-                  paddingLeft: 15,
-                }}
-              />
+              {rowsSelected.length === 1 ? (
+                <>
+                  <TableButton onClick={onClickChitiet}>Chi tiết</TableButton>
+                  <TableButton onClick={onClickCapnhat}>Cập nhật</TableButton>
+                  <TableButton onClick={onClickXoa}>Xóa</TableButton>
+                </>
+              ) : (
+                <TableButton onClick={onClickXoa}>Xóa</TableButton>
+              )}
             </div>
           </Typography>
         ) : (
@@ -87,7 +77,7 @@ const EnhancedTableToolbar = ({
   ) : null;
 };
 
-const TableLangnghe = ({ dsLangnghe, setRowsRemoved }) => {
+const TableLangnghe = ({ dsLangnghe = [], setRowsRemoved, setAlert }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -99,23 +89,18 @@ const TableLangnghe = ({ dsLangnghe, setRowsRemoved }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const toolbarSelectedDropdownVal = (val) => {
-    if (val === "Cập nhật làng nghề") {
-      history.push(`/giamsatvung/langnghe/chinhsua/${selected[0]}`);
-    } else if (val === "Xóa làng nghề") {
-      handleOpen();
-    }
-  };
+  const onClickChitiet = () =>
+    history.push(`/giamsatvung/langnghe/chitiet/${selected[0]}`);
+
+  const onClickCapnhat = () =>
+    history.push(`/giamsatvung/langnghe/chinhsua/${selected[0]}`);
+
+  const onClickXoa = () => handleOpen();
 
   const handleDeleteRow = async () => {
     const data = await apiLangnghe.xoaNhieuLangnghe({ arrayOfId: selected });
     if (data.success) {
-      Toastify({
-        text: "Xóa đại lý thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
+      setAlert(true);
       setRowsRemoved(true);
     }
   };
@@ -126,7 +111,6 @@ const TableLangnghe = ({ dsLangnghe, setRowsRemoved }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsLangnghe?.map((item) => item._id);
@@ -178,7 +162,9 @@ const TableLangnghe = ({ dsLangnghe, setRowsRemoved }) => {
           <EnhancedTableToolbar
             numSelected={selected.length}
             rowsSelected={selected}
-            toolbarSelectedDropdownVal={toolbarSelectedDropdownVal}
+            onClickChitiet={onClickChitiet}
+            onClickCapnhat={onClickCapnhat}
+            onClickXoa={onClickXoa}
           />
           <TableContainer>
             <Table

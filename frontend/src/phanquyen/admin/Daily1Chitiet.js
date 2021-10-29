@@ -4,7 +4,6 @@ import "toastify-js/src/toastify.css";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import ButtonMaterial from "../../components/ButtonMaterial";
-import InputText from "../../components/InputText";
 import apiDaily1 from "../../axios/apiDaily1";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -42,6 +41,7 @@ const Daily1Chitiet = (props) => {
 
   useEffect(() => {
     fetchDaily1();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -50,7 +50,7 @@ const Daily1Chitiet = (props) => {
 
   return (
     <>
-      <BophankinhdoanhThemWrapper>
+      <Container>
         <Header
           title="Quay lại danh sách đại lý 1"
           titleBack
@@ -78,53 +78,37 @@ const Daily1Chitiet = (props) => {
         />
         <Content>
           <Form>
-            <div className="row">
-              <div className="col-lg-6">
-                <FormGroup>
-                  <InputText
-                    label="Tên đại lý"
-                    name="ten"
-                    value={daily1?.ten}
-                  />
-                </FormGroup>
+            <FormContent>
+              <FormTitle>Chi tiết đại lý</FormTitle>
 
-                <FormGroup>
-                  <InputText
-                    label="Tên tài khoản"
-                    value={daily1?.user?.taikhoan}
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-lg-6">
-                <FormGroup>
-                  <InputText
-                    label="Số điện thoại"
-                    name="sdt"
-                    value={daily1?.sdt}
-                  />
-                </FormGroup>
+              <FormGroup>
+                <Label>Tên đại lý:</Label>
+                <Input type="text" value={daily1?.ten} />
+              </FormGroup>
 
-                <FormGroup>
-                  <InputText
-                    label="E-mail"
-                    name="email"
-                    value={daily1?.email}
-                  />
-                </FormGroup>
+              <FormGroup>
+                <Label>Tên tài khoản:</Label>
+                <Input type="text" value={daily1?.user?.taikhoan} />
+              </FormGroup>
 
-                <FormGroup>
-                  <InputText
-                    multiline
-                    rows={4}
-                    label="Địa chỉ"
-                    value={daily1?.diachi}
-                  />
-                </FormGroup>
-              </div>
-            </div>
+              <FormGroup>
+                <Label>Số điện thoại:</Label>
+                <Input type="text" value={daily1?.sdt} />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>E-mail:</Label>
+                <Input type="text" value={daily1?.email} />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Địa chỉ:</Label>
+                <TextArea value={daily1?.diachi} rows="5" />
+              </FormGroup>
+            </FormContent>
           </Form>
         </Content>
-      </BophankinhdoanhThemWrapper>
+      </Container>
 
       <DialogMaterial
         open={open}
@@ -140,37 +124,62 @@ const Daily1Chitiet = (props) => {
   );
 };
 
-const BophankinhdoanhThemWrapper = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
 `;
-
 const Form = styled.div`
   background: #fff;
   padding: 36px 20px;
 `;
-
+const FormContent = styled.div`
+  width: 750px;
+  margin: auto;
+  font-family: "Poppins", sans-serif;
+`;
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
+  margin-bottom: 36px;
+`;
 const FormGroup = styled.div`
-  margin-bottom: 20px;
-  span {
-    font-size: 15px;
-    color: #555;
-    display: block;
-    margin-bottom: 10px;
+  margin-bottom: 26px;
+`;
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
   }
 `;
-
-const ErrMsg = styled.div`
-  font-size: 13px;
-  color: red;
-  margin-top: 4px;
+const TextArea = styled.textarea`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
 `;
 
 export default Daily1Chitiet;

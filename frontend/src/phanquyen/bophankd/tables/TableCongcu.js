@@ -1,6 +1,4 @@
 import * as React from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,56 +9,35 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link, useHistory } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiCongcu from "../../../axios/apiCongcu";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
-// ====
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
-// import EnhancedTableToolbar from "../../../components/table/EnhancedTableToolbar";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsCongcu } from "./headCells";
-// === toolbar
 import { alpha } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import Typography from "@mui/material/Typography";
-import DropdownCustom from "../../../components/DropdownCustom";
 import DialogMaterial from "../../../components/DialogMaterial";
 import apiBophankd from "../../../axios/apiBophankd";
 import ButtonMaterial from "../../../components/ButtonMaterial";
-// modal
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import TablePhanphatDi from "./TablePhanphatDi";
-import ModalDaily1Select from "../ModalDaily1Select";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 1300,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import TableButton from "../../../components/TableButton";
 
 const EnhancedTableToolbar = ({
   numSelected,
   rowsSelected,
-  toolbarSelectedDropdownVal,
+  onClickChitiet,
+  onClickCapnhat,
+  onClickXoa,
   handleRedirect,
+  handleRedirect2,
 }) => {
   return numSelected > 0 ? (
     <>
       <Toolbar
         sx={{
-          pl: { sm: 8 },
+          pl: { sm: 7 },
           pr: { xs: 1, sm: 1 },
           ...(numSelected > 0 && {
             bgcolor: (theme) =>
@@ -79,22 +56,15 @@ const EnhancedTableToolbar = ({
             component="div"
           >
             <div className="d-flex align-items-center">
-              <span>Đã chọn {numSelected} dòng</span>
-              <DropdownCustom
-                selected="Chọn thao tác"
-                onClick={(val) => toolbarSelectedDropdownVal(val)}
-                data={
-                  rowsSelected.length === 1
-                    ? ["Chi tiết công cụ", "Cập nhật công cụ", "Xóa công cụ"]
-                    : ["Xóa công cụ"]
-                }
-                dropdownStyles={{ width: 250, marginLeft: 16 }}
-                dropdownBtnStyles={{
-                  paddingTop: 7,
-                  paddingBottom: 7,
-                  paddingLeft: 15,
-                }}
-              />
+              {rowsSelected.length === 1 ? (
+                <>
+                  <TableButton onClick={onClickChitiet}>Chi tiết</TableButton>
+                  <TableButton onClick={onClickCapnhat}>Cập nhật</TableButton>
+                  <TableButton onClick={onClickXoa}>Xóa</TableButton>
+                </>
+              ) : (
+                <TableButton onClick={onClickXoa}>Xóa</TableButton>
+              )}
             </div>
           </Typography>
         ) : (
@@ -111,7 +81,14 @@ const EnhancedTableToolbar = ({
         {numSelected > 0 && (
           <Tooltip title="Delete">
             <IconButton>
-              <ButtonMaterial variant="contained" onClick={handleRedirect}>
+              <ButtonMaterial variant="contained" onClick={handleRedirect2}>
+                Báo hư
+              </ButtonMaterial>
+              <ButtonMaterial
+                variant="contained"
+                onClick={handleRedirect}
+                style={{ marginLeft: 16 }}
+              >
                 Phân phát
               </ButtonMaterial>
             </IconButton>
@@ -122,8 +99,12 @@ const EnhancedTableToolbar = ({
   ) : null;
 };
 
-const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
-  // console.log({ dsCongcu });
+const TableCongcu = ({
+  dsCongcu = [],
+  setRowsRemoved,
+  bophankdId,
+  setAlert,
+}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -135,20 +116,29 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const toolbarSelectedDropdownVal = (val) => {
-    if (val === "Chi tiết công cụ") {
-      history.push(`/bophankd/congcu/chitiet/${selected[0]}`);
-    } else if (val === "Cập nhật công cụ") {
-      history.push(`/bophankd/congcu/chinhsua/${selected[0]}`);
-    } else if (val === "Xóa công cụ") {
-      handleOpen();
-    }
-  };
+  const onClickChitiet = () =>
+    history.push(`/bophankd/congcu/chitiet/${selected[0]}`);
+
+  const onClickCapnhat = () =>
+    history.push(`/bophankd/congcu/chinhsua/${selected[0]}`);
+
+  const onClickXoa = () => handleOpen();
 
   const handleRedirect = () => {
     history.push({
       pathname: "/bophankd/phanphat/them",
       state: getArrOfCongcuObject(dsCongcu, selected),
+    });
+  };
+
+  const handleRedirect2 = () => {
+    let dscc = dsCongcu.map((item) => ({
+      ...item,
+      soluongloi: 1,
+    }));
+    history.push({
+      pathname: "/bophankd/congcu/huloi/them",
+      state: getArrOfCongcuObject(dscc, selected),
     });
   };
 
@@ -158,12 +148,7 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
       bophankdId,
     });
     if (data.success) {
-      Toastify({
-        text: "Xóa đại lý thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
+      setAlert(true);
       setRowsRemoved(true);
     }
   };
@@ -174,7 +159,6 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsCongcu?.map((item) => item._id);
@@ -243,8 +227,11 @@ const TableCongcu = ({ dsCongcu, setRowsRemoved, bophankdId }) => {
           <EnhancedTableToolbar
             numSelected={selected.length}
             rowsSelected={selected}
-            toolbarSelectedDropdownVal={toolbarSelectedDropdownVal}
+            onClickChitiet={onClickChitiet}
+            onClickCapnhat={onClickCapnhat}
+            onClickXoa={onClickXoa}
             handleRedirect={handleRedirect}
+            handleRedirect2={handleRedirect2}
           />
           <TableContainer>
             <Table

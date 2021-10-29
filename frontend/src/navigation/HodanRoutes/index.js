@@ -11,18 +11,7 @@ const HodanRoutes = () => {
       <Switch>
         <Route exact path="/" component={RouteProvider} />
         <ProtectedRoute exact path="/hodan" component={Dashboard} />
-        <ProtectedRoute exact path="/hodan/congcu" component={Dashboard} />
-        <ProtectedRoute exact path="/hodan/hodan" component={Dashboard} />
-        <ProtectedRoute path="/hodan/hodan/them" component={Dashboard} />
-        <ProtectedRoute exact path="/hodan/phanphat" component={Dashboard} />
-        <ProtectedRoute
-          path="/hodan/phanphat/chitiet/:id"
-          component={Dashboard}
-        />
-        <ProtectedRoute
-          path="/hodan/phanphat/chuyentiep/:id"
-          component={Dashboard}
-        />
+        <ProtectedRoute path="/hodan/*" component={Dashboard} />
         <Route path="*" component={NotfoundPage} />
       </Switch>
     </Router>

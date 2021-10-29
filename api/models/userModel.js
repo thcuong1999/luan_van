@@ -16,10 +16,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["admin", "bophankd", "giamsatvung", "daily1", "daily2", "hodan"],
   },
-  vaitro2: {
-    type: String,
-    enum: ["giamsatvung", "daily1", "daily2", "hodan"],
-  },
 });
 
 const User = mongoose.model("User", userSchema);

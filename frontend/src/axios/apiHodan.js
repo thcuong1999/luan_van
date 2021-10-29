@@ -8,8 +8,8 @@ const apiHodan = {
   },
 
   // chinh sua 1 ho dan
-  suaHodan(id, data) {
-    const url = `/hodan/single/${id}`;
+  suaHodan(hodanId, data) {
+    const url = `/hodan/single/${hodanId}`;
     return axiosClient.put(url, data);
   },
 
@@ -55,12 +55,6 @@ const apiHodan = {
     return axiosClient.put(url, arrOfId);
   },
 
-  // lay danh sach phan phat thuoc ho dan
-  dsPhanphat(hodanId) {
-    const url = `/hodan/dsphanphat/${hodanId}`;
-    return axiosClient.get(url);
-  },
-
   // lay hodan info based userId
   singleHodanBasedUser(userId) {
     const url = `/hodan/singlehdbaseduser/${userId}`;
@@ -73,9 +67,29 @@ const apiHodan = {
     return axiosClient.get(url);
   },
 
-  // lay danh sach cong cu thuoc ho dan
+  //===============================
+
+  // lay danh sach phan phat CONG CU thuoc ho dan
+  dsCongcuPhanphat(hodanId) {
+    const url = `/hodan/dscongcuphanphat/${hodanId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay danh sach phan phat VAT TU thuoc ho dan
+  dsVattuPhanphat(hodanId) {
+    const url = `/hodan/dsvattuphanphat/${hodanId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay danh sach CONG CU thuoc ho dan
   dsCongcu(hodanId) {
     const url = `/hodan/danhsachcongcu/${hodanId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay danh sach VAT TU thuoc ho dan
+  dsVattu(hodanId) {
+    const url = `/hodan/danhsachvattu/${hodanId}`;
     return axiosClient.get(url);
   },
 };

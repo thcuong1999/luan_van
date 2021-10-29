@@ -1,6 +1,4 @@
 import * as React from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -15,28 +13,20 @@ import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsHodan } from "./headCells";
-import DropdownCustom from "../../../components/DropdownCustom";
 import DialogMaterial from "../../../components/DialogMaterial";
 import apiHodan from "../../../axios/apiHodan";
-import { useHistory } from "react-router";
-//
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import ModalChitietHodan from "../../../components/ModalChitietHodan";
+import TableButton from "../../../components/TableButton";
 
-const EnhancedTableToolbar = ({
-  numSelected,
-  rowsSelected,
-  toolbarSelectedDropdownVal,
-}) => {
+const EnhancedTableToolbar = ({ numSelected, rowsSelected, onClickXoa }) => {
   return numSelected > 0 ? (
     <>
       <Toolbar
         sx={{
-          pl: { sm: 8 },
+          pl: { sm: 7 },
           pr: { xs: 1, sm: 1 },
           ...(numSelected > 0 && {
             bgcolor: (theme) =>
@@ -55,18 +45,7 @@ const EnhancedTableToolbar = ({
             component="div"
           >
             <div className="d-flex align-items-center">
-              <span>Đã chọn {numSelected} dòng</span>
-              <DropdownCustom
-                selected="Chọn thao tác"
-                onClick={(val) => toolbarSelectedDropdownVal(val)}
-                data={["Xóa hộ dân"]}
-                dropdownStyles={{ width: 250, marginLeft: 16 }}
-                dropdownBtnStyles={{
-                  paddingTop: 7,
-                  paddingBottom: 7,
-                  paddingLeft: 15,
-                }}
-              />
+              <TableButton onClick={onClickXoa}>Xóa</TableButton>
             </div>
           </Typography>
         ) : (
@@ -84,8 +63,7 @@ const EnhancedTableToolbar = ({
   ) : null;
 };
 
-const TableHodan = ({ dsHodan, setRowsRemoved }) => {
-  // console.log({ dsHodan });
+const TableHodan = ({ dsHodan = [], setRowsRemoved, setAlert }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -94,7 +72,6 @@ const TableHodan = ({ dsHodan, setRowsRemoved }) => {
   const [open, setOpen] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [hodanInfo, setHodanInfo] = React.useState(null);
-  const history = useHistory();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -104,23 +81,15 @@ const TableHodan = ({ dsHodan, setRowsRemoved }) => {
     setHodanInfo(data.hodan);
     setModalOpen(true);
   };
+
   const handleCloseModal = () => setModalOpen(false);
 
-  const toolbarSelectedDropdownVal = (val) => {
-    if (val === "Xóa hộ dân") {
-      handleOpen();
-    }
-  };
+  const onClickXoa = () => handleOpen();
 
   const handleDeleteRow = async () => {
     const data = await apiHodan.xoaNhieuHodan({ arrayOfId: selected });
     if (data.success) {
-      Toastify({
-        text: "Xóa hộ dân thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
+      setAlert(true);
       setRowsRemoved(true);
     }
   };
@@ -131,7 +100,6 @@ const TableHodan = ({ dsHodan, setRowsRemoved }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsHodan?.map((item) => item._id);
@@ -183,7 +151,7 @@ const TableHodan = ({ dsHodan, setRowsRemoved }) => {
           <EnhancedTableToolbar
             numSelected={selected.length}
             rowsSelected={selected}
-            toolbarSelectedDropdownVal={toolbarSelectedDropdownVal}
+            onClickXoa={onClickXoa}
           />
           <TableContainer>
             <Table

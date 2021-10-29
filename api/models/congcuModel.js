@@ -19,10 +19,14 @@ const congcuSchema = new mongoose.Schema(
     soluong: {
       type: Number,
     },
+    soluongloi: {
+      type: Number,
+    },
     slsaukhipp: {
       type: Number,
     },
     ngaytao: String,
+    ngaybaoloi: String,
   },
   {
     timestamps: true,

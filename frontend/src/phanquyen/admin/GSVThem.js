@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import ButtonMaterial from "../../components/ButtonMaterial";
-import InputText from "../../components/InputText";
 import InputPassword from "../../components/InputPassword";
 import DropdownCustom from "../../components/DropdownCustom";
 import { apiTinhThanh } from "../../apiTinhThanh";
 import apiGSV from "../../axios/apiGSV";
+import SnackbarMaterial from "../../components/SnackbarMaterial";
 
 const GSVThem = (props) => {
+  const [alert, setAlert] = React.useState(false);
   const [gsv, setGsv] = useState({
     ten: "",
     taikhoan: "",
@@ -86,17 +85,13 @@ const GSVThem = (props) => {
           email: gsv.email,
           diachi: `${xa}, ${huyen}, ${tinh}`,
         };
-        //console.log(dl);
+        console.log(dl);
         const data = await apiGSV.themGsv(dl);
         console.log(data);
         if (data.success) {
-          Toastify({
-            text: "Thêm giám sát vùng thành công",
-            backgroundColor: "#0DB473",
-            className: "toastifyInfo",
-            position: "center",
-          }).showToast();
+          setAlert(true);
           resetFields();
+          setErrMsg("");
         }
       }
     }
@@ -118,24 +113,28 @@ const GSVThem = (props) => {
   };
 
   return (
-    <Container>
-      <Header
-        title="Quay lại danh sách giám sát vùng"
-        titleBack
-        onClick={() => props.history.push("/admin/gsv")}
-        headerRight={
-          <ButtonMaterial variant="contained" onClick={handleSubmit}>
-            Lưu
-          </ButtonMaterial>
-        }
-      />
-      <Content>
-        <Form>
-          <div className="row">
-            <div className="col-lg-6">
+    <>
+      <Container>
+        <Header
+          title="Quay lại danh sách giám sát vùng"
+          titleBack
+          onClick={() => props.history.push("/admin/gsv")}
+          headerRight={
+            <ButtonMaterial variant="contained" onClick={handleSubmit}>
+              Lưu
+            </ButtonMaterial>
+          }
+        />
+        <Content>
+          <Form>
+            <FormContent>
+              <FormTitle>Thêm giám sát vùng</FormTitle>
+
               <FormGroup>
-                <InputText
-                  label="Tên"
+                <Label>Tên giám sát vùng:</Label>
+                <Input
+                  placeholder="Nhập tên"
+                  type="text"
                   name="ten"
                   value={gsv.ten}
                   onChange={handleChangeGsv}
@@ -144,46 +143,10 @@ const GSVThem = (props) => {
               </FormGroup>
 
               <FormGroup>
-                <InputText
-                  label="Tên tài khoản"
-                  name="taikhoan"
-                  value={gsv.taikhoan}
-                  onChange={handleChangeGsv}
-                />
-                {!gsv.taikhoan && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
-
-              <FormGroup>
-                <InputPassword
-                  label="Mật khẩu"
-                  name="matkhau"
-                  value={gsv.matkhau}
-                  onChange={handleChangeGsv}
-                />
-                {!gsv.matkhau && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
-
-              <FormGroup>
-                <InputPassword
-                  label="Xác nhận mật khẩu"
-                  name="xnmatkhau"
-                  value={gsv.xnmatkhau}
-                  onChange={(e) => {
-                    handleChangeGsv(e);
-                    setPwdNotMatch(false);
-                  }}
-                />
-                {!gsv.xnmatkhau ? (
-                  <ErrMsg>{errMsg}</ErrMsg>
-                ) : pwdNotMatch ? (
-                  <ErrMsg>{pwdNotMatch}</ErrMsg>
-                ) : null}
-              </FormGroup>
-            </div>
-            <div className="col-lg-6">
-              <FormGroup>
-                <InputText
-                  label="Số điện thoại"
+                <Label>Số điện thoại:</Label>
+                <Input
+                  placeholder="Nhập số điện thoại"
+                  type="text"
                   name="sdt"
                   value={gsv.sdt}
                   onChange={handleChangeGsv}
@@ -192,8 +155,10 @@ const GSVThem = (props) => {
               </FormGroup>
 
               <FormGroup>
-                <InputText
-                  label="CMND"
+                <Label>Số chứng minh nhân dân:</Label>
+                <Input
+                  placeholder="Nhập cmnd"
+                  type="text"
                   name="cmnd"
                   value={gsv.cmnd}
                   onChange={handleChangeGsv}
@@ -202,8 +167,10 @@ const GSVThem = (props) => {
               </FormGroup>
 
               <FormGroup>
-                <InputText
-                  label="email"
+                <Label>E-mail:</Label>
+                <Input
+                  placeholder="Nhập email"
+                  type="text"
                   name="email"
                   value={gsv.email}
                   onChange={handleChangeGsv}
@@ -212,7 +179,7 @@ const GSVThem = (props) => {
               </FormGroup>
 
               <FormGroup>
-                <span>Địa chỉ</span>
+                <Label>Địa chỉ:</Label>
                 <div className="row">
                   <div className="col-lg-4">
                     <DropdownCustom
@@ -253,11 +220,67 @@ const GSVThem = (props) => {
                   </div>
                 </div>
               </FormGroup>
-            </div>
-          </div>
-        </Form>
-      </Content>
-    </Container>
+
+              <FormGroup>
+                <Label>Tên tài khoản:</Label>
+                <Input
+                  placeholder="Nhập tên"
+                  type="text"
+                  name="taikhoan"
+                  value={gsv.taikhoan}
+                  onChange={handleChangeGsv}
+                />
+                {!gsv.taikhoan && <ErrMsg>{errMsg}</ErrMsg>}
+              </FormGroup>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <FormGroup>
+                    <Label>Mật khẩu:</Label>
+                    <InputPassword
+                      label="Mật khẩu"
+                      name="matkhau"
+                      value={gsv.matkhau}
+                      onChange={handleChangeGsv}
+                      style={{ width: 362 }}
+                    />
+                    {!gsv.matkhau && <ErrMsg>{errMsg}</ErrMsg>}
+                  </FormGroup>
+                </div>
+
+                <div className="col-lg-6">
+                  <FormGroup>
+                    <Label>Xác nhận mật khẩu:</Label>
+                    <InputPassword
+                      label="Xác nhận"
+                      name="xnmatkhau"
+                      value={gsv.xnmatkhau}
+                      onChange={(e) => {
+                        handleChangeGsv(e);
+                        setPwdNotMatch(false);
+                      }}
+                      style={{ width: 362 }}
+                    />
+                    {!gsv.xnmatkhau ? (
+                      <ErrMsg>{errMsg}</ErrMsg>
+                    ) : pwdNotMatch ? (
+                      <ErrMsg>{pwdNotMatch}</ErrMsg>
+                    ) : null}
+                  </FormGroup>
+                </div>
+              </div>
+            </FormContent>
+          </Form>
+        </Content>
+      </Container>
+
+      <SnackbarMaterial
+        severity="success"
+        message="Thêm thành công"
+        open={alert}
+        setOpen={setAlert}
+      />
+    </>
   );
 };
 
@@ -266,28 +289,47 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
 `;
-
 const Form = styled.div`
   background: #fff;
   padding: 36px 20px;
 `;
-
+const FormContent = styled.div`
+  width: 750px;
+  margin: auto;
+  font-family: "Poppins", sans-serif;
+`;
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
+  margin-bottom: 36px;
+`;
 const FormGroup = styled.div`
-  margin-bottom: 20px;
-  span {
-    font-size: 15px;
-    color: #555;
-    display: block;
-    margin-bottom: 10px;
+  margin-bottom: 26px;
+`;
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
   }
 `;
-
 const ErrMsg = styled.div`
   font-size: 13px;
   color: red;

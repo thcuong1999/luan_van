@@ -9,17 +9,11 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiDaily2 from "../../../axios/apiDaily2";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsCongcu } from "./headCells";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
-// icon
-import ClearIcon from "@mui/icons-material/Clear";
-import CheckIcon from "@mui/icons-material/Check";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
   const [order, setOrder] = React.useState("asc");
@@ -39,7 +33,6 @@ const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsCongcu.map((item) => item._id);
@@ -157,14 +150,6 @@ const TableCongcu = ({ dsCongcu = [], handleOpenModal, setCongcu }) => {
                       </TableCell>
                       <TableCell align="right">{`${row.phanphat.to.daily1.ten}, ${row.phanphat.to.daily2.ten}`}</TableCell>
                       <TableCell align="right">{row.ngaytiepnhan}</TableCell>
-
-                      {/* <TableCell align="right">
-                        <Link
-                          to={`/daily1/phanphat/chitiet/${row.phanphat?._id}`}
-                        >
-                          <VisibilityIcon />
-                        </Link>
-                      </TableCell> */}
                     </TableRow>
                   );
                 })}

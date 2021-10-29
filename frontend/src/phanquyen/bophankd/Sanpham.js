@@ -7,13 +7,14 @@ import BackdropMaterial from "../../components/BackdropMaterial";
 import Header from "../../components/Header";
 import styled from "styled-components";
 import { arrOfLinks } from "./links";
+import SnackbarMaterial from "../../components/SnackbarMaterial";
 
 const Sanpham = (props) => {
+  const [alert, setAlert] = React.useState(false);
   const [query, setQuery] = React.useState("");
-  const [searchColumns] = React.useState(["ten", "sdt"]);
+  const [searchColumns] = React.useState(["ten", "loai", "nhanhieu"]);
   const [loading, setLoading] = React.useState(false);
   const [dsSanpham, setDsSanpham] = React.useState([]);
-  const [khohang, setKhohang] = React.useState([]);
   const { userInfo } = useSelector((state) => state.user);
   const [bophankdInfo, setBophankdInfo] = React.useState(null);
   const [rowsRemoved, setRowsRemoved] = React.useState(false);
@@ -21,16 +22,22 @@ const Sanpham = (props) => {
   const fetchDsSanpham = async () => {
     setLoading(true);
     const data1 = await apiBophankd.bophankdBasedUserId(userInfo._id);
-    const data2 = await apiBophankd.bophankdDSSanpham(data1.bophankd._id);
-    //console.log({ data1 });
+    const { sanpham } = await apiBophankd.bophankdDSSanpham(data1.bophankd._id);
     setBophankdInfo(data1.bophankd);
-    setDsSanpham(data2.sanpham.sanpham);
-    setKhohang(
-      data2.sanpham.khohang && data2.sanpham.khohang.items
-        ? data2.sanpham.khohang.items
-        : []
-    );
+    setDsSanpham(sanpham);
     setLoading(false);
+  };
+
+  const search = (dsSanpham) => {
+    return (
+      dsSanpham &&
+      dsSanpham.filter((item) =>
+        searchColumns.some(
+          (col) =>
+            item[col].toString().toLowerCase().indexOf(query.toLowerCase()) > -1
+        )
+      )
+    );
   };
 
   React.useEffect(() => {
@@ -46,7 +53,7 @@ const Sanpham = (props) => {
   return (
     <>
       <Wrapper>
-        <Header title="Danh sách sản phẩm" arrOfLinks={arrOfLinks} />
+        <Header title="Sản phẩm" arrOfLinks={arrOfLinks} />
         <Content>
           <BtnRight>
             <ButtonMaterial
@@ -65,21 +72,31 @@ const Sanpham = (props) => {
                 <i class="fas fa-search"></i>
                 <input
                   type="text"
-                  placeholder="Tìm sản phẩm theo tên, loại, nhãn hiệu"
+                  placeholder="Tìm sản phẩm theo mã, tên, loại, nhãn hiệu"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </SearchBox>
             </Filter>
-            <TableSanpham
-              dsSanpham={dsSanpham}
-              khohang={khohang}
-              setRowsRemoved={setRowsRemoved}
-              bophankdId={bophankdInfo?._id}
-            />
+
+            <TableSection>
+              <TableSanpham
+                dsSanpham={search(dsSanpham)}
+                setRowsRemoved={setRowsRemoved}
+                bophankdId={bophankdInfo?._id}
+                setAlert={setAlert}
+              />
+            </TableSection>
           </FilterSection>
         </Content>
       </Wrapper>
+
+      <SnackbarMaterial
+        severity="success"
+        message="Xóa thành công"
+        open={alert}
+        setOpen={setAlert}
+      />
     </>
   );
 };
@@ -89,41 +106,35 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 0 36px;
 `;
-
 const BtnRight = styled.div`
   text-align: right;
   padding: 16px 0;
 `;
-
 const FilterSection = styled.div`
   background: #fff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
   font-weight: 500;
   color: #1e93e8;
+  font-family: "Poppins", sans-serif;
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const Filter = styled.div`
   background: #fff;
   padding: 14px 17px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const SearchBox = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
   width: 50%;
@@ -142,10 +153,18 @@ const SearchBox = styled.div`
     padding: 0 10px;
     color: #182537;
     font-size: 14px;
+    font-family: "Poppins", sans-serif;
     &::placeholder {
       font-size: 14px;
       color: rgba(0, 0, 0, 0.35);
+      font-family: "Poppins", sans-serif;
     }
+  }
+`;
+const TableSection = styled.div`
+  th,
+  td {
+    font-family: "Poppins", sans-serif;
   }
 `;
 

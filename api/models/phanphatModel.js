@@ -8,6 +8,10 @@ const phanphatSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Congcu",
         },
+        vattu: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Vattu",
+        },
         soluongphanphat: Number,
       },
     ],
@@ -71,6 +75,10 @@ const phanphatSchema = new mongoose.Schema(
     hoanthanh: {
       type: Boolean,
       default: false,
+    },
+    phanphattype: {
+      type: String,
+      enum: ["congcu", "vattu"],
     },
     ngaytao: String,
   },

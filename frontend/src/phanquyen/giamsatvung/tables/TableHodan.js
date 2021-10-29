@@ -1,6 +1,4 @@
 import * as React from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -15,22 +13,20 @@ import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsHodan } from "./headCells";
-import DropdownCustom from "../../../components/DropdownCustom";
 import DialogMaterial from "../../../components/DialogMaterial";
 import apiHodan from "../../../axios/apiHodan";
 import { useHistory } from "react-router";
-//
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import ModalChitietHodan from "../../../components/ModalChitietHodan";
+import TableButton from "../../../components/TableButton";
 
 const EnhancedTableToolbar = ({
   numSelected,
   rowsSelected,
-  toolbarSelectedDropdownVal,
+  onClickCapnhat,
+  onClickXoa,
 }) => {
   return numSelected > 0 ? (
     <>
@@ -55,18 +51,14 @@ const EnhancedTableToolbar = ({
             component="div"
           >
             <div className="d-flex align-items-center">
-              <span>Đã chọn {numSelected} dòng</span>
-              <DropdownCustom
-                selected="Chọn thao tác"
-                onClick={(val) => toolbarSelectedDropdownVal(val)}
-                data={["Xóa hộ dân"]}
-                dropdownStyles={{ width: 250, marginLeft: 16 }}
-                dropdownBtnStyles={{
-                  paddingTop: 7,
-                  paddingBottom: 7,
-                  paddingLeft: 15,
-                }}
-              />
+              {rowsSelected.length === 1 ? (
+                <>
+                  <TableButton onClick={onClickCapnhat}>Cập nhật</TableButton>
+                  <TableButton onClick={onClickXoa}>Xóa</TableButton>
+                </>
+              ) : (
+                <TableButton onClick={onClickXoa}>Xóa</TableButton>
+              )}
             </div>
           </Typography>
         ) : (
@@ -84,8 +76,7 @@ const EnhancedTableToolbar = ({
   ) : null;
 };
 
-const TableHodan = ({ dsHodan, setRowsRemoved }) => {
-  // console.log({ dsHodan });
+const TableHodan = ({ dsHodan = [], setRowsRemoved, setAlert }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -106,22 +97,15 @@ const TableHodan = ({ dsHodan, setRowsRemoved }) => {
   };
   const handleCloseModal = () => setModalOpen(false);
 
-  const toolbarSelectedDropdownVal = (val) => {
-    if (val === "Xóa hộ dân") {
-      handleOpen();
-    }
-  };
+  const onClickCapnhat = () =>
+    history.push(`/giamsatvung/hodan/chinhsua/${selected[0]}`);
+
+  const onClickXoa = () => handleOpen();
 
   const handleDeleteRow = async () => {
     const data = await apiHodan.xoaNhieuHodan({ arrayOfId: selected });
     if (data.success) {
-      console.log(data);
-      Toastify({
-        text: "Xóa hộ dân thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
+      setAlert(true);
       setRowsRemoved(true);
     }
   };
@@ -132,7 +116,6 @@ const TableHodan = ({ dsHodan, setRowsRemoved }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsHodan?.map((item) => item._id);
@@ -184,7 +167,8 @@ const TableHodan = ({ dsHodan, setRowsRemoved }) => {
           <EnhancedTableToolbar
             numSelected={selected.length}
             rowsSelected={selected}
-            toolbarSelectedDropdownVal={toolbarSelectedDropdownVal}
+            onClickCapnhat={onClickCapnhat}
+            onClickXoa={onClickXoa}
           />
           <TableContainer>
             <Table
@@ -237,9 +221,8 @@ const TableHodan = ({ dsHodan, setRowsRemoved }) => {
                         </TableCell>
                         <TableCell align="right">{row.sdt}</TableCell>
                         <TableCell align="right">{row.cmnd}</TableCell>
-                        <TableCell align="right">
-                          {row?.user?.taikhoan}
-                        </TableCell>
+                        <TableCell align="right">{row?.namsinh}</TableCell>
+                        <TableCell align="right">{row?.nghe}</TableCell>
                         <TableCell align="right">
                           <Link
                             to={`/giamsatvung/langnghe/chitiet/${row.langngheId}`}

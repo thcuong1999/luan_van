@@ -1,77 +1,20 @@
 import React, { useEffect, useState } from "react";
 import BackdropMaterial from "../../components/BackdropMaterial";
-import { makeStyles } from "@material-ui/core/styles";
 import img_placeholder from "../../assets/images/img_placeholder.png";
-import Alert from "@material-ui/lab/Alert";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Axios from "axios";
-import apiBophankd from "../../axios/apiBophankd";
-import { useSelector } from "react-redux";
 import apiSanpham from "../../axios/apiSanpham";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: "auto",
-    width: "95%",
-    marginTop: "20px",
-    "& > * + *": {
-      marginTop: theme.spacing(2),
-    },
-  },
-}));
+import styled from "styled-components";
+import Header from "../../components/Header";
+import Checkbox from "@mui/material/Checkbox";
 
 const SanphamChitiet = (props) => {
   const [sanpham, setSanpham] = useState(null);
-  const [bophankdInfo, setBophankdInfo] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-  const [open, setOpen] = React.useState(false);
   const { id: sanphamId } = props.match.params;
-  const { userInfo } = useSelector((state) => state.user);
-  const classes = useStyles();
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleRedirect = () => {
-    props.history.push("/bophankd/sanpham");
-  };
-
-  const handleDelete = async () => {
-    const data = await apiBophankd.bophankdXoaSanpham({
-      bophankdId: bophankdInfo._id,
-      sanphamId,
-    });
-    setOpen(false);
-    if (data.success) {
-      Toastify({
-        text: "Xoa san pham thanh cong",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
-    }
-    setTimeout(() => props.history.push("/bophankd/sanpham"), 1000);
-  };
 
   const fetchSanpham = async () => {
     setLoading(true);
-    const data1 = await apiBophankd.bophankdBasedUserId(userInfo._id);
-    const data2 = await apiSanpham.singleSanpham(sanphamId);
-    setSanpham(data2.sanpham);
-    setBophankdInfo(data1.bophankd);
+    const { sanpham } = await apiSanpham.singleSanpham(sanphamId);
+    setSanpham(sanpham);
     setLoading(false);
   };
 
@@ -86,144 +29,237 @@ const SanphamChitiet = (props) => {
 
   return (
     <>
-      <div id="bophankdChiettietSP">
-        <div className="header">
-          <h5 className="title" onClick={handleRedirect}>
-            <i class="fas fa-angle-left"></i>
-            <span>Quay lại trang danh sách sản phẩm</span>
-          </h5>
-          <div className="btns">
-            <button
-              className="btn btn-outline-danger"
-              onClick={handleClickOpen}
-            >
-              Xóa
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={() =>
-                props.history.push(`/bophankd/sanpham/chinhsua/${sanphamId}`)
-              }
-            >
-              Sửa sản phẩm
-            </button>
-          </div>
-        </div>
-        {errMsg ? (
-          <div className={classes.root}>
-            <Alert severity="error">Không tìm thấy sản phẩm!</Alert>
-          </div>
-        ) : (
-          <div className="content">
-            <h4>{sanpham?.ten}</h4>
-            <div className="productInfo">
-              <h5>Thông tin sản phẩm</h5>
-              <div className="productInfoDetails">
-                <div className="titles">
-                  <p>Mã SKU</p>
-                  <p>Tên sản phẩm</p>
-                  <p>Loại</p>
-                  <p>Nhãn hiệu</p>
-                </div>
-                <div className="values">
-                  <p>: {sanpham?.sku}</p>
-                  <p>: {sanpham?.ten}</p>
-                  <p>: {sanpham?.loai}</p>
-                  <p>: {sanpham?.nhanhieu}</p>
-                </div>
-                <div className="titles">
-                  <p>Giá bán lẻ</p>
-                  <p>Giá bán buôn</p>
-                </div>
-                <div className="values">
-                  <p>: {sanpham?.giabanle}</p>
-                  <p>: {sanpham?.giabanbuon}</p>
-                </div>
-                <div className="productImg">
-                  <img
+      <Container>
+        <Header
+          title="Quay lại trang danh sách sản phẩm"
+          titleBack
+          onClick={() => props.history.push("/bophankd/sanpham")}
+        />
+
+        <Content>
+          <div className="row">
+            <div className="col-lg-8">
+              <Box>
+                <BoxTitle>
+                  <h5>Thông tin chung</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <FormGroup>
+                    <Label>Tên sản phẩm:</Label>
+                    <Input type="text" value={sanpham?.ten} />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label>Số lượng có thể bán:</Label>
+                    <Input
+                      type="text"
+                      style={{ width: "50%" }}
+                      value={sanpham?.cotheban}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label>Mô tả sản phẩm:</Label>
+                    <TextArea value={sanpham?.mota} rows="5" />
+                  </FormGroup>
+                </BoxContent>
+              </Box>
+
+              <Box>
+                <BoxTitle>
+                  <h5>Giá sản phẩm</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <div className="row">
+                    <div className="col-lg-6">
+                      <FormGroup>
+                        <Label>Giá bản lẻ:</Label>
+                        <Input type="text" value={sanpham?.giabanle} />
+                      </FormGroup>
+                    </div>
+                    <div className="col-lg-6">
+                      <FormGroup>
+                        <Label>Giá bản buôn:</Label>
+                        <Input type="text" value={sanpham?.giabanbuon} />
+                      </FormGroup>
+                    </div>
+                  </div>
+                </BoxContent>
+              </Box>
+
+              <Box>
+                <BoxTitle>
+                  <h5>Ảnh sản phẩm</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <Image
                     src={
                       sanpham?.hinhanh
                         ? `/uploads/${sanpham?.hinhanh}`
                         : img_placeholder
                     }
-                    alt="test"
-                    className={!sanpham?.hinhanh && "noImg"}
+                    className={!sanpham?.hinhanh && "noImage"}
+                    alt="anhsp"
                   />
-                </div>
-              </div>
+                </BoxContent>
+              </Box>
+
+              <Box>
+                <BoxTitle>
+                  <h5>Thuộc tính</h5>
+                </BoxTitle>
+                <BoxContent>
+                  {sanpham && sanpham.length
+                    ? sanpham.thuoctinh.map((item, key) => {
+                        return (
+                          <div className="row">
+                            <div className="col-lg-5">
+                              <FormGroup style={{ marginBottom: 10 }}>
+                                <Input type="text" value={item?.ten} />
+                              </FormGroup>
+                            </div>
+                            <div className="col-lg-7">
+                              <FormGroup style={{ marginBottom: 10 }}>
+                                <Input type="text" value={item?.giatri} />
+                              </FormGroup>
+                            </div>
+                          </div>
+                        );
+                      })
+                    : "---------"}
+                </BoxContent>
+              </Box>
             </div>
 
-            <div className="row">
-              <div className="col-lg-8">
-                <div className="productInfo mt-4">
-                  <h5>Giá sản phẩm</h5>
+            <div className="col-lg-4">
+              <Box>
+                <BoxTitle>
+                  <h5>Hình thức quản lý</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <FormGroup>
+                    <Label>Loại sản phẩm:</Label>
+                    <Input type="text" value={sanpham?.loai} />
+                  </FormGroup>
 
-                  <div className="productInfoDetails">
-                    <div className="titles">
-                      <p>Giá bán lẻ</p>
-                      <p>Giá bán buôn</p>
-                    </div>
-                    <div className="values">
-                      <p>: {sanpham?.giabanle}</p>
-                      <p>: {sanpham?.giabanbuon}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-4">
-                <div className="productInfo mt-4">
-                  <h5>Thông tin thêm</h5>
+                  <FormGroup>
+                    <Label>Nhãn hiệu:</Label>
+                    <Input type="text" value={sanpham?.nhanhieu} />
+                  </FormGroup>
+                </BoxContent>
+              </Box>
 
-                  <div className="productInfoDetails">
-                    <div className="d-flex justify-content-between w-100 py-3">
-                      <div className="px-3">
-                        <input
-                          type="checkbox"
-                          className="mr-2"
-                          checked={sanpham?.chophepban}
-                          disabled
-                        />
-                        <span>Cho phép bán</span>
-                      </div>
-                      <div className="px-3">
-                        <input
-                          type="checkbox"
-                          checked={sanpham?.apdungthue}
-                          disabled
-                        />
-                        <span className="ml-2">Áp dụng thuế</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Box>
+                <BoxTitle>
+                  <h5>Cho phép bán</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <Checkbox
+                    checked={sanpham?.chophepban}
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                    disabled
+                  />
+                </BoxContent>
+              </Box>
+
+              <Box>
+                <BoxTitle>
+                  <h5>Áp dụng thuế</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <Checkbox
+                    checked={sanpham?.apdungthue}
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                    disabled
+                  />
+                </BoxContent>
+              </Box>
+
+              {/* <Box>
+                <BoxTitle>
+                  <h5>Thêm vào kho hàng</h5>
+                </BoxTitle>
+                <BoxContent>
+                  <Checkbox
+                    checked={luuvaokho}
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                  />
+                </BoxContent>
+              </Box> */}
             </div>
           </div>
-        )}
-      </div>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Xóa sản phẩm?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Bạn chắc xóa vĩnh viễn sản phẩm này chứ ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDelete} color="primary">
-            Xóa
-          </Button>
-          <Button onClick={handleClose} color="primary" autoFocus>
-            Hủy
-          </Button>
-        </DialogActions>
-      </Dialog>
+        </Content>
+      </Container>
     </>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
+const Content = styled.div`
+  flex: 1;
+  background: #f0eeee;
+  padding: 20px 36px;
+  font-family: "Poppins", sans-serif;
+`;
+const Box = styled.div`
+  background: #fff;
+  margin-bottom: 20px;
+`;
+const BoxTitle = styled.div`
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  h5 {
+    font-size: 16px;
+    display: inline-block;
+    padding: 20px;
+    margin-bottom: 0;
+  }
+`;
+const BoxContent = styled.div`
+  padding: 20px;
+`;
+const FormGroup = styled.div`
+  margin-bottom: 26px;
+`;
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+const TextArea = styled.textarea`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+const Image = styled.img`
+  width: 150px;
+  &.noImage {
+    opacity: 0.1;
+  }
+`;
 
 export default SanphamChitiet;

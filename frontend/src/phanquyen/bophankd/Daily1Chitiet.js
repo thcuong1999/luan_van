@@ -1,292 +1,249 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import InputText from "../../components/InputText";
-// import img_placeholder from "../assets/images/img_placeholder.png";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import ButtonMaterial from "../../components/ButtonMaterial";
+import Header from "../../components/Header";
+import BreadcrumbMaterial from "../../components/BreadcrumbMaterial";
+import Link from "@mui/material/Link";
+import DL1Congcu from "./subcomponents/DL1Congcu";
+import DL1Vattu from "./subcomponents/DL1Vattu";
+import DL1Daily2 from "./subcomponents/DL1Daily2";
+import DL1CongcuPhanphat from "./subcomponents/DL1CongcuPhanphat";
+import DL1VattuPhanphat from "./subcomponents/DL1VattuPhanphat";
+import apiDaily1 from "../../axios/apiDaily1";
+import BackdropMaterial from "../../components/BackdropMaterial";
+import daily2Icon from "../../assets/icons/daily2.png";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 950,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
+const Daily1Chitiet = (props) => {
+  const [active, setActive] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [daily1Info, setDaily1Info] = useState(null);
+  const { id: daily1Id } = props.match.params;
 
-const Daily1Chitiet = ({ open, onClose, daily1 }) => {
+  const fetchDaily1Info = async () => {
+    setLoading(true);
+    const { daily1 } = await apiDaily1.singleDaily1(daily1Id);
+    setDaily1Info(daily1);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchDaily1Info();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (loading) {
+    return <BackdropMaterial />;
+  }
+
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style} style={{ border: "none" }}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Chi tiết đại lý cấp 1
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Form>
-              <div className="row">
-                <div className="col-lg-6">
-                  <FormGroup>
-                    <InputText label="Tên đại lý" value={daily1.ten} />
-                  </FormGroup>
+    <>
+      <Wrapper>
+        <Header
+          title={
+            <BreadcrumbMaterial>
+              <Link underline="hover" color="inherit" href="/bophankd/daily1">
+                Đại lý cấp 1
+              </Link>
+              <Link
+                underline="hover"
+                color="inherit"
+                href="#"
+                aria-current="page"
+              >
+                {daily1Info?.ten}
+              </Link>
+            </BreadcrumbMaterial>
+          }
+        />
+        <Content>
+          <Boxes>
+            <Box
+              onClick={() => setActive(1)}
+              className={active === 1 && "active"}
+            >
+              <i class="fas fa-tools"></i>
+              <BoxTitle>Công cụ</BoxTitle>
+            </Box>
 
-                  <FormGroup>
-                    <InputText
-                      label="Tài khoản"
-                      value={daily1?.user?.taikhoan}
-                    />
-                  </FormGroup>
-                </div>
-                <div className="col-lg-6">
-                  <FormGroup>
-                    <InputText label="E-mail" value={daily1.email} />
-                  </FormGroup>
+            <Box
+              onClick={() => setActive(2)}
+              className={active === 2 && "active"}
+            >
+              <i class="fab fa-accusoft"></i>
+              <BoxTitle>Vật tư</BoxTitle>
+            </Box>
 
-                  <FormGroup>
-                    <InputText label="Số điện thoại" value={daily1.sdt} />
-                  </FormGroup>
+            <Box
+              onClick={() => setActive(3)}
+              className={active === 3 && "active"}
+            >
+              <img src={daily2Icon} width="36" alt="daily2" />
+              <BoxTitle>Đại lý cấp 2</BoxTitle>
+            </Box>
 
-                  <FormGroup>
-                    <InputText
-                      multiline
-                      rows={4}
-                      label="Địa chỉ"
-                      value={daily1.diachi}
-                    />
-                  </FormGroup>
-                </div>
-              </div>
-            </Form>
-          </Typography>
-          <div className="text-right">
-            <ButtonMaterial variant="outlined" onClick={onClose}>
-              Đóng
-            </ButtonMaterial>
-          </div>
-        </Box>
-      </Modal>
-    </div>
+            <Box
+              onClick={() => setActive(4)}
+              className={active === 4 && "active"}
+            >
+              <i class="fas fa-tools"></i>
+              <BoxTitle>Công cụ phân phát</BoxTitle>
+            </Box>
+
+            <Box
+              onClick={() => setActive(5)}
+              className={active === 5 && "active"}
+            >
+              <i class="fab fa-accusoft"></i>
+              <BoxTitle>Vật tư phân phát</BoxTitle>
+            </Box>
+          </Boxes>
+
+          <SubComponents>
+            {active === 1 ? (
+              <DL1Congcu />
+            ) : active === 2 ? (
+              <DL1Vattu />
+            ) : active === 3 ? (
+              <DL1Daily2 />
+            ) : active === 4 ? (
+              <DL1CongcuPhanphat />
+            ) : (
+              <DL1VattuPhanphat />
+            )}
+          </SubComponents>
+        </Content>
+      </Wrapper>
+    </>
   );
 };
 
-const Image = styled.img`
-  width: 100px;
-
-  &.noImage {
-    opacity: 0.15;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
+const Content = styled.div`
+  flex: 1;
+  background: #f0eeee;
+  padding: 26px 36px;
+  font-family: "Poppins", sans-serif;
+`;
+const Boxes = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+const Box = styled.div`
+  width: 280px;
+  padding: 26px 36px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgb(0 0 20 / 8%), 0 1px 2px rgb(0 0 20 / 8%);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    bottom: -16px;
+    height: 6px;
+    border-radius: 4px;
+    transition: width 350ms;
+  }
+  &.active {
+    &::after {
+      width: 100%;
+    }
+  }
+  i {
+    color: #fff;
+    font-size: 28px;
+  }
+  &:nth-child(1) {
+    background: #da542e;
+    &::after {
+      background: #da542e;
+    }
+    &:hover {
+      background: #b03e1e;
+      &::after {
+        width: 100%;
+      }
+    }
+    &.active {
+      background: #b03e1e;
+    }
+  }
+  &:nth-child(2) {
+    background: #2255a4;
+    &::after {
+      background: #2255a4;
+    }
+    &:hover {
+      background: #163d7a;
+      &::after {
+        width: 100%;
+      }
+    }
+    &.active {
+      background: #163d7a;
+    }
+  }
+  &:nth-child(3) {
+    background: #27a9e3;
+    &::after {
+      background: #27a9e3;
+    }
+    &:hover {
+      background: #1d86b5;
+      &::after {
+        width: 100%;
+      }
+    }
+    &.active {
+      background: #1d86b5;
+    }
+  }
+  &:nth-child(4) {
+    background: #28b779;
+    &::after {
+      background: #28b779;
+    }
+    &:hover {
+      background: #1c8c5c;
+      &::after {
+        width: 100%;
+      }
+    }
+    &.active {
+      background: #1c8c5c;
+    }
+  }
+  &:nth-child(5) {
+    background: #ffb848;
+    &::after {
+      background: #ffb848;
+    }
+    &:hover {
+      background: #d99c3d;
+      &::after {
+        width: 100%;
+      }
+    }
+    &.active {
+      background: #d99c3d;
+    }
   }
 `;
-
-const StyledInput = styled.input`
-  width: 100%;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  padding: 6px 10px;
-  border-radius: 3px;
-  margin-bottom: 10px;
-  outline: none;
+const BoxTitle = styled.div`
+  font-size: 16px;
+  color: #fff;
+  margin-top: 16px;
+  font-family: "Poppins", sans-serif;
 `;
-
-const Form = styled.div`
-  background: #fff;
-  padding: 36px 0;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 20px;
-  span {
-    font-size: 15px;
-    color: #555;
-    display: block;
-    margin-bottom: 10px;
-  }
+const SubComponents = styled.div`
+  display: block;
+  margin-top: 36px;
 `;
 
 export default Daily1Chitiet;
-
-// import React, { useState, useEffect } from "react";
-// import Axios from "axios";
-// import Button from "@material-ui/core/Button";
-// import Loading from "../../components/Loading";
-// import Toastify from "toastify-js";
-// import "toastify-js/src/toastify.css";
-// import Dialog from "@material-ui/core/Dialog";
-// import DialogActions from "@material-ui/core/DialogActions";
-// import DialogContent from "@material-ui/core/DialogContent";
-// import DialogContentText from "@material-ui/core/DialogContentText";
-// import DialogTitle from "@material-ui/core/DialogTitle";
-// import DeleteIcon from "@mui/icons-material/Delete";
-// import ButtonMaterial from "../../components/ButtonMaterial";
-// import InputText from "../../components/InputText";
-// import DialogMaterial from "../../components/DialogMaterial";
-
-// const Daily1Chitiet = (props) => {
-//   const [daily1, setDaily1] = useState({});
-//   const [loading, setLoading] = useState(false);
-//   const [open, setOpen] = React.useState(false);
-//   const { id: daily1Id } = props.match.params;
-
-//   const fetchDaily1 = async () => {
-//     setLoading(true);
-//     const { data } = await Axios.get(`/api/daily1/single/${daily1Id}`);
-//     if (data.success) {
-//       setDaily1(data.daily1);
-//     }
-//     setLoading(false);
-//   };
-
-//   useEffect(() => {
-//     fetchDaily1();
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, []);
-
-//   const handleClickOpen = () => {
-//     setOpen(true);
-//   };
-
-//   const handleClose = () => {
-//     setOpen(false);
-//   };
-
-//   const handleDelete = async () => {
-//     const { data } = await Axios.delete(`/api/daily1/single/${daily1Id}`);
-//     setOpen(false);
-//     if (data.success) {
-//       Toastify({
-//         text: "Xoa san pham thanh cong",
-//         backgroundColor: "#0DB473",
-//         className: "toastifyInfo",
-//         position: "center",
-//       }).showToast();
-//     }
-//     setTimeout(() => props.history.push("/bophankd/daily1"), 1000);
-//   };
-
-//   if (loading) {
-//     return <Loading />;
-//   }
-
-//   return (
-//     <>
-//       <div id="bophankdThemdaily1">
-//         <div className="header">
-//           <h5
-//             className="title"
-//             onClick={() => props.history.push("/bophankd/daily1")}
-//           >
-//             <i class="fas fa-angle-left"></i>
-//             <span>Quay lại trang danh sách dai ly 1</span>
-//           </h5>
-//           <div className="btns">
-//             <ButtonMaterial
-//               variant="outlined"
-//               startIcon={<DeleteIcon />}
-//               onClick={handleClickOpen}
-//             >
-//               Xóa
-//             </ButtonMaterial>
-
-//             <ButtonMaterial
-//               variant="contained"
-//               onClick={() =>
-//                 props.history.push(`/bophankd/daily1/chinhsua/${daily1Id}`)
-//               }
-//             >
-//               Chỉnh sửa
-//             </ButtonMaterial>
-//           </div>
-//         </div>
-//         <div className="content bophankdChitietdaily1">
-//           <div className="form">
-//             <div className="row">
-//               <div className="col-lg-6">
-//                 <div className="formGroup">
-//                   <InputText label="Tên đại lý" value={daily1.ten} disabled />
-//                 </div>
-
-//                 <div className="formGroup">
-//                   <InputText
-//                     label="Tài khoản"
-//                     value={daily1.user?.taikhoan}
-//                     disabled
-//                   />
-//                 </div>
-//               </div>
-//               <div className="col-lg-6">
-//                 <div className="formGroup">
-//                   <InputText
-//                     label="E-mail"
-//                     name="email"
-//                     value={daily1.email}
-//                     disabled
-//                   />
-//                 </div>
-
-//                 <div className="formGroup">
-//                   <InputText
-//                     label="Số điện thoại"
-//                     value={daily1.sdt}
-//                     disabled
-//                   />
-//                 </div>
-
-//                 <div className="formGroup">
-//                   <InputText
-//                     label="Địa chỉ"
-//                     value={daily1.diachi}
-//                     multiline
-//                     rows={5}
-//                     disabled
-//                   />
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//       <DialogMaterial
-//         open={open}
-//         onClose={handleClose}
-//         title="Xóa sản phẩm?"
-//         content="Bạn chắc xóa vĩnh viễn sản phẩm này chứ ?"
-//         onClick1={handleDelete}
-//         onClick2={handleClose}
-//         text1="Xóa"
-//         text2="Hủy"
-//       />
-
-//       <Dialog
-//         open={open}
-//         onClose={handleClose}
-//         aria-labelledby="alert-dialog-title"
-//         aria-describedby="alert-dialog-description"
-//       >
-//         <DialogTitle id="alert-dialog-title">{"Xóa sản phẩm?"}</DialogTitle>
-//         <DialogContent>
-//           <DialogContentText id="alert-dialog-description">
-//             Bạn chắc xóa vĩnh viễn sản phẩm này chứ ?
-//           </DialogContentText>
-//         </DialogContent>
-//         <DialogActions>
-//           <Button onClick={handleDelete} color="primary">
-//             Xóa
-//           </Button>
-//           <Button onClick={handleClose} color="primary" autoFocus>
-//             Hủy
-//           </Button>
-//         </DialogActions>
-//       </Dialog>
-//     </>
-//   );
-// };
-
-// export default Daily1Chitiet;

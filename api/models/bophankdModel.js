@@ -24,6 +24,18 @@ const bophankdSchema = new mongoose.Schema(
         ref: "Congcu",
       },
     ],
+    vattu: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vattu",
+      },
+    ],
+    nguyenlieu: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Nguyenlieu",
+      },
+    ],
     sanpham: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -36,10 +48,10 @@ const bophankdSchema = new mongoose.Schema(
         ref: "Daily1",
       },
     ],
-    khohang: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Khohang",
-    },
+    // khohang: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Khohang",
+    // },
     dsphanphat: [
       {
         phanphat: {

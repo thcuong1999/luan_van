@@ -9,14 +9,11 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiDaily1 from "../../../axios/apiDaily1";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsDaily2 } from "./headCells";
 import ButtonMaterial from "../../../components/ButtonMaterial";
-// tool bar
 import { alpha } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -76,7 +73,7 @@ const EnhancedTableToolbar = ({ numSelected, selected, handleThemDaily }) => {
   ) : null;
 };
 
-const TableDaily2Them = ({ dsDaily2, handleThemDaily }) => {
+const TableDaily2Them = ({ dsDaily2 = [], handleThemDaily }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -99,7 +96,6 @@ const TableDaily2Them = ({ dsDaily2, handleThemDaily }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsDaily2.map((item) => item._id);

@@ -43,6 +43,7 @@ const apiPhanphat = {
     return axiosClient.put(url, payload);
   },
 
+  // daily2 pp -> hodan
   daily2ppHodan(payload) {
     const url = `/phanphat/daily2pphodan`;
     return axiosClient.put(url, payload);
@@ -71,6 +72,56 @@ const apiPhanphat = {
   baocaothieu(data) {
     const url = "/phanphat/baocaothieu";
     return axiosClient.put(url, data);
+  },
+
+  //========================================================
+
+  // them phan phat vattu
+  themPhanphatVattu(payload) {
+    const url = "/phanphat/themppvattu";
+    return axiosClient.post(url, payload);
+  },
+
+  // chinh sua phan phat vat tu
+  suaPhanphatVattu(id, data) {
+    const url = `/phanphat/capnhatvattupp/${id}`;
+    return axiosClient.put(url, data);
+  },
+
+  // lay danh sach phan phat cong cu
+  dsCongcuPhanphat(bophankdId) {
+    const url = `/phanphat/dscongcuphanphat/${bophankdId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay danh sach phan phat vat tu
+  dsVattuPhanphat(bophankdId) {
+    const url = `/phanphat/dsvattuphanphat/${bophankdId}`;
+    return axiosClient.get(url);
+  },
+
+  // nhap VAT TU vao kho
+  nhapKhoVattu(payload) {
+    const url = `/phanphat/nhapkhovattu`;
+    return axiosClient.put(url, payload);
+  },
+
+  // daily1 pp VAT TU -> daily2
+  daily1ppvattuDaily2(payload) {
+    const url = `/phanphat/daily1ppvattudaily2`;
+    return axiosClient.put(url, payload);
+  },
+
+  // daily2 pp VAT TU -> hodan
+  daily2ppvattuHodan(payload) {
+    const url = `/phanphat/daily2ppvattuhodan`;
+    return axiosClient.put(url, payload);
+  },
+
+  // hoan thanh phan phat (ho dan xac nhan) VAT TU
+  hoanthanhVattuPhanphat(payload) {
+    const url = `/phanphat/hoanthanhvattupp`;
+    return axiosClient.put(url, payload);
   },
 };
 

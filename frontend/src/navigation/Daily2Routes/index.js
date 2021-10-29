@@ -11,18 +11,7 @@ const Daily2Routes = () => {
       <Switch>
         <Route exact path="/" component={RouteProvider} />
         <ProtectedRoute exact path="/daily2" component={Dashboard} />
-        <ProtectedRoute exact path="/daily2/congcu" component={Dashboard} />
-        <ProtectedRoute exact path="/daily2/hodan" component={Dashboard} />
-        <ProtectedRoute path="/daily2/hodan/them" component={Dashboard} />
-        <ProtectedRoute exact path="/daily2/phanphat" component={Dashboard} />
-        <ProtectedRoute
-          path="/daily2/phanphat/chitiet/:id"
-          component={Dashboard}
-        />
-        <ProtectedRoute
-          path="/daily2/phanphat/chuyentiep/:id"
-          component={Dashboard}
-        />
+        <ProtectedRoute path="/daily2/*" component={Dashboard} />
         <Route path="*" component={NotfoundPage} />
       </Switch>
     </Router>

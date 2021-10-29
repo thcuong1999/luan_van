@@ -1,6 +1,4 @@
 import * as React from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,27 +9,27 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiDaily1 from "../../../axios/apiDaily1";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsDaily1 } from "./headCells";
 import { alpha } from "@mui/material/styles";
-import Daily1Chitiet from "../Daily1Chitiet";
-import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import DialogMaterial from "../../../components/DialogMaterial";
 import apiBophankd from "../../../axios/apiBophankd";
+import TableButton from "../../../components/TableButton";
 
-const EnhancedTableToolbar = ({ numSelected, handleOpenModalConfirm }) => {
+const EnhancedTableToolbar = ({
+  numSelected,
+  handleOpenModalConfirm,
+  rowsSelected,
+  onClickXoa,
+}) => {
   return numSelected > 0 ? (
     <Toolbar
       sx={{
-        pl: { sm: 8 },
+        pl: { sm: 7 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
@@ -49,7 +47,11 @@ const EnhancedTableToolbar = ({ numSelected, handleOpenModalConfirm }) => {
           variant="subtitle1"
           component="div"
         >
-          <span>Đã chọn {numSelected} dòng </span>
+          <div className="d-flex align-items-center">
+            {rowsSelected.length === 1 && (
+              <TableButton onClick={onClickXoa}>Xóa</TableButton>
+            )}
+          </div>
         </Typography>
       ) : (
         <Typography
@@ -61,35 +63,26 @@ const EnhancedTableToolbar = ({ numSelected, handleOpenModalConfirm }) => {
           Nutrition
         </Typography>
       )}
-
-      {numSelected > 0 && (
-        <Tooltip title="Delete">
-          <IconButton onClick={handleOpenModalConfirm}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      )}
     </Toolbar>
   ) : null;
 };
 
-const TableDaily1 = ({ dsDaily1, bophankdId, setRowsRemoved }) => {
+const TableDaily1 = ({
+  dsDaily1 = [],
+  bophankdId,
+  setRowsRemoved,
+  setAlert,
+}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [modalConfirmOpen, setModalConfirmOpen] = React.useState(false);
-  const [modalChitietOpen, setModalChitietOpen] = React.useState(false);
-  const [daily1Info, setDaily1Info] = React.useState(false);
-
-  const handleOpenModalChitiet = async (id) => {
-    const data = await apiDaily1.singleDaily1(id);
-    setDaily1Info(data.daily1);
-    setModalChitietOpen(true);
-  };
 
   const handleOpenModalConfirm = async (id) => setModalConfirmOpen(true);
+
+  const onClickXoa = () => handleOpenModalConfirm();
 
   const handleDeleteRow = async () => {
     const data = await apiBophankd.bophankdXoaNhieuDaily1({
@@ -97,17 +90,11 @@ const TableDaily1 = ({ dsDaily1, bophankdId, setRowsRemoved }) => {
       arrayOfId: selected,
     });
     if (data.success) {
-      Toastify({
-        text: "Xóa đại lý thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
+      setAlert(true);
       setRowsRemoved(true);
     }
   };
 
-  const handleCloseModalChitiet = () => setModalChitietOpen(false);
   const handleCloseModalConfirm = () => setModalConfirmOpen(false);
 
   const handleRequestSort = (event, property) => {
@@ -116,7 +103,6 @@ const TableDaily1 = ({ dsDaily1, bophankdId, setRowsRemoved }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsDaily1.map((item) => item._id);
@@ -168,6 +154,8 @@ const TableDaily1 = ({ dsDaily1, bophankdId, setRowsRemoved }) => {
           <EnhancedTableToolbar
             numSelected={selected.length}
             handleOpenModalConfirm={handleOpenModalConfirm}
+            rowsSelected={selected}
+            onClickXoa={onClickXoa}
           />
           <TableContainer>
             <Table
@@ -215,8 +203,8 @@ const TableDaily1 = ({ dsDaily1, bophankdId, setRowsRemoved }) => {
                         </TableCell>
                         <TableCell align="right">
                           <Link
-                            to="#"
-                            onClick={() => handleOpenModalChitiet(row._id)}
+                            to={`/bophankd/daily1/chitiet/${row._id}`}
+                            // onClick={() => handleOpenModalChitiet(row._id)}
                           >
                             {row.ten}
                           </Link>
@@ -260,12 +248,6 @@ const TableDaily1 = ({ dsDaily1, bophankdId, setRowsRemoved }) => {
           />
         </Paper>
       </Box>
-
-      <Daily1Chitiet
-        open={modalChitietOpen}
-        onClose={handleCloseModalChitiet}
-        daily1={daily1Info}
-      />
 
       <DialogMaterial
         open={modalConfirmOpen}

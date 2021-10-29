@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import ButtonMaterial from "../../components/ButtonMaterial";
-import InputText from "../../components/InputText";
 import InputPassword from "../../components/InputPassword";
 import DropdownCustom from "../../components/DropdownCustom";
 import { apiTinhThanh } from "../../apiTinhThanh";
 import apiBophankd from "../../axios/apiBophankd";
+import SnackbarMaterial from "../../components/SnackbarMaterial";
 
 const BophankdThem = (props) => {
+  const [alert, setAlert] = React.useState(false);
   const [bpkd, setBpkd] = useState({
     ten: "",
     taikhoan: "",
@@ -85,13 +84,9 @@ const BophankdThem = (props) => {
         // console.log(dl);
         const data = await apiBophankd.themBophankd(dl);
         if (data.success) {
-          Toastify({
-            text: "Thêm bộ phận kinh doanh thành công",
-            backgroundColor: "#0DB473",
-            className: "toastifyInfo",
-            position: "center",
-          }).showToast();
+          setAlert(true);
           resetFields();
+          setErrMsg("");
         }
       }
     }
@@ -112,24 +107,28 @@ const BophankdThem = (props) => {
   };
 
   return (
-    <BophankinhdoanhThemWrapper>
-      <Header
-        title="Quay lại danh sách bộ phận kinh doanh"
-        titleBack
-        onClick={() => props.history.push("/admin/bophankd")}
-        headerRight={
-          <ButtonMaterial variant="contained" onClick={handleSubmit}>
-            Lưu
-          </ButtonMaterial>
-        }
-      />
-      <Content>
-        <Form>
-          <div className="row">
-            <div className="col-lg-6">
+    <>
+      <Container>
+        <Header
+          title="Quay lại danh sách bộ phận kinh doanh"
+          titleBack
+          onClick={() => props.history.push("/admin/bophankd")}
+          headerRight={
+            <ButtonMaterial variant="contained" onClick={handleSubmit}>
+              Lưu
+            </ButtonMaterial>
+          }
+        />
+        <Content>
+          <Form>
+            <FormContent>
+              <FormTitle>Thêm bộ phận kinh doanh</FormTitle>
+
               <FormGroup>
-                <InputText
-                  label="Tên BPKD"
+                <Label>Tên bộ phận kinh doanh:</Label>
+                <Input
+                  placeholder="Nhập tên"
+                  type="text"
                   name="ten"
                   value={bpkd.ten}
                   onChange={handleChangeBpkd}
@@ -138,46 +137,10 @@ const BophankdThem = (props) => {
               </FormGroup>
 
               <FormGroup>
-                <InputText
-                  label="Tên tài khoản"
-                  name="taikhoan"
-                  value={bpkd.taikhoan}
-                  onChange={handleChangeBpkd}
-                />
-                {!bpkd.taikhoan && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
-
-              <FormGroup>
-                <InputPassword
-                  label="Mật khẩu"
-                  name="matkhau"
-                  value={bpkd.matkhau}
-                  onChange={handleChangeBpkd}
-                />
-                {!bpkd.matkhau && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
-
-              <FormGroup>
-                <InputPassword
-                  label="Xác nhận mật khẩu"
-                  name="xnmatkhau"
-                  value={bpkd.xnmatkhau}
-                  onChange={(e) => {
-                    handleChangeBpkd(e);
-                    setPwdNotMatch(false);
-                  }}
-                />
-                {!bpkd.xnmatkhau ? (
-                  <ErrMsg>{errMsg}</ErrMsg>
-                ) : pwdNotMatch ? (
-                  <ErrMsg>{pwdNotMatch}</ErrMsg>
-                ) : null}
-              </FormGroup>
-            </div>
-            <div className="col-lg-6">
-              <FormGroup>
-                <InputText
-                  label="Số điện thoại"
+                <Label>Số điện thoại:</Label>
+                <Input
+                  placeholder="Nhập số điện thoại"
+                  type="text"
                   name="sdt"
                   value={bpkd.sdt}
                   onChange={handleChangeBpkd}
@@ -186,8 +149,10 @@ const BophankdThem = (props) => {
               </FormGroup>
 
               <FormGroup>
-                <InputText
-                  label="E-mail"
+                <Label>E-mail:</Label>
+                <Input
+                  placeholder="Nhập email"
+                  type="text"
                   name="email"
                   value={bpkd.email}
                   onChange={handleChangeBpkd}
@@ -196,7 +161,7 @@ const BophankdThem = (props) => {
               </FormGroup>
 
               <FormGroup>
-                <span>Địa chỉ</span>
+                <Label>Địa chỉ:</Label>
                 <div className="row">
                   <div className="col-lg-4">
                     <DropdownCustom
@@ -234,41 +199,116 @@ const BophankdThem = (props) => {
                   </div>
                 </div>
               </FormGroup>
-            </div>
-          </div>
-        </Form>
-      </Content>
-    </BophankinhdoanhThemWrapper>
+
+              <FormGroup>
+                <Label>Tên tài khoản:</Label>
+                <Input
+                  placeholder="Nhập tên"
+                  type="text"
+                  name="taikhoan"
+                  value={bpkd.taikhoan}
+                  onChange={handleChangeBpkd}
+                />
+                {!bpkd.taikhoan && <ErrMsg>{errMsg}</ErrMsg>}
+              </FormGroup>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <FormGroup>
+                    <Label>Mật khẩu:</Label>
+                    <InputPassword
+                      label="Mật khẩu"
+                      name="matkhau"
+                      value={bpkd.matkhau}
+                      onChange={handleChangeBpkd}
+                      style={{ width: 362 }}
+                    />
+                    {!bpkd.matkhau && <ErrMsg>{errMsg}</ErrMsg>}
+                  </FormGroup>
+                </div>
+
+                <div className="col-lg-6">
+                  <FormGroup>
+                    <Label>Xác nhận mật khẩu:</Label>
+                    <InputPassword
+                      label="Xác nhận"
+                      name="xnmatkhau"
+                      value={bpkd.xnmatkhau}
+                      onChange={(e) => {
+                        handleChangeBpkd(e);
+                        setPwdNotMatch(false);
+                      }}
+                      style={{ width: 362 }}
+                    />
+                    {!bpkd.xnmatkhau ? (
+                      <ErrMsg>{errMsg}</ErrMsg>
+                    ) : pwdNotMatch ? (
+                      <ErrMsg>{pwdNotMatch}</ErrMsg>
+                    ) : null}
+                  </FormGroup>
+                </div>
+              </div>
+            </FormContent>
+          </Form>
+        </Content>
+      </Container>
+
+      <SnackbarMaterial
+        severity="success"
+        message="Thêm thành công"
+        open={alert}
+        setOpen={setAlert}
+      />
+    </>
   );
 };
 
-const BophankinhdoanhThemWrapper = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
 `;
-
 const Form = styled.div`
   background: #fff;
   padding: 36px 20px;
 `;
-
+const FormContent = styled.div`
+  width: 750px;
+  margin: auto;
+  font-family: "Poppins", sans-serif;
+`;
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
+  margin-bottom: 36px;
+`;
 const FormGroup = styled.div`
-  margin-bottom: 20px;
-  span {
-    font-size: 15px;
-    color: #555;
-    display: block;
-    margin-bottom: 10px;
+  margin-bottom: 26px;
+`;
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
   }
 `;
-
 const ErrMsg = styled.div`
   font-size: 13px;
   color: red;

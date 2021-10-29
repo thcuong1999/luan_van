@@ -13,7 +13,11 @@ const adminRouter = require("./routers/adminRouter");
 const hodanRouter = require("./routers/hodanRouter");
 const giamsatvungRouter = require("./routers/giamsatvungRouter");
 const langngheRouter = require("./routers/langngheRouter");
-
+const vattuRouter = require("./routers/vattuRouter");
+const nguyenlieuRouter = require("./routers/nguyenlieuRouter");
+const tiendoRouter = require("./routers/TiendoRouter");
+const sanphamLangngheRouter = require("./routers/SanphamLangngheRouter");
+const nhanhieuRouter = require("./routers/nhanhieuRouter");
 const app = express();
 
 app.use(cors());
@@ -38,8 +42,14 @@ app.use("/api/phanphat", phanphatRouter);
 app.use("/api/hodan", hodanRouter);
 app.use("/api/gsv", giamsatvungRouter);
 app.use("/api/langnghe", langngheRouter);
+app.use("/api/vattu", vattuRouter);
+app.use("/api/nguyenlieu", nguyenlieuRouter);
+app.use("/api/tiendo", tiendoRouter);
+app.use("/api/sanphamlangnghe", sanphamLangngheRouter);
+app.use("/api/nhanhieu", nhanhieuRouter);
 
 const port = process.env.PORT || 8000;
+
 app.listen(port, () => {
   console.log(`server is running on port ${port}`);
 });

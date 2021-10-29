@@ -32,33 +32,33 @@ const StyledTableRow = styled1(TableRow)(({ theme }) => ({
 
 const TableBaocaoThieu = ({ rows, setCongcuThieu }) => {
   const [dsCongcu, setDsCongcu] = React.useState([]);
-  console.log({ rows });
+  // console.log({ rows });
 
-  const compareSoluong = (slcap, slthieu) => {
-    // console.log({ slcap, slthieu });
-    if (parseInt(slthieu) > slcap) {
-      return slcap;
-    } else {
-      return slthieu;
-    }
-  };
+  // const compareSoluong = (slcap, slthieu) => {
+  //   // console.log({ slcap, slthieu });
+  //   if (parseInt(slthieu) > slcap) {
+  //     return slcap;
+  //   } else {
+  //     return slthieu;
+  //   }
+  // };
 
-  const handleChangeSlThieu = (e, row) => {
-    let val = e.target.value;
-    if (isNaN(val)) {
-      e.target.value = 1;
-    } else {
-      setDsCongcu(
-        dsCongcu.map((item) => {
-          if (item._id === row._id) {
-            item.soluongthieu = compareSoluong(item.soluongphanphat, val);
-          }
-          return item;
-        })
-      );
-      setCongcuThieu(dsCongcu);
-    }
-  };
+  // const handleChangeSlThieu = (e, row) => {
+  //   let val = e.target.value;
+  //   if (isNaN(val)) {
+  //     e.target.value = 1;
+  //   } else {
+  //     setDsCongcu(
+  //       dsCongcu.map((item) => {
+  //         if (item._id === row._id) {
+  //           item.soluongthieu = compareSoluong(item.soluongphanphat, val);
+  //         }
+  //         return item;
+  //       })
+  //     );
+  //     setCongcuThieu(dsCongcu);
+  //   }
+  // };
 
   React.useEffect(() => {
     const mappedState = rows?.items.map((item) => ({
@@ -126,7 +126,6 @@ const Image = styled.img`
     opacity: 0.15;
   }
 `;
-
 const slnhanduocfield = {
   outline: "none",
   width: 50,

@@ -8,15 +8,11 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import { Link, useHistory } from "react-router-dom";
-import img_placeholder from "../../../assets/images/img_placeholder.png";
-// ====
+import { Link } from "react-router-dom";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
-// import EnhancedTableToolbar from "../../../components/table/EnhancedTableToolbar";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsPhanphat } from "./headCells";
-// === toolbar
 import { alpha } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -24,24 +20,12 @@ import Toolbar from "@mui/material/Toolbar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import Typography from "@mui/material/Typography";
-// icon
 import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, selectedCongcu } = props;
-  let history = useHistory();
-
-  const handleChange = (e) => {
-    const selected = e.target.value;
-    if (selected === "phanphat") {
-      history.push({
-        pathname: "/bophankd/phanphat/them",
-        state: { congcu: selectedCongcu },
-      });
-    }
-  };
+  const { numSelected } = props;
 
   return numSelected > 0 ? (
     <Toolbar
@@ -95,7 +79,7 @@ const EnhancedTableToolbar = (props) => {
   ) : null;
 };
 
-const TablePhanphatDanhsach = ({ dsPhanphat }) => {
+const TablePhanphatDanhsach = ({ dsPhanphat = [] }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -108,7 +92,6 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsPhanphat.map((item) => item);
@@ -155,10 +138,10 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar
+        {/* <EnhancedTableToolbar
           numSelected={selected.length}
           selectedCongcu={selected}
-        />
+        /> */}
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -204,7 +187,7 @@ const TablePhanphatDanhsach = ({ dsPhanphat }) => {
                         />
                       </TableCell>
                       <TableCell align="right">
-                        {row.phanphat?.to.hodan.daidien}
+                        {row.phanphat?.to.hodan?.daidien}
                       </TableCell>
                       <TableCell align="right">
                         {`${row.phanphat?.to.daily1.ten}, ${row.phanphat?.to.daily2.ten}`}

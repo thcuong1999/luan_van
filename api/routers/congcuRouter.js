@@ -7,17 +7,25 @@ const { getCurrentDatetime } = require("../utils");
 
 // them cong cu
 congcuRouter.post("/them", upload.single("hinhanh"), async (req, res) => {
-  const { ten, mota, thuoctinh, congdung, soluong, bophankdId } = req.body;
-  const newCongcu = new Congcu({
+  const { ten, mota, thuoctinh, congdung, soluong, soluongloi, bophankdId } =
+    req.body;
+  let obj = {
     ten,
     mota,
     thuoctinh: JSON.parse(thuoctinh),
     hinhanh: req.file ? req.file.filename : "",
     congdung,
-    soluong,
     slsaukhipp: soluong,
-    ngaytao: getCurrentDatetime(),
-  });
+  };
+  if (soluong) {
+    obj.soluong = soluong;
+    obj.ngaytao = getCurrentDatetime();
+  } else if (soluongloi) {
+    obj.soluongloi = soluongloi;
+    obj.ngaybaoloi = getCurrentDatetime();
+  }
+
+  const newCongcu = new Congcu(obj);
   try {
     const savedCongcu = await newCongcu.save();
 
@@ -71,6 +79,23 @@ congcuRouter.get("/single/:id", async (req, res) => {
     } else {
       res.send({ message: "Không tìm thấy công cụ", success: false });
     }
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
+
+// them cong cu hu loi
+congcuRouter.put("/themcchuloi", async (req, res) => {
+  const { dsccLoi } = req.body;
+  try {
+    for (const item of dsccLoi) {
+      const congcu = await Congcu.findById(item.congcu);
+      congcu.soluongloi = item.soluongloi;
+      congcu.ngaybaoloi = getCurrentDatetime();
+      await congcu.save();
+    }
+
+    res.send({ success: true });
   } catch (error) {
     res.send({ message: error.message, success: false });
   }

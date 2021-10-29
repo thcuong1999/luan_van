@@ -2,21 +2,14 @@ import React, { useEffect, useState } from "react";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import styled from "styled-components";
-import apiDaily1 from "../../axios/apiDaily1";
-import apiDaily2 from "../../axios/apiDaily2";
 import apiLangnghe from "../../axios/apiLangnghe";
-import ButtonMaterial from "../../components/ButtonMaterial";
-import DropdownCustom from "../../components/DropdownCustom";
 import Header from "../../components/Header";
-import { useSelector } from "react-redux";
-import apiBophankd from "../../axios/apiBophankd";
-import apiHodan from "../../axios/apiHodan";
 import apiPhanphat from "../../axios/apiPhanphat";
 import TablePhanphatChuyentiep from "./tables/TablePhanphatChuyentiep";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import ModalChitietCongcu from "../../components/ModalChitietCongcu";
 import ModalTienhanhPhanphat from "./ModalTienhanhPhanphat";
-// import ModalTienhanhPhanphat from "./ModalTienhanhPhanphat";
+import ButtonMaterial from "../../components/ButtonMaterial";
 
 const PhanphatChuyentiep = (props) => {
   const [loading, setLoading] = useState(false);
@@ -76,6 +69,7 @@ const PhanphatChuyentiep = (props) => {
 
   useEffect(() => {
     fetchPhanphat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -136,11 +130,13 @@ const PhanphatChuyentiep = (props) => {
 
           <Section>
             <SectionTitle>Danh sách công cụ phân phát</SectionTitle>
-            <TablePhanphatChuyentiep
-              dsCongcu={dsCongcu}
-              setSingleCongcu={setSingleCongcu}
-              handleOpenModal={handleOpenModal}
-            />
+            <TableSection>
+              <TablePhanphatChuyentiep
+                dsCongcu={dsCongcu}
+                setSingleCongcu={setSingleCongcu}
+                handleOpenModal={handleOpenModal}
+              />
+            </TableSection>
           </Section>
 
           <ButtonRight>
@@ -179,6 +175,7 @@ const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
+  font-family: "Poppins", sans-serif;
 `;
 const FormWrapper = styled.div`
   background: #fff;
@@ -186,7 +183,7 @@ const FormWrapper = styled.div`
   width: 100%;
 `;
 const Form = styled.div`
-  width: 570px;
+  width: 600px;
   margin: auto;
   padding: 0 26px;
 `;
@@ -223,11 +220,6 @@ const FormGroup = styled.div`
     margin-bottom: 10px;
   }
 `;
-const ErrMsg = styled.span`
-  font-size: 15px;
-  color: red !important;
-  margin-top: -10px;
-`;
 const ButtonRight = styled.div`
   text-align: right;
   margin-top: 20px;
@@ -242,6 +234,12 @@ const Section = styled.div`
 const SectionTitle = styled.h6`
   margin-bottom: 20px;
   color: #333;
+`;
+const TableSection = styled.div`
+  th,
+  td {
+    font-family: "Poppins", sans-serif;
+  }
 `;
 
 export default PhanphatChuyentiep;

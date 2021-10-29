@@ -49,9 +49,33 @@ const apiBophankd = {
     return axiosClient.get(url);
   },
 
+  // lay danh sach cong cu hu loi
+  dsCongcuHuloi(bophankdId) {
+    const url = `/bophankd/dscongcuhuloi/${bophankdId}`;
+    return axiosClient.get(url);
+  },
+
   // lay danh sach cong cu thuoc bophankd
   bophankdDSCongcu(bophankdId) {
     const url = `/bophankd/dscongcu/${bophankdId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay danh sach vattu thuoc bophankd
+  bophankdDSVattu(bophankdId) {
+    const url = `/bophankd/dsvattu/${bophankdId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay danh sach cong cu hu loi
+  dsVattuHuloi(bophankdId) {
+    const url = `/bophankd/dsvattuhuloi/${bophankdId}`;
+    return axiosClient.get(url);
+  },
+
+  // lay danh sach nguyenlieu thuoc bophankd
+  bophankdDSNguyenlieu(bophankdId) {
+    const url = `/bophankd/dsnguyenlieu/${bophankdId}`;
     return axiosClient.get(url);
   },
 
@@ -91,6 +115,18 @@ const apiBophankd = {
     return axiosClient.put(url, payload);
   },
 
+  // xoa nhieu` nglieu thuoc bophankd
+  bophankdXoaNhieuNglieu(payload) {
+    const url = `/bophankd/xoanhieunglieu`;
+    return axiosClient.put(url, payload);
+  },
+
+  // xoa nhieu` vattu thuoc bophankd
+  bophankdXoaNhieuVattu(payload) {
+    const url = `/bophankd/xoanhieuvattu`;
+    return axiosClient.put(url, payload);
+  },
+
   // xoa nhieu` daily 1 thuoc bophankd
   bophankdXoaNhieuDaily1(payload) {
     const url = `/bophankd/xoanhieudaily1`;
@@ -103,9 +139,27 @@ const apiBophankd = {
     return axiosClient.put(url, payload);
   },
 
-  //them daily 1
+  // xoa 1 nguyenlieu thuoc bophankd
+  xoa1Nguyenlieu(payload) {
+    const url = `/bophankd/xoa1nguyenlieu`;
+    return axiosClient.put(url, payload);
+  },
+
+  // xoa 1 vat tu thuoc bophankd
+  xoa1Vattu(payload) {
+    const url = `/bophankd/xoa1vattu`;
+    return axiosClient.put(url, payload);
+  },
+
+  // them daily 1
   bophankdThemDaily1(data) {
     const url = `/bophankd/themdaily1`;
+    return axiosClient.put(url, data);
+  },
+
+  // them san pham
+  themSanpham(data) {
+    const url = `/bophankd/themsanpham`;
     return axiosClient.put(url, data);
   },
 };

@@ -4,7 +4,6 @@ import "toastify-js/src/toastify.css";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import ButtonMaterial from "../../components/ButtonMaterial";
-import InputText from "../../components/InputText";
 import InputPassword from "../../components/InputPassword";
 import DropdownCustom from "../../components/DropdownCustom";
 import { apiTinhThanh } from "../../apiTinhThanh";
@@ -21,6 +20,7 @@ const HodanThem = (props) => {
     sdt: "",
     cmnd: "",
     namsinh: "",
+    nghe: "",
   });
   const [dsLangnghe, setDsLangnghe] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -86,12 +86,13 @@ const HodanThem = (props) => {
           cmnd: hodan.cmnd,
           namsinh: hodan.namsinh,
           diachi: `${xa}, ${huyen}, ${tinh}`,
+          nghe: hodan.nghe,
           langngheId:
             selectedLangnghe !== "Chọn làng nghề"
               ? dsLangnghe.find((item) => item.ten === selectedLangnghe)._id
               : selectedLangnghe,
         };
-        //console.log(dl);
+        // console.log(dl);
         const data = await apiHodan.themHodan(dl);
         if (data.success) {
           Toastify({
@@ -116,6 +117,7 @@ const HodanThem = (props) => {
       sdt: "",
       cmnd: "",
       namsinh: "",
+      nghe: "",
     });
     setTinh("Chọn Tỉnh/Thành Phố");
     sethuyen("Chọn Quận/Huyện");
@@ -133,6 +135,7 @@ const HodanThem = (props) => {
 
   useEffect(() => {
     fetchDsLangnghe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -153,134 +156,171 @@ const HodanThem = (props) => {
       />
       <Content>
         <Form>
-          <div className="row">
-            <div className="col-lg-6">
-              <FormGroup>
-                <InputText
-                  label="Đại diện"
-                  name="daidien"
-                  value={hodan.daidien}
-                  onChange={(e) => {
-                    handleChangeHodan(e);
-                  }}
-                />
-                {!hodan.daidien && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
+          <FormContent>
+            <FormTitle>Thêm hộ dân</FormTitle>
 
-              <FormGroup>
-                <InputText
-                  label="Tên tài khoản"
-                  name="taikhoan"
-                  value={hodan.taikhoan}
-                  onChange={(e) => {
-                    handleChangeHodan(e);
-                  }}
-                />
-                {!hodan.taikhoan && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
+            <FormGroup>
+              <Label>Tên hộ dân:</Label>
+              <Input
+                placeholder="Nhập tên"
+                type="text"
+                name="daidien"
+                value={hodan.daidien}
+                onChange={(e) => {
+                  handleChangeHodan(e);
+                }}
+              />
+              {!hodan.daidien && <ErrMsg>{errMsg}</ErrMsg>}
+            </FormGroup>
 
-              <FormGroup>
-                <InputPassword
-                  label="Mật khẩu"
-                  name="matkhau"
-                  value={hodan.matkhau}
-                  onChange={(e) => {
-                    handleChangeHodan(e);
-                  }}
-                />
-                {!hodan.matkhau && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
+            <FormGroup>
+              <Label>Số điện thoại:</Label>
+              <Input
+                placeholder="Nhập sđt"
+                type="text"
+                name="sdt"
+                value={hodan.sdt}
+                onChange={(e) => {
+                  handleChangeHodan(e);
+                }}
+              />
+              {!hodan.sdt && <ErrMsg>{errMsg}</ErrMsg>}
+            </FormGroup>
 
-              <FormGroup>
-                <InputPassword
-                  label="Xác nhận mật khẩu"
-                  name="xnmatkhau"
-                  value={hodan.xnmatkhau}
-                  onChange={(e) => {
-                    handleChangeHodan(e);
-                  }}
-                />
-                {!hodan.xnmatkhau ? (
-                  <ErrMsg>{errMsg}</ErrMsg>
-                ) : pwdNotMatch ? (
-                  <ErrMsg>{pwdNotMatch}</ErrMsg>
-                ) : null}
-              </FormGroup>
-            </div>
-            <div className="col-lg-6">
-              <FormGroup>
-                <InputText
-                  label="Số điện thoại"
-                  name="sdt"
-                  value={hodan.sdt}
-                  onChange={(e) => {
-                    handleChangeHodan(e);
-                  }}
-                />
-                {!hodan.sdt && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
+            <FormGroup>
+              <Label>Chứng minh nhân dân:</Label>
+              <Input
+                placeholder="Nhập cmnd"
+                type="text"
+                name="cmnd"
+                value={hodan.cmnd}
+                onChange={(e) => {
+                  handleChangeHodan(e);
+                }}
+              />
+              {!hodan.cmnd && <ErrMsg>{errMsg}</ErrMsg>}
+            </FormGroup>
 
-              <FormGroup>
-                <InputText
-                  label="CMND"
-                  name="cmnd"
-                  value={hodan.cmnd}
-                  onChange={(e) => {
-                    handleChangeHodan(e);
-                  }}
-                />
-                {!hodan.cmnd && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
+            <FormGroup>
+              <Label>Năm sinh:</Label>
+              <Input
+                placeholder="Nhập năm sinh"
+                type="text"
+                name="namsinh"
+                value={hodan.namsinh}
+                onChange={(e) => {
+                  handleChangeHodan(e);
+                }}
+              />
+              {!hodan.namsinh && <ErrMsg>{errMsg}</ErrMsg>}
+            </FormGroup>
 
-              <FormGroup>
-                <InputText
-                  label="Năm sinh"
-                  name="namsinh"
-                  value={hodan.namsinh}
-                  onChange={(e) => {
-                    handleChangeHodan(e);
-                  }}
-                />
-                {!hodan.namsinh && <ErrMsg>{errMsg}</ErrMsg>}
-              </FormGroup>
+            <FormGroup>
+              <Label>Nghề:</Label>
+              <Input
+                placeholder="Nhập năm sinh"
+                type="text"
+                name="nghe"
+                value={hodan.nghe}
+                onChange={(e) => {
+                  handleChangeHodan(e);
+                }}
+              />
+              {!hodan.nghe && <ErrMsg>{errMsg}</ErrMsg>}
+            </FormGroup>
 
-              <FormGroup>
-                <span>Làng nghề</span>
-                <div className="row">
-                  <div className="col-lg-4">
-                    <DropdownCustom
-                      dropdownStyles={{ width: 380 }}
-                      selected={selectedLangnghe}
-                      data={dsLangnghe.map((item) => item.ten)}
-                      onClick={(val) => {
-                        setSelectedLangnghe(val);
-                        let { tinh, huyen } = dsLangnghe.find(
-                          (item) => item.ten === val
-                        );
-                        setTinh(tinh);
-                        sethuyen(huyen);
-                      }}
-                    />
-                    {selectedLangnghe === "Chọn làng nghề" ? (
-                      <ErrMsg>{errMsg}</ErrMsg>
-                    ) : null}
+            <div className="row">
+              <div className="col-lg-6">
+                <FormGroup>
+                  <Label>Làng nghề</Label>
+                  <div className="row">
+                    <div className="col-lg-4">
+                      <DropdownCustom
+                        dropdownStyles={{ width: 362 }}
+                        selected={selectedLangnghe}
+                        data={dsLangnghe.map((item) => item.ten)}
+                        onClick={(val) => {
+                          setSelectedLangnghe(val);
+                          let { tinh, huyen } = dsLangnghe.find(
+                            (item) => item.ten === val
+                          );
+                          setTinh(tinh);
+                          sethuyen(huyen);
+                        }}
+                      />
+                      {selectedLangnghe === "Chọn làng nghề" ? (
+                        <ErrMsg>{errMsg}</ErrMsg>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              </FormGroup>
-
-              <FormGroup>
-                <span>Nơi cư trú</span>
-                <DropdownCustom
-                  dropdownStyles={{ width: 380 }}
-                  selected={xa}
-                  data={dsXa}
-                  onClick={(val) => {
-                    setXa(val);
-                  }}
-                />
-              </FormGroup>
+                </FormGroup>
+              </div>
+              <div className="col-lg-6">
+                <FormGroup>
+                  <Label>Nơi cư trú</Label>
+                  <DropdownCustom
+                    dropdownStyles={{ width: 362 }}
+                    selected={xa}
+                    data={dsXa}
+                    onClick={(val) => {
+                      setXa(val);
+                    }}
+                  />
+                </FormGroup>
+              </div>
             </div>
-          </div>
+
+            <FormGroup>
+              <Label>Tên tài khoản:</Label>
+              <Input
+                placeholder="Nhập tài khoản"
+                type="text"
+                name="taikhoan"
+                value={hodan.taikhoan}
+                onChange={(e) => {
+                  handleChangeHodan(e);
+                }}
+              />
+              {!hodan.taikhoan && <ErrMsg>{errMsg}</ErrMsg>}
+            </FormGroup>
+
+            <div className="row">
+              <div className="col-lg-6">
+                <FormGroup>
+                  <Label>Mật khẩu:</Label>
+                  <InputPassword
+                    label="Mật khẩu"
+                    name="matkhau"
+                    value={hodan.matkhau}
+                    onChange={(e) => {
+                      handleChangeHodan(e);
+                    }}
+                    style={{ width: 362 }}
+                  />
+                  {!hodan.matkhau && <ErrMsg>{errMsg}</ErrMsg>}
+                </FormGroup>
+              </div>
+              <div className="col-lg-6">
+                <FormGroup>
+                  <Label>Xác nhận mật khẩu:</Label>
+                  <InputPassword
+                    label="Xác nhận"
+                    name="xnmatkhau"
+                    value={hodan.xnmatkhau}
+                    onChange={(e) => {
+                      handleChangeHodan(e);
+                    }}
+                    style={{ width: 362 }}
+                  />
+                  {!hodan.xnmatkhau ? (
+                    <ErrMsg>{errMsg}</ErrMsg>
+                  ) : pwdNotMatch ? (
+                    <ErrMsg>{pwdNotMatch}</ErrMsg>
+                  ) : null}
+                </FormGroup>
+              </div>
+            </div>
+          </FormContent>
         </Form>
       </Content>
     </Container>
@@ -292,28 +332,47 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
 `;
-
 const Form = styled.div`
   background: #fff;
-  padding: 36px 20px;
+  padding: 36px 26px;
 `;
-
+const FormContent = styled.div`
+  width: 750px;
+  margin: auto;
+  font-family: "Poppins", sans-serif;
+`;
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
+  margin-bottom: 36px;
+`;
 const FormGroup = styled.div`
-  margin-bottom: 20px;
-  span {
-    font-size: 15px;
-    color: #555;
-    display: block;
-    margin-bottom: 10px;
+  margin-bottom: 26px;
+`;
+const Label = styled.span`
+  font-size: 16px;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 13px 16px;
+  outline: none;
+  color: #333;
+  border-radius: 3px;
+  &:focus {
+    border: 1px solid blue;
   }
 `;
-
 const ErrMsg = styled.span`
   font-size: 15px;
   color: red !important;

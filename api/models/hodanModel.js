@@ -25,6 +25,7 @@ const hodanSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Langnghe",
     },
+    nghe: String,
     daily2: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Daily2",
@@ -32,6 +33,7 @@ const hodanSchema = new mongoose.Schema(
     items: [
       {
         congcu: { type: mongoose.Schema.Types.ObjectId, ref: "Congcu" },
+        vattu: { type: mongoose.Schema.Types.ObjectId, ref: "Vattu" },
         soluongphanphat: Number,
         ngaytiepnhan: String,
         daguitra: {

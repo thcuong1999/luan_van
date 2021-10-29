@@ -9,6 +9,8 @@ import styled from "styled-components";
 import Header from "../../components/Header";
 
 const Phanphat = (props) => {
+  const [query, setQuery] = React.useState("");
+  const [searchColumns] = React.useState(["daidien", "daily1", "daily2"]);
   const [loading, setLoading] = React.useState(false);
   const [dsPhanphat, setDsPhanphat] = React.useState([]);
   const { userInfo } = useSelector((state) => state.user);
@@ -16,9 +18,31 @@ const Phanphat = (props) => {
   const fetchCongcu = async () => {
     setLoading(true);
     const { bophankd } = await apiBophankd.bophankdBasedUserId(userInfo._id);
-    const { dsphanphat } = await apiBophankd.dsPhanphat(bophankd._id);
-    setDsPhanphat(dsphanphat ? dsphanphat : []);
+    const { dsphanphat } = await apiPhanphat.dsCongcuPhanphat(bophankd._id);
+    console.log(dsphanphat);
+    setDsPhanphat(
+      dsphanphat
+        ? dsphanphat.map((item) => ({
+            ...item,
+            daidien: item.phanphat.to.hodan.daidien,
+            daily1: item.phanphat.to.daily1.ten,
+            daily2: item.phanphat.to.daily2.ten,
+          }))
+        : []
+    );
     setLoading(false);
+  };
+
+  const search = (dsPhanphat) => {
+    return (
+      dsPhanphat &&
+      dsPhanphat.filter((item) =>
+        searchColumns.some(
+          (col) =>
+            item[col].toString().toLowerCase().indexOf(query.toLowerCase()) > -1
+        )
+      )
+    );
   };
 
   React.useEffect(() => {
@@ -32,7 +56,7 @@ const Phanphat = (props) => {
 
   return (
     <Wrapper>
-      <Header title="Danh sách công cụ" />
+      <Header title="Công cụ phân phát" />
       <Content>
         <BtnRight>
           <ButtonMaterial
@@ -51,13 +75,16 @@ const Phanphat = (props) => {
               <i class="fas fa-search"></i>
               <input
                 type="text"
-                placeholder="Tim công cụ theo tên, công dụng"
-                // value={query}
-                // onChange={(e) => setQuery(e.target.value)}
+                placeholder="Tim phân phát theo tên, công dụng"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
               />
             </SearchBox>
           </Filter>
-          <TablePhanphatDanhsach dsPhanphat={dsPhanphat} />
+
+          <TableSection>
+            <TablePhanphatDanhsach dsPhanphat={search(dsPhanphat)} />
+          </TableSection>
         </FilterSection>
       </Content>
     </Wrapper>
@@ -69,41 +96,35 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 0 36px;
 `;
-
 const BtnRight = styled.div`
   text-align: right;
   padding: 16px 0;
 `;
-
 const FilterSection = styled.div`
   background: #fff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
   font-weight: 500;
   color: #1e93e8;
+  font-family: "Poppins", sans-serif;
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const Filter = styled.div`
   background: #fff;
   padding: 14px 17px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const SearchBox = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
   width: 50%;
@@ -122,10 +143,18 @@ const SearchBox = styled.div`
     padding: 0 10px;
     color: #182537;
     font-size: 14px;
+    font-family: "Poppins", sans-serif;
     &::placeholder {
       font-size: 14px;
       color: rgba(0, 0, 0, 0.35);
+      font-family: "Poppins", sans-serif;
     }
+  }
+`;
+const TableSection = styled.div`
+  th,
+  td {
+    font-family: "Poppins", sans-serif;
   }
 `;
 

@@ -57,21 +57,19 @@ const Dropdown = styled.div`
   user-select: none;
   position: relative;
 `;
-
 const DropdownBtn = styled.div`
   padding: 15px 20px;
   background: #fff;
-  /* box-shadow: 3px 3px 10px 6px rgba(0, 0, 0, 0.06); */
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 3px;
   font-weight: 400;
   color: #333;
+  font-family: "Poppins", sans-serif;
   display: flex;
   align-items: center;
   cursor: pointer;
   justify-content: space-between;
 `;
-
 const DropdownContent = styled.div`
   position: absolute;
   top: 110%;
@@ -81,12 +79,12 @@ const DropdownContent = styled.div`
   box-shadow: 3px 3px 10px 6px rgba(0, 0, 0, 0.06);
   font-weight: 400;
   color: #333;
+  font-family: "Poppins", sans-serif;
   width: 95%;
   max-height: 200px;
   overflow: auto;
   z-index: 999;
 `;
-
 const DropdownItem = styled.div`
   padding: 10px;
   cursor: pointer;

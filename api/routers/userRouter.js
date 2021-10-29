@@ -18,13 +18,10 @@ userRouter.post("/login", async (req, res) => {
     //const validPwd = bcrypt.compareSync(matkhau, user.matkhau); // falses
     const token = generateToken(user);
     if (bcrypt.compareSync(matkhau, user.matkhau)) {
-      // passwd matched, -> tìm thông tin user tương ứng với vaitro
-
       res.status(200).send({
         _id: user._id,
         taikhoan: user.taikhoan,
         vaitro: user.vaitro,
-        vaitro2: user.vaitro2 ? user.vaitro2 : "",
         token,
         success: true,
       });

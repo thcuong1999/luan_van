@@ -1,190 +1,60 @@
+* 1 langf nghe nhieu/1 sanpham
+* show thao tac
+* show thong ke trong page Tong quan
+* giao dien kho hang
+* qly lang nghe -> muon biet qlkd/cty, sp nao do lang nghe nao dap ung dc/mua 1 sp mua o dau/
+* tien do bao cao -> muon biet 1 cacsh tong quat, muon 1 sp -> khi nao co'
+* xem thong tin lang nghe -> click icon langnghe
+* langnghe: don dat hang, tuong tac voi' nong dan, theo doi don hang, su kien xay ra -> thong bao'
+
+db.customers.update(
+  {},
+  {
+    $set: {
+      "sanpham": "Maier"
+    }
+  }
+);
+
+//===================
 padding: 36px 20px;
 
 onclick={() => myFunc()} : Gọi hàm <=> onclick={myFunc} : tham chiếu
-
 
 MẤY CÁI REF TRONG COLLECTION CHỈ LÀ THAM CHIẾU THÔI, KO TÁC ĐỘNG LÊ NÓ KHI UPDATE
 => CHỈ TÁC ĐỘNG LÊN COLLECTION MÀ NÓ THAM CHIẾU ĐẾN THÔI
 - khi cập nhật or thêm, sửa, xóa -> đặt giả thiết field này có tồn tại ko
     nêu tồn tại thì làm j, ko tồn tại thì làm j
-
-sửa sp -> sp chưa nhập kho -> có thể nhập kho (do later)
-
-tỉnh: name
-huyện: districts
-xã: wards
-
-db.phanphats.drop()
-db.bophankds.update({}, {$set: {dsphanphat: []}}, false, true);
-db.congcus.update({}, {$set: {slsaukhipp: 10}}, false, true);
-db.daily1.update({}, {$set: {items: [], dsphanphat: []}}, false, true);
-db.daily2.update({}, {$set: {items: [], dsphanphat: []}}, false, true);
-db.hodans.update({}, {$set: {dsphanphat: []}}, false, true);
-db.hodans.update({}, {$set: {items: []}}, false, true);
-
-db.users.update({taikhoan: bophankda}, {$set: {vaitro2: giamsatvung}}, false, true);
-
-
-
-mỗi bộ phận kd quản lý riêng: công cụ, sản phẩm, đại lý 1, kho hàng, phân phát
-
-bophankdRouter.get("/danhsach", async (req, res) => {
-  try {
-    const bophankd = await Bophankd.find({}).populate("user");
-    res.send({ bophankd, success: true });
-  } catch (error) {
-    res.send({ message: error.message, success: false });
-  }
-});
-
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
-
-if(data.success) {
-    Toastify({
-        text: "Then nhan hieu thanh cong",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-    }).showToast();
-}
+ 
+- generate passwd
+- dl xem thong tin dl2
+- nhieu sp, ser nhieu sp
+- gsv -> gs làng nghề có bn sp | thêm list sp. ql hộ dân đan
+    + add hodan -> bpkd
+    + sale, marketing
+- bpkd: tên sp: admin nhpaj
+    + add sp (msdh, mssp): 
+    + cty cc kiểu đan, cách đan
+    + nhận đơn hàng, qly đơn hàng
+    + nhap sp: admin nhập
     
-const [bophankd, setBophankd] = useState(null);
-const [loading, setLoading] = useState(false)   
-const fetchDsBophankd = async () => {
-    setLoading(true);
-    const data = await apiBophankd.dsBophankd();
-    setDsBophankd(data.bophankd);
-    setLoading(false);
-  };
+
+=> admin them sanpham: trai tao, le,... -> bokd chon
+=> admin them sanpham langnghe
 
 
-   useEffect(() => {
-      //
-  }, [])
-
-===================================================
-
-PHAN PHAT FUNCTIONALITY
-
-I. bo phan KD
-    - 
-daily2: {
-    tencty,
-    sdt,
-    email,
-    diachi,
-    hodan: [],
-    items: [],
-    daily1,
-    user,
-  },
+const [alert, setAlert] = React.useState(false);
 
 
-langnghe: {
-    ten,
-    tinh,
-    huyen,
-    sanphamchinh,
-    hodan[]
-}
-
-hodan: {
-    daidien,
-    diachi,
-    sdt,
-    cmnd,
-    ngaysinh,
-    user,
-    langnghe,
-    daily2,
-    items
-}
-
-//=== LÀNG NGHỀ
-Langnghe.js
-    - show ds làng nghề:    ten | tinh | huyen | san pham chinh | tổng số hộ dân -> (langnghe.find({}))
-    - them lang nghe: {
-        ten,
-        tinh,
-        huyen,
-        sanphamchinh,
-    }
-    - sua lang nghe: {
-        ten,
-        tinh,
-        huyen,
-        sanphamchinh,
-    }
-    - xoa lang nghe: { langngheID }
-LangngheChitiet.js:
-    - show chi tiết làng nghề:  tên, tỉnh, huyện, sản phẩm chính, hộ dân (table) -> (langnghe.find({}).populate('hodan'))
-        -> row hộ dân onclick => HodanChitiet.js
-     - sua lang nghe: {
-        ten,
-        tinh,
-        huyen,
-        sanphamchinh,
-    }
-    - xoa lang nghe: { langngheID }
-
-//=== HỘ DÂN
-Hodan.js
-    - show ds hộ dân:   dai dien(tên người đại diện) | sdt | cmnd | ngày sinh | ten làng -> (hodan.find({}).populate('langnghe'))
-        -> làng onclick => LangngheChitiet.js
-HodanChitiet.js:
-    - show chi tiết hộ dân: daidien, diachi, sdt, cmnd, ngaysinh, taikhoan, tên langnghe, tên đaily2 -> (hodan.find({}).populate('langnghe').populate('daily2'))
-        -> ten langnghe onclick => LangngheChitiet.js:
-
-* 1 tỉnh, huyền -> nhiều làng nghề
-* 1 làng nghề -> nhiều hộ dân
-
-xoa ho dan
-  - remove doc of Hodan collection -> return removed doc -> gained field: langnghe
-    - Langnghe model update field: hodan 
-payload: { hodanId }
-
-gsv1
-    - lang nong san: ho dan A, B, C
-    - lang thu cong my nghe: ho dan D, E, F
-    - lang nguyen lieu: ho dan G, H, K
-bpkda
-    - daily1a, daily1b, daily1c
-
-daily1a
-    - daily2a, daily2c
-daily1b
-    - daily2b
-
-daily2a
-    - ho dan A, B, C
-dail2b 
-    - ho dan D, E, F => daily2b chua co daily1 quan ly
-dail2c
-    - ho dan G, H, K
-
-=======================
-Daily1 model {
-    ...,
-    phanphats: [
-        phanphat: phanphatId,
-        trangthai
-    ]
-}
-
-Daily2 model {
-    ...,
-    phanphats: [
-        phanphat: phanphatId,
-        trangthai
-    ]
-}
+<SnackbarMaterial
+    severity="success"
+    message="Thêm/Chỉnh sửa/Xóa thành công"
+    open={alert}
+    setOpen={setAlert}
+/>
 
 
-daily1 phanphat -> daily2
-    Phanphat collection: update:
-    - trangthai: { daily1: 'daxn', daily2: 'choxn' }
-    Daily2 collection: update:
-    - dsphanphat
-payload: { phanphatId }
-=> props.history.push(ds pp of daily1)
+
+setAlert(true);
+
+import SnackbarMaterial from "../../components/SnackbarMaterial";

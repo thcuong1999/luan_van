@@ -19,26 +19,22 @@ const apiSanpham = {
     return axiosClient.get(url);
   },
 
+  // lay danh sach san pham Chua nam trong 1 bophankd cu the
+  dsNotInBophankd(bophankdId) {
+    const url = `/sanpham/dsspchuacobopkd/${bophankdId}`;
+    return axiosClient.get(url);
+  },
+
   // lay thong tin 1 sp
   singleSanpham(id) {
     const url = `/sanpham/single/${id}`;
     return axiosClient.get(url);
   },
 
-  // lay ds loai sp
-  dsLoai() {
-    const url = "/sanpham/loai";
-    return axiosClient.get(url);
-  },
-
-  dsNhanhieu() {
-    const url = "/sanpham/nhanhieu";
-    return axiosClient.get(url);
-  },
-
-  themNhanhieu(data) {
-    const url = "/sanpham/nhanhieu";
-    return axiosClient.post(url, data);
+  // xoa nhieu sp
+  xoaNhieuSanpham(arrOfIds) {
+    const url = "/sanpham/xoanhieusanpham";
+    return axiosClient.put(url, arrOfIds);
   },
 };
 

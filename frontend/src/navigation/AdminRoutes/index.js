@@ -11,11 +11,7 @@ const AdminRoutes = () => {
       <Switch>
         <Route exact path="/" component={RouteProvider} />
         <ProtectedRoute exact path="/admin" component={Dashboard} />
-        <Route path="/admin/bophankd" component={Dashboard} />
-        <Route path="/admin/daily1" component={Dashboard} />
-        <Route path="/admin/daily2" component={Dashboard} />
-        <Route path="/admin/hodan" component={Dashboard} />
-        <Route path="/admin/gsv" component={Dashboard} />
+        <ProtectedRoute path="/admin/*" component={Dashboard} />
         <Route path="*" component={NotfoundPage} />
       </Switch>
     </Router>

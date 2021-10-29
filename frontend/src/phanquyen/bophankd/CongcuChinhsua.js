@@ -1,36 +1,17 @@
 import React, { useState, useEffect } from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Axios from "axios";
 import BackdropMaterial from "../../components/BackdropMaterial";
-import InputText from "../../components/InputText";
 import ButtonMaterial from "../../components/ButtonMaterial";
 import styled from "styled-components";
 import Header from "../../components/Header";
+import SnackbarMaterial from "../../components/SnackbarMaterial";
 
 const CongcuChinhsua = (props) => {
+  const [alert, setAlert] = React.useState(false);
   const [thuoctinh, setThuoctinh] = useState([{ ten: "", giatri: "" }]);
-  // api
   const [loading, setLoading] = useState(false);
   const [congcu, setCongcu] = useState({});
   const { id: congcuId } = props.match.params;
-
-  const fetchCongcu = async () => {
-    setLoading(true);
-    const { data } = await Axios.get(`/api/congcu/single/${congcuId}`);
-    if (data.success) {
-      setCongcu(data.congcu);
-      setThuoctinh(
-        data.congcu.thuoctinh.length ? data.congcu.thuoctinh : thuoctinh
-      );
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCongcu();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const getThuocTinh = () => {
     if (
@@ -58,13 +39,7 @@ const CongcuChinhsua = (props) => {
     );
     console.log(data);
     if (data.success) {
-      Toastify({
-        text: "Then nhan hieu thanh cong",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
-      props.history.push(`/bophankd/congcu/chitiet/${congcuId}`);
+      setAlert(true);
     }
   };
 
@@ -96,6 +71,23 @@ const CongcuChinhsua = (props) => {
     });
   };
 
+  const fetchCongcu = async () => {
+    setLoading(true);
+    const { data } = await Axios.get(`/api/congcu/single/${congcuId}`);
+    if (data.success) {
+      setCongcu(data.congcu);
+      setThuoctinh(
+        data.congcu.thuoctinh.length ? data.congcu.thuoctinh : thuoctinh
+      );
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCongcu();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (loading) {
     return <BackdropMaterial />;
   }
@@ -109,139 +101,143 @@ const CongcuChinhsua = (props) => {
           onClick={() => props.history.push("/bophankd/congcu")}
           headerRight={
             <ButtonMaterial variant="contained" onClick={submitForm}>
-              Cập nhật
+              cập nhật
             </ButtonMaterial>
           }
         />
         <Content>
           <Form>
-            <div className="row">
-              <div className="col-lg-6">
-                <FormGroup>
-                  <Label>Tên công cụ:</Label>
-                  <Input
-                    type="text"
-                    placeholder="Nhập tên công cụ"
-                    value={congcu.ten}
-                    name="ten"
-                    onChange={handleChange}
-                  />
-                  {/* {!ten && <ErrMsg>{errMsg}</ErrMsg>} */}
-                </FormGroup>
+            <FormContent>
+              <FormTitle>Cập nhật công cụ</FormTitle>
 
-                <FormGroup>
-                  <Label>Mô tả công cụ:</Label>
-                  <TextArea
-                    value={congcu.mota}
-                    name="mota"
-                    onChange={handleChange}
-                    rows="5"
-                  />
-                </FormGroup>
+              <FormGroup>
+                <Label>Tên công cụ:</Label>
+                <Input
+                  type="text"
+                  placeholder="Nhập tên công cụ"
+                  value={congcu.ten}
+                  name="ten"
+                  onChange={handleChange}
+                />
+                {/* {!ten && <ErrMsg>{errMsg}</ErrMsg>} */}
+              </FormGroup>
 
-                <FormGroup>
-                  <Label>Hình ảnh:</Label>
-                  <input
-                    type="file"
-                    onChange={(e) =>
+              <FormGroup>
+                <Label>Mô tả công cụ:</Label>
+                <TextArea
+                  value={congcu.mota}
+                  name="mota"
+                  onChange={handleChange}
+                  rows="5"
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Chọn ảnh:</Label>
+                <input
+                  type="file"
+                  onChange={(e) =>
+                    setCongcu({
+                      ...congcu,
+                      hinhanh: e.target.files[0],
+                    })
+                  }
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Công dụng:</Label>
+                <Input
+                  type="text"
+                  placeholder="Nhập công dụng"
+                  name="congdung"
+                  value={congcu.congdung}
+                  onChange={handleChange}
+                />
+                {/* {!congdung && <ErrMsg>{errMsg}</ErrMsg>} */}
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Số lượng:</Label>
+                <Input
+                  type="text"
+                  placeholder="Nhập số lượng"
+                  value={congcu.soluong}
+                  onChange={(e) => {
+                    let val = e.target.value;
+                    if (isNaN(val)) {
+                      e.target.value = 0;
                       setCongcu({
                         ...congcu,
-                        hinhanh: e.target.files[0],
-                      })
+                        soluong: 0,
+                      });
+                    } else {
+                      setCongcu({
+                        ...congcu,
+                        soluong: e.target.value,
+                      });
                     }
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-lg-6">
-                <FormGroup>
-                  <Label>Công dụng:</Label>
-                  <Input
-                    type="text"
-                    placeholder="Nhập công dụng"
-                    name="congdung"
-                    value={congcu.congdung}
-                    onChange={handleChange}
-                  />
-                  {/* {!congdung && <ErrMsg>{errMsg}</ErrMsg>} */}
-                </FormGroup>
+                  }}
+                />
+                {/* {!soluong && <ErrMsg>{errMsg}</ErrMsg>} */}
+              </FormGroup>
 
-                <FormGroup>
-                  <Label>Số lượng:</Label>
-                  <Input
-                    type="text"
-                    placeholder="Nhập số lượng"
-                    value={congcu.soluong}
-                    onChange={(e) => {
-                      let val = e.target.value;
-                      if (isNaN(val)) {
-                        e.target.value = 0;
-                        setCongcu({
-                          ...congcu,
-                          soluong: 0,
-                        });
-                      } else {
-                        setCongcu({
-                          ...congcu,
-                          soluong: e.target.value,
-                        });
-                      }
-                    }}
-                  />
-                  {/* {!soluong && <ErrMsg>{errMsg}</ErrMsg>} */}
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>Thuộc tính:</Label>
-                  {thuoctinh.map((item, key) => {
-                    return (
-                      <div className="row">
-                        <div className="col-lg-4">
-                          <FormGroup style={{ marginBottom: 10 }}>
-                            <Input
-                              type="text"
-                              name="ten"
-                              value={item.ten}
-                              onChange={(e) => handleInputChange(e, key)}
-                              placeholder="Tên thuộc tính"
-                            />
-                          </FormGroup>
-                        </div>
-                        <div className="col-lg-8">
-                          <div className="d-flex align-items-center">
-                            <Input
-                              type="text"
-                              name="giatri"
-                              value={item.giatri}
-                              onChange={(e) => handleInputChange(e, key)}
-                              placeholder="Giá trị"
-                            />
-                            {thuoctinh.length !== 1 && (
-                              <CrossButton
-                                onClick={() => handleRemoveClick(key)}
-                              >
-                                <i class="fas fa-times"></i>
-                              </CrossButton>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="addElementBtn">
-                          {thuoctinh.length - 1 === key && (
-                            <PlusButton onClick={handleAddClick}>
-                              <i class="fas fa-plus"></i>
-                              <span>Thêm thuộc tính khác</span>
-                            </PlusButton>
+              <FormGroup>
+                <Label>Thuộc tính:</Label>
+                {thuoctinh.map((item, key) => {
+                  return (
+                    <div className="row">
+                      <div className="col-lg-4">
+                        <FormGroup style={{ marginBottom: 10 }}>
+                          <Input
+                            type="text"
+                            name="ten"
+                            value={item.ten}
+                            onChange={(e) => handleInputChange(e, key)}
+                            placeholder="Tên thuộc tính"
+                          />
+                        </FormGroup>
+                      </div>
+                      <div className="col-lg-8">
+                        <div className="d-flex align-items-center">
+                          <Input
+                            type="text"
+                            name="giatri"
+                            value={item.giatri}
+                            onChange={(e) => handleInputChange(e, key)}
+                            placeholder="Giá trị"
+                          />
+                          {thuoctinh.length !== 1 && (
+                            <CrossButton onClick={() => handleRemoveClick(key)}>
+                              <i class="fas fa-times"></i>
+                            </CrossButton>
                           )}
                         </div>
                       </div>
-                    );
-                  })}
-                </FormGroup>
-              </div>
-            </div>
+
+                      <div className="addElementBtn">
+                        {thuoctinh.length - 1 === key && (
+                          <PlusButton onClick={handleAddClick}>
+                            <i class="fas fa-plus"></i>
+                            <span>Thêm thuộc tính khác</span>
+                          </PlusButton>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </FormGroup>
+            </FormContent>
           </Form>
         </Content>
       </Container>
+
+      <SnackbarMaterial
+        severity="success"
+        message="Chỉnh sửa thành công"
+        open={alert}
+        setOpen={setAlert}
+      />
     </>
   );
 };
@@ -251,22 +247,30 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
 `;
-
 const Form = styled.div`
   background: #fff;
   padding: 36px 20px;
 `;
-
+const FormContent = styled.div`
+  width: 750px;
+  margin: auto;
+  font-family: "Poppins", sans-serif;
+`;
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
+  margin-bottom: 26px;
+`;
 const FormGroup = styled.div`
   margin-bottom: 26px;
 `;
-
 const CrossButton = styled.button`
   border: none;
   margin-left: 10px;
@@ -280,7 +284,6 @@ const CrossButton = styled.button`
     outline: none;
   }
 `;
-
 const PlusButton = styled.button`
   margin-left: 20px;
   background: #fff;
@@ -304,14 +307,12 @@ const PlusButton = styled.button`
     outline: none;
   }
 `;
-
 const Label = styled.span`
   font-size: 16px;
   color: #333;
   display: block;
   margin-bottom: 10px;
 `;
-
 const SmallLabel = styled.span`
   font-size: 15px;
   color: blue;
@@ -319,7 +320,6 @@ const SmallLabel = styled.span`
   margin-top: 4px;
   cursor: pointer;
 `;
-
 const Input = styled.input`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -331,7 +331,6 @@ const Input = styled.input`
     border: 1px solid blue;
   }
 `;
-
 const TextArea = styled.textarea`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -343,7 +342,6 @@ const TextArea = styled.textarea`
     border: 1px solid blue;
   }
 `;
-
 const ErrMsg = styled.span`
   font-size: 15px;
   color: red !important;

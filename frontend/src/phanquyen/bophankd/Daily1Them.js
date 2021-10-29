@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import DropdownCustom from "../../components/DropdownCustom";
@@ -12,8 +10,11 @@ import { gethuyen, getTinh, getXa } from "../../utils";
 import { useSelector } from "react-redux";
 import apiBophankd from "../../axios/apiBophankd";
 import DialogMaterial from "../../components/DialogMaterial";
+import SnackbarMaterial from "../../components/SnackbarMaterial";
 
 const Daily1Them = (props) => {
+  const [alert, setAlert] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [searchColumns, setSearchColumns] = React.useState([
     "ten",
@@ -53,17 +54,12 @@ const Daily1Them = (props) => {
       bophankdId: bophankdInfo._id,
       daily1Arr: dsSelectedDaily1,
     };
-    console.log({ dl });
     const data = await apiBophankd.bophankdThemDaily1(dl);
     if (data.success) {
-      Toastify({
-        text: "Thêm đại lý 1 thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
+      setOpen(false);
+      setAlert(true);
+      setSuccess(true);
     }
-    props.history.push("/bophankd/daily1");
   };
 
   const search = (dsDaily1) => {
@@ -105,10 +101,11 @@ const Daily1Them = (props) => {
   };
 
   React.useEffect(() => {
+    setSuccess(false);
     fetchDsDaily1();
     fetchBophankdInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [success]);
 
   if (loading) {
     return <BackdropMaterial />;
@@ -206,10 +203,13 @@ const Daily1Them = (props) => {
               </SearchBox>
             </FilterWrapper>
           </FilterSection>
-          <TableDaily1Them
-            dsDaily1={search(dsDaily1)}
-            handleThemDaily={handleThemDaily}
-          />
+
+          <TableSection>
+            <TableDaily1Them
+              dsDaily1={search(dsDaily1)}
+              handleThemDaily={handleThemDaily}
+            />
+          </TableSection>
         </Content>
       </Wrapper>
 
@@ -223,6 +223,13 @@ const Daily1Them = (props) => {
         onClick1={handleCloseDialog}
         onClick2={handleSubmit}
       />
+
+      <SnackbarMaterial
+        severity="success"
+        message="Thêm thành công"
+        open={alert}
+        setOpen={setAlert}
+      />
     </>
   );
 };
@@ -232,34 +239,29 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 26px 36px;
 `;
-
 const FilterSection = styled.div`
   background: #ffff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
   font-weight: 500;
   color: #1e93e8;
+  font-family: "Poppins", sans-serif;
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const DropdownsWrapper = styled.div`
   padding: 16px;
 `;
-
 const FilterWrapper = styled.div`
   padding-top: 0;
   padding-bottom: 14px;
@@ -267,10 +269,9 @@ const FilterWrapper = styled.div`
   padding-right: 17px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const SearchBox = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
-  width: 360px;
+  width: 50%;
   border-radius: 4px;
   display: flex;
   overflow: hidden;
@@ -286,10 +287,18 @@ const SearchBox = styled.div`
     padding: 0 10px;
     color: #182537;
     font-size: 14px;
+    font-family: "Poppins", sans-serif;
     &::placeholder {
       font-size: 14px;
       color: rgba(0, 0, 0, 0.35);
+      font-family: "Poppins", sans-serif;
     }
+  }
+`;
+const TableSection = styled.div`
+  th,
+  td {
+    font-family: "Poppins", sans-serif;
   }
 `;
 

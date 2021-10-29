@@ -73,23 +73,18 @@ const ModalChitietCongcu = ({ open, onClose, congcu }) => {
 
                 <div className="mb-4">
                   <h6>Thuộc tính</h6>
-                  <div className="row">
-                    <div className="col-5 pr-0">
-                      <StyledInput type="text" value="chieu cao" />
-                    </div>
-                    <div className="col-7">
-                      <StyledInput type="text" value="9m" />
-                    </div>
-                  </div>
-
-                  <div className="row">
-                    <div className="col-5 pr-0">
-                      <StyledInput type="text" value="chieu cao" />
-                    </div>
-                    <div className="col-7">
-                      <StyledInput type="text" value="9m" />
-                    </div>
-                  </div>
+                  {congcu && congcu.thuoctinh.length
+                    ? congcu.thuoctinh.map((item) => (
+                        <div className="row">
+                          <div className="col-5 pr-0">
+                            <StyledInput type="text" value="chieu cao" />
+                          </div>
+                          <div className="col-7">
+                            <StyledInput type="text" value="9m" />
+                          </div>
+                        </div>
+                      ))
+                    : "-------"}
                 </div>
               </div>
             </div>

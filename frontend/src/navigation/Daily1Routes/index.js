@@ -21,12 +21,22 @@ const Daily1Routes = () => {
           path="/daily1/daily2/chinhsua/:id"
           component={Dashboard}
         />
+
         <ProtectedRoute exact path="/daily1/congcu" component={Dashboard} />
         <ProtectedRoute path="/daily1/congcu/them" component={Dashboard} />
         <ProtectedRoute
           path="/daily1/congcu/chitiet/:id"
           component={Dashboard}
         />
+
+        <ProtectedRoute exact path="/daily1/vattu" component={Dashboard} />
+        <ProtectedRoute path="/daily1/vattu/them" component={Dashboard} />
+        <ProtectedRoute
+          exact
+          path="/daily1/vattu/chitiet/:id"
+          component={Dashboard}
+        />
+
         <ProtectedRoute
           path="/daily1/congcu/chinhsua/:id"
           component={Dashboard}
@@ -38,6 +48,20 @@ const Daily1Routes = () => {
         />
         <ProtectedRoute
           path="/daily1/phanphat/chuyentiep/:id"
+          component={Dashboard}
+        />
+        {/* //================== */}
+        <ProtectedRoute
+          exact
+          path="/daily1/vattuphanphat"
+          component={Dashboard}
+        />
+        <ProtectedRoute
+          path="/daily1/vattuphanphat/chitiet/:id"
+          component={Dashboard}
+        />
+        <ProtectedRoute
+          path="/daily1/vattuphanphat/chuyentiep/:id"
           component={Dashboard}
         />
 

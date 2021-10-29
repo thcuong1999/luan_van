@@ -37,12 +37,6 @@ const apiDaily2 = {
     return axiosClient.get(url);
   },
 
-  // lay ds phan phat thuoc daily2
-  dsPhanphat(daily2Id) {
-    const url = `/daily2/dsphanphat/${daily2Id}`;
-    return axiosClient.get(url);
-  },
-
   // lay thong tin 1 phan phat thuoc daily2
   singlePhanphat(daily2Id, phanphatId) {
     const url = `/daily2/singlephanphat/${daily2Id}/${phanphatId}`;
@@ -85,9 +79,29 @@ const apiDaily2 = {
     return axiosClient.get(url);
   },
 
-  // lay ds congcu thuoc daily 2
+  //============================
+
+  // lay ds phan phat CONG CU thuoc daily2
+  dsPhanphat(daily2Id) {
+    const url = `/daily2/dsphanphat/${daily2Id}`;
+    return axiosClient.get(url);
+  },
+
+  // lay ds phan phat VAT TU thuoc daily2
+  dsVattuPhanphat(daily2Id) {
+    const url = `/daily2/dsvattuphanphat/${daily2Id}`;
+    return axiosClient.get(url);
+  },
+
+  // lay ds CONG CU thuoc daily 2
   dsCongcu(daily2Id) {
     const url = `/daily2/danhsachcongcu/${daily2Id}`;
+    return axiosClient.get(url);
+  },
+
+  // lay ds VAT TU thuoc daily 2
+  dsVattu(daily2Id) {
+    const url = `/daily2/danhsachvattu/${daily2Id}`;
     return axiosClient.get(url);
   },
 };

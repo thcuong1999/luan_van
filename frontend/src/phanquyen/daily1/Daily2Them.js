@@ -53,7 +53,6 @@ const Daily2Them = (props) => {
       daily1Id: daily1Info._id,
       daily2Arr: dsSelectedDaily2,
     };
-    // console.log({ dl });
     const data = await apiDaily1.themDaily2(dl);
     if (data.success) {
       Toastify({
@@ -206,10 +205,13 @@ const Daily2Them = (props) => {
               </SearchBox>
             </FilterWrapper>
           </FilterSection>
-          <TableDaily2Them
-            dsDaily2={search(dsDaily2)}
-            handleThemDaily={handleThemDaily}
-          />
+
+          <TableSection>
+            <TableDaily2Them
+              dsDaily2={search(dsDaily2)}
+              handleThemDaily={handleThemDaily}
+            />
+          </TableSection>
         </Content>
       </Wrapper>
 
@@ -232,17 +234,15 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 26px 36px;
+  font-family: "Poppins", sans-serif;
 `;
-
 const FilterSection = styled.div`
   background: #ffff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
@@ -251,15 +251,12 @@ const Title = styled.div`
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const DropdownsWrapper = styled.div`
   padding: 16px;
 `;
-
 const FilterWrapper = styled.div`
   padding-top: 0;
   padding-bottom: 14px;
@@ -267,10 +264,9 @@ const FilterWrapper = styled.div`
   padding-right: 17px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const SearchBox = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
-  width: 360px;
+  width: 50%;
   border-radius: 4px;
   display: flex;
   overflow: hidden;
@@ -290,6 +286,12 @@ const SearchBox = styled.div`
       font-size: 14px;
       color: rgba(0, 0, 0, 0.35);
     }
+  }
+`;
+const TableSection = styled.div`
+  th,
+  td {
+    font-family: "Poppins", sans-serif;
   }
 `;
 

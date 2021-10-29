@@ -9,20 +9,16 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiDaily1 from "../../../axios/apiDaily1";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsDaily1 } from "./headCells";
 import ButtonMaterial from "../../../components/ButtonMaterial";
-// tool bar
 import { alpha } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Daily1Chitiet from "../Daily1Chitiet";
 
 const EnhancedTableToolbar = ({ numSelected, selected, handleThemDaily }) => {
   return numSelected > 0 ? (
@@ -45,9 +41,7 @@ const EnhancedTableToolbar = ({ numSelected, selected, handleThemDaily }) => {
           color="inherit"
           variant="subtitle1"
           component="div"
-        >
-          <span>Đã chọn {numSelected} dòng </span>
-        </Typography>
+        ></Typography>
       ) : (
         <Typography
           sx={{ flex: "1 1 100%" }}
@@ -75,22 +69,12 @@ const EnhancedTableToolbar = ({ numSelected, selected, handleThemDaily }) => {
   ) : null;
 };
 
-const TableDaily1Them = ({ dsDaily1, handleThemDaily }) => {
+const TableDaily1Them = ({ dsDaily1 = [], handleThemDaily }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [modalChitietOpen, setModalChitietOpen] = React.useState(false);
-  const [daily1Info, setDaily1Info] = React.useState(false);
-
-  const handleOpenModalChitiet = async (id) => {
-    const data = await apiDaily1.singleDaily1(id);
-    setDaily1Info(data.daily1);
-    setModalChitietOpen(true);
-  };
-
-  const handleCloseModalChitiet = () => setModalChitietOpen(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -98,7 +82,6 @@ const TableDaily1Them = ({ dsDaily1, handleThemDaily }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsDaily1.map((item) => item._id);
@@ -197,12 +180,7 @@ const TableDaily1Them = ({ dsDaily1, handleThemDaily }) => {
                           />
                         </TableCell>
                         <TableCell align="right">
-                          <Link
-                            to="#"
-                            onClick={() => handleOpenModalChitiet(row._id)}
-                          >
-                            {row.ten}
-                          </Link>
+                          <Link to="#">{row.ten}</Link>
                         </TableCell>
                         <TableCell align="right">{row.sdt}</TableCell>
                         <TableCell align="right">{row.email}</TableCell>
@@ -243,12 +221,6 @@ const TableDaily1Them = ({ dsDaily1, handleThemDaily }) => {
           />
         </Paper>
       </Box>
-
-      <Daily1Chitiet
-        open={modalChitietOpen}
-        onClose={handleCloseModalChitiet}
-        daily1={daily1Info}
-      />
     </>
   );
 };

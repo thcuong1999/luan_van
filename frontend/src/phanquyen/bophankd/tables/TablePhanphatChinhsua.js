@@ -31,7 +31,7 @@ const StyledTableRow = styledMaterial(TableRow)(({ theme }) => ({
 }));
 
 const TablePhanphatChinhsua = ({
-  dsCongcu,
+  dsCongcu = [],
   phanphat,
   handleRemoveRow,
   setDsCongcu,

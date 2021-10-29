@@ -25,6 +25,12 @@ const apiCongcu = {
     const url = `/congcu/single/${id}`;
     return axiosClient.delete(url);
   },
+
+  // them cong cu hu loi
+  themCongcuHuloi(payload) {
+    const url = "/congcu/themcchuloi";
+    return axiosClient.put(url, payload);
+  },
 };
 
 export default apiCongcu;

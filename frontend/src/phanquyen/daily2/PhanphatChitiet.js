@@ -1,45 +1,19 @@
 import React, { useState, useEffect } from "react";
 import BackdropMaterial from "../../components/BackdropMaterial";
-import img_placeholder from "../../assets/images/img_placeholder.png";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import InputText from "../../components/InputText";
 import DialogMaterial from "../../components/DialogMaterial";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ButtonMaterial from "../../components/ButtonMaterial";
 import apiPhanphat from "../../axios/apiPhanphat";
-import apiCongcu from "../../axios/apiCongcu";
-import apiDaily1 from "../../axios/apiDaily1";
 import apiDaily2 from "../../axios/apiDaily2";
 import TablePhanphatChitiet from "./tables/TablePhanphatChitiet";
 import { useSelector } from "react-redux";
-import Alert from "@mui/material/Alert";
 import styled from "styled-components";
-// modal
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import Button from "@mui/material/Button";
-import Fade from "@mui/material/Fade";
-import Backdrop from "@mui/material/Backdrop";
-// icon
 import CheckIcon from "@mui/icons-material/Check";
-import { getCurrentDatetime } from "../../utils";
 import ModalChitietCongcu from "../../components/ModalChitietCongcu";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Header from "../../components/Header";
 import apiLangnghe from "../../axios/apiLangnghe";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 950,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
 
 const PhanphatChitiet = (props) => {
   const [loading, setLoading] = useState(false);
@@ -259,6 +233,7 @@ const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 26px 36px;
+  font-family: "Poppins", sans-serif;
 `;
 const Section = styled.div`
   padding: 26px;
@@ -266,13 +241,21 @@ const Section = styled.div`
   margin-bottom: 20px;
 `;
 const Title = styled.h6`
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `;
 const FormGroup = styled.div`
   margin-bottom: 20px;
+  input,
+  textarea {
+    font-family: "Poppins", sans-serif;
+  }
 `;
 const TableSection = styled.div`
   table {
+    th,
+    td {
+      font-family: "Poppins", sans-serif;
+    }
     th:first-child {
       display: none;
     }

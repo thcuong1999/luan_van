@@ -35,6 +35,7 @@ const LangngheChitiet = (props) => {
   useEffect(() => {
     setRowsRemoved(false);
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowsRemoved]);
 
   if (loading) {
@@ -98,7 +99,10 @@ const LangngheChitiet = (props) => {
               />
             </SearchBox>
           </Filter>
-          <TableHodan dsHodan={dsHodan} setRowsRemoved={setRowsRemoved} />
+
+          <TableSection>
+            <TableHodan dsHodan={dsHodan} setRowsRemoved={setRowsRemoved} />
+          </TableSection>
         </FilterSection>
       </Content>
     </Wrapper>
@@ -110,25 +114,22 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
+  font-family: "Poppins", sans-serif;
 `;
-
 const FormWrapper = styled.div`
   background: #fff;
   padding: 36px 20px 16px 36px;
   width: 100%;
 `;
-
 const Form = styled.div`
   width: 570px;
   margin: auto;
   padding: 0 26px;
 `;
-
 const FormTitle = styled.div`
   font-size: 26px;
   font-weight: bold;
@@ -136,14 +137,12 @@ const FormTitle = styled.div`
   margin-bottom: 20px;
   text-align: center;
 `;
-
 const Label = styled.span`
   font-size: 16px;
   color: #333;
   display: block;
   margin-bottom: 10px;
 `;
-
 const Input = styled.input`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -155,7 +154,6 @@ const Input = styled.input`
     border: 1px solid blue;
   }
 `;
-
 const FormGroup = styled.div`
   margin-bottom: 20px;
   span {
@@ -165,17 +163,14 @@ const FormGroup = styled.div`
     margin-bottom: 10px;
   }
 `;
-
 const ErrMsg = styled.span`
   font-size: 15px;
   color: red !important;
   margin-top: 3px;
 `;
-
 const FilterSection = styled.div`
   background: #fff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
@@ -184,17 +179,14 @@ const Title = styled.div`
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const Filter = styled.div`
   background: #fff;
   padding: 14px 17px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const SearchBox = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
   width: 50%;
@@ -217,6 +209,12 @@ const SearchBox = styled.div`
       font-size: 14px;
       color: rgba(0, 0, 0, 0.35);
     }
+  }
+`;
+const TableSection = styled.div`
+  th,
+  td {
+    font-family: "Poppins", sans-serif;
   }
 `;
 

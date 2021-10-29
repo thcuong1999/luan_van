@@ -11,8 +11,7 @@ const GsvRoutes = () => {
       <Switch>
         <Route exact path="/" component={RouteProvider} />
         <ProtectedRoute exact path="/giamsatvung" component={Dashboard} />
-        <ProtectedRoute path="/giamsatvung/langnghe" component={Dashboard} />
-        <ProtectedRoute path="/giamsatvung/hodan" component={Dashboard} />
+        <ProtectedRoute path="/giamsatvung/*" component={Dashboard} />
         <Route path="*" component={NotfoundPage} />
       </Switch>
     </Router>

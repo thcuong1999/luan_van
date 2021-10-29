@@ -5,12 +5,10 @@ import styled from "styled-components";
 import Header from "../../components/Header";
 import DropdownCustom from "../../components/DropdownCustom";
 import TableHodanThem from "./tables/TableHodanThem";
-import apiDaily1 from "../../axios/apiDaily1";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import { apiTinhThanh } from "../../apiTinhThanh";
 import { gethuyen, getTinh, getXa } from "../../utils";
 import { useSelector } from "react-redux";
-import apiBophankd from "../../axios/apiBophankd";
 import DialogMaterial from "../../components/DialogMaterial";
 import apiHodan from "../../axios/apiHodan";
 import apiDaily2 from "../../axios/apiDaily2";
@@ -210,10 +208,13 @@ const HodanThem = (props) => {
               </SearchBox>
             </FilterWrapper>
           </FilterSection>
-          <TableHodanThem
-            dsHodan={search(dsHodan)}
-            handleThemHodan={handleThemHodan}
-          />
+
+          <TableSection>
+            <TableHodanThem
+              dsHodan={search(dsHodan)}
+              handleThemHodan={handleThemHodan}
+            />
+          </TableSection>
         </Content>
       </Wrapper>
 
@@ -236,17 +237,15 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 26px 36px;
+  font-family: "Poppins", sans-serif;
 `;
-
 const FilterSection = styled.div`
   background: #ffff;
 `;
-
 const Title = styled.div`
   margin: 0;
   padding: 14px 17px;
@@ -255,15 +254,12 @@ const Title = styled.div`
   display: inline-block;
   border-bottom: 2px solid #1e93e8;
 `;
-
 const TitleWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const DropdownsWrapper = styled.div`
   padding: 16px;
 `;
-
 const FilterWrapper = styled.div`
   padding-top: 0;
   padding-bottom: 14px;
@@ -271,10 +267,9 @@ const FilterWrapper = styled.div`
   padding-right: 17px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
-
 const SearchBox = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
-  width: 360px;
+  width: 50%;
   border-radius: 4px;
   display: flex;
   overflow: hidden;
@@ -294,6 +289,12 @@ const SearchBox = styled.div`
       font-size: 14px;
       color: rgba(0, 0, 0, 0.35);
     }
+  }
+`;
+const TableSection = styled.div`
+  th,
+  td {
+    font-family: "Poppins", sans-serif;
   }
 `;
 

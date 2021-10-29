@@ -72,7 +72,7 @@ const EnhancedTableToolbar = ({ numSelected, handleOpenModalConfirm }) => {
   ) : null;
 };
 
-const TableDaily2 = ({ dsDaily2, setRowsRemoved, daily1Id }) => {
+const TableDaily2 = ({ dsDaily2 = [], setRowsRemoved, daily1Id }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -90,7 +90,6 @@ const TableDaily2 = ({ dsDaily2, setRowsRemoved, daily1Id }) => {
 
   const handleCloseModalChitiet = () => setModalChitietOpen(false);
 
-  // console.log(dsDaily2);
   const handleOpenModalConfirm = async (id) => setModalConfirmOpen(true);
   const handleCloseModalConfirm = () => setModalConfirmOpen(false);
 
@@ -116,7 +115,6 @@ const TableDaily2 = ({ dsDaily2, setRowsRemoved, daily1Id }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsDaily2?.map((item) => item._id);

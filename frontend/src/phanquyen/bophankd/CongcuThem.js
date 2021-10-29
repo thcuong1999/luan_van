@@ -1,16 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
-import Axios from "axios";
-import InputText from "../../components/InputText";
 import ButtonMaterial from "../../components/ButtonMaterial";
 import { useSelector } from "react-redux";
 import apiBophankd from "../../axios/apiBophankd";
 import apiCongcu from "../../axios/apiCongcu";
 import styled from "styled-components";
 import Header from "../../components/Header";
+import SnackbarMaterial from "../../components/SnackbarMaterial";
 
 const CongcuThem = (props) => {
+  const [alert, setAlert] = React.useState(false);
   const [thuoctinh, setThuoctinh] = useState([{ ten: "", giatri: "" }]);
   const [ten, setTen] = useState("");
   const [mota, setMota] = useState("");
@@ -55,13 +53,9 @@ const CongcuThem = (props) => {
       formData.append("bophankdId", bophankdInfo._id);
       const data = await apiCongcu.themCongcu(formData);
       if (data.success) {
-        Toastify({
-          text: "Then nhan hieu thanh cong",
-          backgroundColor: "#0DB473",
-          className: "toastifyInfo",
-          position: "center",
-        }).showToast();
+        setAlert(true);
         resetFields();
+        setErrMsg("");
       }
     }
   };
@@ -102,24 +96,26 @@ const CongcuThem = (props) => {
 
   useEffect(() => {
     fetchBophankdInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Container>
-      <Header
-        title="Quay lại trang danh sách công cụ"
-        titleBack
-        onClick={() => props.history.push("/bophankd/congcu")}
-        headerRight={
-          <ButtonMaterial variant="contained" onClick={submitForm}>
-            Lưu
-          </ButtonMaterial>
-        }
-      />
-      <Content>
-        <Form>
-          <div className="row">
-            <div className="col-lg-6">
+    <>
+      <Container>
+        <Header
+          title="Quay lại trang danh sách công cụ"
+          titleBack
+          onClick={() => props.history.push("/bophankd/congcu")}
+          headerRight={
+            <ButtonMaterial variant="contained" onClick={submitForm}>
+              Lưu
+            </ButtonMaterial>
+          }
+        />
+        <Content>
+          <Form>
+            <FormContent>
+              <FormTitle>Thêm công cụ</FormTitle>
               <FormGroup>
                 <Label>Tên công cụ:</Label>
                 <Input
@@ -149,8 +145,7 @@ const CongcuThem = (props) => {
                   style={{ border: "none", paddingLeft: 0 }}
                 />
               </FormGroup>
-            </div>
-            <div className="col-lg-6">
+
               <FormGroup>
                 <Label>Công dụng:</Label>
                 <Input
@@ -225,11 +220,18 @@ const CongcuThem = (props) => {
                   );
                 })}
               </FormGroup>
-            </div>
-          </div>
-        </Form>
-      </Content>
-    </Container>
+            </FormContent>
+          </Form>
+        </Content>
+      </Container>
+
+      <SnackbarMaterial
+        severity="success"
+        message="Thêm thành công"
+        open={alert}
+        setOpen={setAlert}
+      />
+    </>
   );
 };
 
@@ -238,22 +240,30 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
 `;
-
 const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 20px 36px;
 `;
-
 const Form = styled.div`
   background: #fff;
   padding: 36px 20px;
 `;
-
+const FormContent = styled.div`
+  width: 750px;
+  margin: auto;
+  font-family: "Poppins", sans-serif;
+`;
+const FormTitle = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
+  margin-bottom: 26px;
+`;
 const FormGroup = styled.div`
   margin-bottom: 26px;
 `;
-
 const CrossButton = styled.button`
   border: none;
   margin-left: 10px;
@@ -267,7 +277,6 @@ const CrossButton = styled.button`
     outline: none;
   }
 `;
-
 const PlusButton = styled.button`
   margin-left: 20px;
   background: #fff;
@@ -291,22 +300,12 @@ const PlusButton = styled.button`
     outline: none;
   }
 `;
-
 const Label = styled.span`
   font-size: 16px;
   color: #333;
   display: block;
   margin-bottom: 10px;
 `;
-
-const SmallLabel = styled.span`
-  font-size: 15px;
-  color: blue;
-  display: block;
-  margin-top: 4px;
-  cursor: pointer;
-`;
-
 const Input = styled.input`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -318,7 +317,6 @@ const Input = styled.input`
     border: 1px solid blue;
   }
 `;
-
 const TextArea = styled.textarea`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -330,7 +328,6 @@ const TextArea = styled.textarea`
     border: 1px solid blue;
   }
 `;
-
 const ErrMsg = styled.span`
   font-size: 15px;
   color: red !important;

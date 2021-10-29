@@ -9,20 +9,14 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiDaily2 from "../../../axios/apiDaily2";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsPhanphatChitiet } from "./headCells";
 import img_placeholder from "../../../assets/images/img_placeholder.png";
-// icon
-import ClearIcon from "@mui/icons-material/Clear";
-import CheckIcon from "@mui/icons-material/Check";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const TablePhanphatChitiet = ({
-  dsCongcu,
+  dsCongcu = [],
   phanphat,
   setCongcu,
   handleOpenModal,
@@ -44,7 +38,6 @@ const TablePhanphatChitiet = ({
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsCongcu.map((item) => item._id);
@@ -88,10 +81,6 @@ const TablePhanphatChitiet = ({
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsCongcu.length) : 0;
-
-  // if (loading) {
-  //   return <BackdropMaterial />;
-  // }
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -167,9 +156,11 @@ const TablePhanphatChitiet = ({
                         <TableCell align="right">
                           {row.soluongphanphat}
                         </TableCell>
-                        <TableCell align="right">{phanphat.ngaytao}</TableCell>
                         <TableCell align="right">
-                          {phanphat.phanphat.trangthai.daily2 === "choxn"
+                          {phanphat.phanphat.ngaytao}
+                        </TableCell>
+                        <TableCell align="right">
+                          {phanphat.phanphat.trangthai.hodan === "choxn"
                             ? "Chờ xác nhận"
                             : "Đã xác nhận"}
                         </TableCell>

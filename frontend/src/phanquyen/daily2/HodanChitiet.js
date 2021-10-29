@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import InputText from "../../components/InputText";
-// import img_placeholder from "../assets/images/img_placeholder.png";
 import styled from "styled-components";
 import ButtonMaterial from "../../components/ButtonMaterial";
 
@@ -79,29 +78,10 @@ const HodanChitiet = ({ open, onClose, hodan }) => {
   );
 };
 
-const Image = styled.img`
-  width: 100px;
-
-  &.noImage {
-    opacity: 0.15;
-  }
-`;
-
-const StyledInput = styled.input`
-  width: 100%;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  padding: 6px 10px;
-  border-radius: 3px;
-  margin-bottom: 10px;
-  outline: none;
-`;
-
 const Form = styled.div`
   background: #fff;
   padding: 36px 0;
 `;
-
 const FormGroup = styled.div`
   margin-bottom: 20px;
   span {

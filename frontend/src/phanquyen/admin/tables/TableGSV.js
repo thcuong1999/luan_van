@@ -1,6 +1,4 @@
 import * as React from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -15,115 +13,23 @@ import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsGsv } from "./headCells";
-import DropdownCustom from "../../../components/DropdownCustom";
 import DialogMaterial from "../../../components/DialogMaterial";
-import apiHodan from "../../../axios/apiHodan";
-import { useHistory } from "react-router";
-//
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import { alpha } from "@mui/material/styles";
 import apiGSV from "../../../axios/apiGSV";
 
-const EnhancedTableToolbar = ({
-  numSelected,
-  rowsSelected,
-  toolbarSelectedDropdownVal,
-}) => {
-  return numSelected > 0 ? (
-    <>
-      <Toolbar
-        sx={{
-          pl: { sm: 8 },
-          pr: { xs: 1, sm: 1 },
-          ...(numSelected > 0 && {
-            bgcolor: (theme) =>
-              alpha(
-                theme.palette.primary.main,
-                theme.palette.action.activatedOpacity
-              ),
-          }),
-        }}
-      >
-        {numSelected > 0 ? (
-          <Typography
-            sx={{ flex: "1 1 100%" }}
-            color="inherit"
-            variant="subtitle1"
-            component="div"
-          >
-            <div className="d-flex align-items-center">
-              <span>Đã chọn {numSelected} dòng</span>
-              <DropdownCustom
-                selected="Chọn thao tác"
-                onClick={(val) => toolbarSelectedDropdownVal(val)}
-                data={
-                  rowsSelected.length === 1
-                    ? [
-                        "Chi tiết giám sát vùng",
-                        "Cập nhật giám sát vùng",
-                        "Xóa giám sát vùng",
-                      ]
-                    : ["Xóa giám sát vùng"]
-                }
-                dropdownStyles={{ width: 250, marginLeft: 16 }}
-                dropdownBtnStyles={{
-                  paddingTop: 7,
-                  paddingBottom: 7,
-                  paddingLeft: 15,
-                }}
-              />
-            </div>
-          </Typography>
-        ) : (
-          <Typography
-            sx={{ flex: "1 1 100%" }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Nutrition
-          </Typography>
-        )}
-      </Toolbar>
-    </>
-  ) : null;
-};
-
-const TableGSV = ({ dsGsv, setRowsRemoved }) => {
-  // console.log({ dsHodan });
+const TableGSV = ({ dsGsv = [], setRowsRemoved, setAlert }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [open, setOpen] = React.useState(false);
-  const history = useHistory();
 
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const toolbarSelectedDropdownVal = (val) => {
-    if (val === "Chi tiết giám sát vùng") {
-      history.push(`/admin/gsv/chitiet/${selected[0]}`);
-    } else if (val === "Cập nhật giám sát vùng") {
-      history.push(`/admin/gsv/chinhsua/${selected[0]}`);
-    } else if (val === "Xóa giám sát vùng") {
-      handleOpen();
-    }
-  };
 
   const handleDeleteRow = async () => {
     const data = await apiGSV.xoaNhieuGsv({ arrayOfId: selected });
     if (data.success) {
-      Toastify({
-        text: "Xóa giám sát vùng thành công",
-        backgroundColor: "#0DB473",
-        className: "toastifyInfo",
-        position: "center",
-      }).showToast();
+      setAlert(true);
       setRowsRemoved(true);
     }
   };
@@ -183,11 +89,6 @@ const TableGSV = ({ dsGsv, setRowsRemoved }) => {
     <>
       <Box sx={{ width: "100%" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
-          <EnhancedTableToolbar
-            numSelected={selected.length}
-            rowsSelected={selected}
-            toolbarSelectedDropdownVal={toolbarSelectedDropdownVal}
-          />
           <TableContainer>
             <Table
               sx={{ minWidth: 750 }}

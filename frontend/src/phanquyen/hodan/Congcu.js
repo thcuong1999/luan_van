@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import ButtonMaterial from "../../components/ButtonMaterial";
 import { useSelector } from "react-redux";
 import BackdropMaterial from "../../components/BackdropMaterial";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import TableCongcu from "./tables/TableCongcu";
 import ModalChitietCongcu from "../../components/ModalChitietCongcu";
-import apiDaily2 from "../../axios/apiDaily2";
 import apiHodan from "../../axios/apiHodan";
 
 const Congcu = (props) => {
+  const [query, setQuery] = useState("");
+  const [searchColumns] = useState(["ten", "bophankd", "daily2"]);
   const [loading, setLoading] = useState(false);
   const [dsCongcu, setDsCongcu] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -22,14 +22,35 @@ const Congcu = (props) => {
   const fetchDsCongcu = async () => {
     setLoading(true);
     const { hodan } = await apiHodan.singleHodanBasedUser(userInfo._id);
-    const { congcu } = await apiHodan.dsCongcu(hodan._id);
-    // console.log(congcu);
-    setDsCongcu(congcu.items);
+    const { dscongcu } = await apiHodan.dsCongcu(hodan._id);
+    setDsCongcu(
+      dscongcu && dscongcu.length
+        ? dscongcu.map((item) => ({
+            ...item,
+            ten: item.congcu.ten,
+            bophankd: item.phanphat.from.bophankd.ten,
+            daily2: item.phanphat.to.daily2.ten,
+          }))
+        : []
+    );
     setLoading(false);
+  };
+
+  const search = (dsCongcu) => {
+    return (
+      dsCongcu &&
+      dsCongcu.filter((item) =>
+        searchColumns.some(
+          (col) =>
+            item[col].toString().toLowerCase().indexOf(query.toLowerCase()) > -1
+        )
+      )
+    );
   };
 
   useEffect(() => {
     fetchDsCongcu();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -41,14 +62,6 @@ const Congcu = (props) => {
       <Wrapper>
         <Header title="Công cụ" />
         <Content>
-          {/* <BtnRight>
-            <ButtonMaterial
-              variant="contained"
-              onClick={() => props.history.push("/bophankd/congcu/them")}
-            >
-              Thêm công cụ
-            </ButtonMaterial>
-          </BtnRight> */}
           <FilterSection>
             <TitleWrapper>
               <Title>Danh sách công cụ</Title>
@@ -59,15 +72,15 @@ const Congcu = (props) => {
                 <input
                   type="text"
                   placeholder="Tim công cụ theo tên, công dụng"
-                  // value={query}
-                  // onChange={(e) => setQuery(e.target.value)}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                 />
               </SearchBox>
             </Filter>
 
             <TableSection>
               <TableCongcu
-                dsCongcu={dsCongcu}
+                dsCongcu={search(dsCongcu)}
                 handleOpenModal={handleOpenModal}
                 setCongcu={setCongcu}
               />
@@ -94,6 +107,7 @@ const Content = styled.div`
   flex: 1;
   background: #f0eeee;
   padding: 26px 36px;
+  font-family: "Poppins", sans-serif;
 `;
 const FilterSection = styled.div`
   background: #fff;
@@ -140,6 +154,10 @@ const SearchBox = styled.div`
 `;
 const TableSection = styled.div`
   table {
+    th,
+    td {
+      font-family: "Poppins", sans-serif;
+    }
     th:first-child {
       display: none;
     }

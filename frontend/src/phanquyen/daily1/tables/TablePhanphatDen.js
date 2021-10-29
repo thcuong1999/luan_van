@@ -9,39 +9,19 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
-import BackdropMaterial from "../../../components/BackdropMaterial";
-import apiDaily2 from "../../../axios/apiDaily2";
 import EnhancedTableHead from "../../../components/table/EnhancedTableHead";
 import { getComparator } from "../../../utils";
 import EnhancedTableToolbar from "../../../components/table/EnhancedTableToolbar";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { headCellsPhanphat } from "./headCells";
-// icon
-import ClearIcon from "@mui/icons-material/Clear";
-import CheckIcon from "@mui/icons-material/Check";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-const TablePhanphatDen = ({ dsPhanphat }) => {
+const TablePhanphatDen = ({ dsPhanphat = [] }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  // api
-  // const [loading, setLoading] = React.useState(false);
-  // const [daily2, setDaily2] = React.useState([]);
-
-  // const fetchCongcu = async () => {
-  //   setLoading(true);
-  //   const data = await apiDaily2.dsDaily2();
-  //   setDaily2(data.daily2);
-  //   setLoading(false);
-  // };
-
-  // React.useEffect(() => {
-  //   fetchCongcu();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -49,7 +29,6 @@ const TablePhanphatDen = ({ dsPhanphat }) => {
     setOrderBy(property);
   };
 
-  //===
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = dsPhanphat.map((item) => item._id);
@@ -93,10 +72,6 @@ const TablePhanphatDen = ({ dsPhanphat }) => {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsPhanphat.length) : 0;
-
-  // if (loading) {
-  //   return <BackdropMaterial />;
-  // }
 
   return (
     <Box sx={{ width: "100%" }}>
